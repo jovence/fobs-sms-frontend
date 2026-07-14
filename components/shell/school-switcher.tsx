@@ -56,7 +56,7 @@ export function SchoolSwitcher() {
         </span>
         <ChevronsUpDown className="size-4 shrink-0 text-sidebar-foreground/50" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-72￼">
+      <DropdownMenuContent align="start" className="w-72">
         <DropdownMenuLabel className="text-xs text-muted-foreground">
           {t("switchSchool")}
         </DropdownMenuLabel>
