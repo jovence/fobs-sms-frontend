@@ -1,8 +1,7 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
-// Locale negotiation + prefixing. (Next 16 still supports `middleware`; the
-// `proxy` convention is the future replacement — tracked for a later migration.)
+// Locale negotiation + prefixing, via the Next 16 `proxy` convention.
 export default createMiddleware(routing);
 
 export const config = {
