@@ -1014,5 +1014,102 @@
       "filteredTitle": "No matching users",
       "filteredDescription": "Try adjusting your search or filters."
     }
+  },
+  "adminReferrals": {
+    "title": "Referrals",
+    "subtitle": "Manage the referral program and referrer payouts.",
+    "searchPlaceholder": "Search by name, code or phone…",
+    "allStatuses": "All statuses",
+    "clearFilters": "Clear",
+    "caption": "Referrers earn 20,000 XAF per successful referral; schools get 25,000 XAF off.",
+    "stats": {
+      "referrers": "Referrers",
+      "earnings": "Total earnings",
+      "referrals": "Successful referrals"
+    },
+    "columns": {
+      "referrer": "Referrer",
+      "code": "Code",
+      "residence": "Residence",
+      "referrals": "Referrals",
+      "earnings": "Earnings",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete"
+    },
+    "delete": {
+      "title": "Delete referrer?",
+      "description": "{name} will be permanently removed. This cannot be undone.",
+      "bulkTitle": "Delete {count} referrers?",
+      "bulkDescription": "The selected referrers will be permanently removed."
+    },
+    "toasts": {
+      "statusChanged": "Status updated.",
+      "deleted": "Referrer deleted.",
+      "bulkDeleted": "{count} referrers deleted."
+    },
+    "empty": {
+      "title": "No referrers",
+      "description": "Referrers will appear here.",
+      "filteredTitle": "No matching referrers",
+      "filteredDescription": "Try adjusting your search or filters."
+    }
+  },
+  "adminAppControl": {
+    "title": "App control",
+    "subtitle": "Manage mobile app versions and force-update prompts.",
+    "apps": {
+      "teacher": "Teacher app",
+      "parent": "Parent app"
+    },
+    "currentVersion": "Current version {version}",
+    "updateOn": "Update forced",
+    "forceUpdate": "Force update",
+    "forceUpdateHint": "Require users to update before continuing.",
+    "version": "Latest version",
+    "message": "Update message",
+    "downloadUrl": "Download URL",
+    "save": "Save",
+    "toasts": {
+      "saved": "Settings saved."
+    },
+    "errorTitle": "Couldn't load app settings",
+    "errorDescription": "Something went wrong. Please try again."
+  },
+  "adminActivity": {
+    "title": "Activity",
+    "subtitle": "A live audit log of activity across the platform.",
+    "searchPlaceholder": "Search activity…",
+    "allTypes": "All types",
+    "clearFilters": "Clear",
+    "columns": {
+      "type": "Type",
+      "description": "Activity",
+      "actor": "By",
+      "school": "School",
+      "when": "When"
+    },
+    "types": {
+      "enrollment": "Enrollment",
+      "marks": "Marks",
+      "attendance": "Attendance",
+      "payment": "Payment",
+      "teacher": "Teacher",
+      "school": "School"
+    },
+    "empty": {
+      "title": "No activity",
+      "description": "Platform activity will appear here.",
+      "filteredTitle": "No matching activity",
+      "filteredDescription": "Try adjusting your search or filters."
+    }
   }
 }

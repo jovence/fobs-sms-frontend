@@ -1014,5 +1014,102 @@
       "filteredTitle": "Aucun utilisateur correspondant",
       "filteredDescription": "Ajustez votre recherche ou vos filtres."
     }
+  },
+  "adminReferrals": {
+    "title": "Parrainage",
+    "subtitle": "Gérez le programme de parrainage et les gains des parrains.",
+    "searchPlaceholder": "Rechercher par nom, code ou téléphone…",
+    "allStatuses": "Tous les statuts",
+    "clearFilters": "Effacer",
+    "caption": "Les parrains gagnent 20 000 XAF par parrainage réussi ; les écoles bénéficient de 25 000 XAF de réduction.",
+    "stats": {
+      "referrers": "Parrains",
+      "earnings": "Gains totaux",
+      "referrals": "Parrainages réussis"
+    },
+    "columns": {
+      "referrer": "Parrain",
+      "code": "Code",
+      "residence": "Résidence",
+      "referrals": "Parrainages",
+      "earnings": "Gains",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "delete": "Supprimer"
+    },
+    "delete": {
+      "title": "Supprimer le parrain ?",
+      "description": "{name} sera définitivement supprimé. Cette action est irréversible.",
+      "bulkTitle": "Supprimer {count} parrains ?",
+      "bulkDescription": "Les parrains sélectionnés seront définitivement supprimés."
+    },
+    "toasts": {
+      "statusChanged": "Statut mis à jour.",
+      "deleted": "Parrain supprimé.",
+      "bulkDeleted": "{count} parrains supprimés."
+    },
+    "empty": {
+      "title": "Aucun parrain",
+      "description": "Les parrains apparaîtront ici.",
+      "filteredTitle": "Aucun parrain correspondant",
+      "filteredDescription": "Ajustez votre recherche ou vos filtres."
+    }
+  },
+  "adminAppControl": {
+    "title": "Contrôle des apps",
+    "subtitle": "Gérez les versions des applications mobiles et les mises à jour forcées.",
+    "apps": {
+      "teacher": "App Enseignant",
+      "parent": "App Parent"
+    },
+    "currentVersion": "Version actuelle {version}",
+    "updateOn": "Mise à jour forcée",
+    "forceUpdate": "Forcer la mise à jour",
+    "forceUpdateHint": "Obliger les utilisateurs à mettre à jour avant de continuer.",
+    "version": "Dernière version",
+    "message": "Message de mise à jour",
+    "downloadUrl": "Lien de téléchargement",
+    "save": "Enregistrer",
+    "toasts": {
+      "saved": "Paramètres enregistrés."
+    },
+    "errorTitle": "Impossible de charger les paramètres",
+    "errorDescription": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "adminActivity": {
+    "title": "Activité",
+    "subtitle": "Un journal d'audit en direct de l'activité sur la plateforme.",
+    "searchPlaceholder": "Rechercher une activité…",
+    "allTypes": "Tous les types",
+    "clearFilters": "Effacer",
+    "columns": {
+      "type": "Type",
+      "description": "Activité",
+      "actor": "Par",
+      "school": "Établissement",
+      "when": "Quand"
+    },
+    "types": {
+      "enrollment": "Inscription",
+      "marks": "Notes",
+      "attendance": "Présence",
+      "payment": "Paiement",
+      "teacher": "Enseignant",
+      "school": "Établissement"
+    },
+    "empty": {
+      "title": "Aucune activité",
+      "description": "L'activité de la plateforme apparaîtra ici.",
+      "filteredTitle": "Aucune activité correspondante",
+      "filteredDescription": "Ajustez votre recherche ou vos filtres."
+    }
   }
 }
