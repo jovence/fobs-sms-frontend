@@ -973,5 +973,46 @@
       "filteredTitle": "No matching schools",
       "filteredDescription": "Try adjusting your search or filters."
     }
+  },
+  "adminUsers": {
+    "title": "Users",
+    "subtitle": "Manage every account across the platform.",
+    "searchPlaceholder": "Search by name or email…",
+    "allRoles": "All roles",
+    "clearFilters": "Clear",
+    "export": "Export",
+    "columns": {
+      "user": "User",
+      "role": "Role",
+      "phone": "Phone",
+      "joined": "Joined",
+      "actions": "Actions"
+    },
+    "roles": {
+      "owner": "Owner",
+      "teacher": "Teacher",
+      "parent": "Parent",
+      "admin": "Admin"
+    },
+    "actions": {
+      "delete": "Delete"
+    },
+    "delete": {
+      "title": "Delete user?",
+      "description": "{name} will be permanently removed. This cannot be undone.",
+      "bulkTitle": "Delete {count} users?",
+      "bulkDescription": "The selected users will be permanently removed. Admins are never deleted."
+    },
+    "toasts": {
+      "deleted": "User deleted.",
+      "bulkDeleted": "{count} users deleted.",
+      "exported": "Export ready."
+    },
+    "empty": {
+      "title": "No users",
+      "description": "Platform users will appear here.",
+      "filteredTitle": "No matching users",
+      "filteredDescription": "Try adjusting your search or filters."
+    }
   }
 }

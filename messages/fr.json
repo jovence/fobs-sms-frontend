@@ -973,5 +973,46 @@
       "filteredTitle": "Aucun établissement correspondant",
       "filteredDescription": "Ajustez votre recherche ou vos filtres."
     }
+  },
+  "adminUsers": {
+    "title": "Utilisateurs",
+    "subtitle": "Gérez tous les comptes de la plateforme.",
+    "searchPlaceholder": "Rechercher par nom ou e-mail…",
+    "allRoles": "Tous les rôles",
+    "clearFilters": "Effacer",
+    "export": "Exporter",
+    "columns": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "phone": "Téléphone",
+      "joined": "Inscrit le",
+      "actions": "Actions"
+    },
+    "roles": {
+      "owner": "Propriétaire",
+      "teacher": "Enseignant",
+      "parent": "Parent",
+      "admin": "Admin"
+    },
+    "actions": {
+      "delete": "Supprimer"
+    },
+    "delete": {
+      "title": "Supprimer l'utilisateur ?",
+      "description": "{name} sera définitivement supprimé. Cette action est irréversible.",
+      "bulkTitle": "Supprimer {count} utilisateurs ?",
+      "bulkDescription": "Les utilisateurs sélectionnés seront supprimés. Les administrateurs ne sont jamais supprimés."
+    },
+    "toasts": {
+      "deleted": "Utilisateur supprimé.",
+      "bulkDeleted": "{count} utilisateurs supprimés.",
+      "exported": "Export prêt."
+    },
+    "empty": {
+      "title": "Aucun utilisateur",
+      "description": "Les utilisateurs apparaîtront ici.",
+      "filteredTitle": "Aucun utilisateur correspondant",
+      "filteredDescription": "Ajustez votre recherche ou vos filtres."
+    }
   }
 }
