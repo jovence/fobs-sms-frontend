@@ -27,6 +27,23 @@ export function AuthGuard({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+/** Restricts a route to platform admins; owners/others are sent to their dashboard. */
+export function AdminGuard({ children }: { children: ReactNode }) {
+  const hydrated = useAuthHydrated();
+  const session = useSession();
+  const router = useRouter();
+  const isAdmin = session?.user.role === "admin";
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!session) router.replace("/login");
+    else if (!isAdmin) router.replace("/dashboard");
+  }, [hydrated, session, isAdmin, router]);
+
+  if (!hydrated || !session || !isAdmin) return <FullPageSpinner />;
+  return <>{children}</>;
+}
+
 /** Keeps signed-in users out of the auth pages. */
 export function GuestOnly({ children }: { children: ReactNode }) {
   const hydrated = useAuthHydrated();

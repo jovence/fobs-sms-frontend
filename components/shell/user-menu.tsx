@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LogOut, Settings, UserCircle } from "lucide-react";
+import { LogOut, Settings, ShieldCheck, UserCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useCurrentUser, useLogout } from "@/features/auth/hooks";
 import { useRouter, Link } from "@/i18n/navigation";
@@ -50,6 +50,13 @@ export function UserMenu() {
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {user.role === "admin" && (
+          <DropdownMenuItem asChild>
+            <Link href="/admin" className="font-medium text-primary">
+              <ShieldCheck className="mr-2 size-4" /> {t("adminPanel")}
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem asChild>
           <Link href="/settings">
             <UserCircle className="mr-2 size-4" /> {t("edit")}

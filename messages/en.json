@@ -17,7 +17,8 @@
     "theme": "Theme",
     "language": "Language",
     "english": "English",
-    "french": "Français"
+    "french": "Français",
+    "adminPanel": "Admin panel"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -897,6 +898,44 @@
       "errors": {
         "range": "Enter a mark between 0 and {max}",
         "fix": "Fix the highlighted marks before saving."
+      }
+    }
+  },
+  "admin": {
+    "badge": "Platform Admin",
+    "title": "Platform Administration",
+    "backToApp": "Back to app",
+    "nav": {
+      "overview": "Overview",
+      "schools": "Schools",
+      "users": "Users",
+      "referrals": "Referrals",
+      "appControl": "App control",
+      "activity": "Activity"
+    },
+    "tiers": {
+      "free": "Free",
+      "basic": "Basic",
+      "pro": "Pro"
+    },
+    "dashboard": {
+      "title": "Platform overview",
+      "subtitle": "Health and growth across every school on FOBS SMS.",
+      "vsLastMonth": "vs last month",
+      "schools": "Schools",
+      "students": "Students",
+      "teachers": "Teachers",
+      "revenue": "Est. revenue",
+      "growth": "Platform growth",
+      "growthSubtitle": "Total users over the last 12 months",
+      "subscriptions": "Subscriptions",
+      "topSchools": "Top schools",
+      "usersByRole": "Users by role",
+      "roles": {
+        "owner": "Owners",
+        "teacher": "Teachers",
+        "parent": "Parents",
+        "admin": "Admins"
       }
     }
   }

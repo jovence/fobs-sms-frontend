@@ -17,7 +17,8 @@
     "theme": "Thème",
     "language": "Langue",
     "english": "English",
-    "french": "Français"
+    "french": "Français",
+    "adminPanel": "Panneau admin"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -897,6 +898,44 @@
       "errors": {
         "range": "Saisissez une note entre 0 et {max}",
         "fix": "Corrigez les notes en surbrillance avant d'enregistrer."
+      }
+    }
+  },
+  "admin": {
+    "badge": "Admin plateforme",
+    "title": "Administration de la plateforme",
+    "backToApp": "Retour à l'application",
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "schools": "Établissements",
+      "users": "Utilisateurs",
+      "referrals": "Parrainage",
+      "appControl": "Contrôle app",
+      "activity": "Activité"
+    },
+    "tiers": {
+      "free": "Gratuit",
+      "basic": "Basique",
+      "pro": "Pro"
+    },
+    "dashboard": {
+      "title": "Vue d'ensemble de la plateforme",
+      "subtitle": "Santé et croissance de tous les établissements FOBS SMS.",
+      "vsLastMonth": "vs mois dernier",
+      "schools": "Établissements",
+      "students": "Élèves",
+      "teachers": "Enseignants",
+      "revenue": "Revenu est.",
+      "growth": "Croissance de la plateforme",
+      "growthSubtitle": "Total des utilisateurs sur les 12 derniers mois",
+      "subscriptions": "Abonnements",
+      "topSchools": "Meilleurs établissements",
+      "usersByRole": "Utilisateurs par rôle",
+      "roles": {
+        "owner": "Propriétaires",
+        "teacher": "Enseignants",
+        "parent": "Parents",
+        "admin": "Admins"
       }
     }
   }
