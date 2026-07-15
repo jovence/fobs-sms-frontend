@@ -938,5 +938,40 @@
         "admin": "Admins"
       }
     }
+  },
+  "adminSchools": {
+    "title": "Schools",
+    "subtitle": "Manage every school on the platform and its subscription tier.",
+    "searchPlaceholder": "Search by school, code or owner…",
+    "allTiers": "All tiers",
+    "clearFilters": "Clear",
+    "demo": "Demo",
+    "columns": {
+      "school": "School",
+      "owner": "Owner",
+      "subscription": "Plan",
+      "students": "Students",
+      "actions": "Actions"
+    },
+    "tiers": {
+      "free": "Free",
+      "basic": "Basic",
+      "pro": "Pro"
+    },
+    "actions": {
+      "upgradeBasic": "Upgrade to Basic",
+      "downgradeFree": "Downgrade to Free",
+      "toggleDemo": "Toggle demo"
+    },
+    "toasts": {
+      "tierChanged": "Subscription updated.",
+      "demoToggled": "Demo flag updated."
+    },
+    "empty": {
+      "title": "No schools",
+      "description": "Schools will appear here.",
+      "filteredTitle": "No matching schools",
+      "filteredDescription": "Try adjusting your search or filters."
+    }
   }
 }

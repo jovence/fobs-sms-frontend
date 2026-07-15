@@ -938,5 +938,40 @@
         "admin": "Admins"
       }
     }
+  },
+  "adminSchools": {
+    "title": "Établissements",
+    "subtitle": "Gérez tous les établissements de la plateforme et leur abonnement.",
+    "searchPlaceholder": "Rechercher par établissement, code ou propriétaire…",
+    "allTiers": "Tous les forfaits",
+    "clearFilters": "Effacer",
+    "demo": "Démo",
+    "columns": {
+      "school": "Établissement",
+      "owner": "Propriétaire",
+      "subscription": "Forfait",
+      "students": "Élèves",
+      "actions": "Actions"
+    },
+    "tiers": {
+      "free": "Gratuit",
+      "basic": "Basique",
+      "pro": "Pro"
+    },
+    "actions": {
+      "upgradeBasic": "Passer à Basique",
+      "downgradeFree": "Rétrograder à Gratuit",
+      "toggleDemo": "Basculer démo"
+    },
+    "toasts": {
+      "tierChanged": "Abonnement mis à jour.",
+      "demoToggled": "Indicateur démo mis à jour."
+    },
+    "empty": {
+      "title": "Aucun établissement",
+      "description": "Les établissements apparaîtront ici.",
+      "filteredTitle": "Aucun établissement correspondant",
+      "filteredDescription": "Ajustez votre recherche ou vos filtres."
+    }
   }
 }
