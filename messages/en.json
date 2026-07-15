@@ -174,6 +174,55 @@
       "filteredDescription": "Try adjusting your search or filters."
     }
   },
+  "teachers": {
+    "title": "Teachers",
+    "subtitle": "Review staff, approve join requests, and manage assignments.",
+    "searchPlaceholder": "Search by name, email or subject…",
+    "allStatuses": "All teachers",
+    "clearFilters": "Clear",
+    "years": "yrs",
+    "columns": {
+      "teacher": "Teacher",
+      "specialization": "Specialization",
+      "experience": "Experience",
+      "load": "Subjects · Classes",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": { "active": "Active", "pending": "Pending request" },
+    "actions": { "approve": "Approve", "edit": "Edit", "remove": "Remove" },
+    "form": {
+      "editTitle": "Edit teacher",
+      "editSubtitle": "Update this teacher's profile details.",
+      "name": "Full name",
+      "email": "Email address",
+      "phone": "Phone number",
+      "specialization": "Specialization",
+      "qualifications": "Qualifications",
+      "experience": "Years of experience",
+      "cancel": "Cancel",
+      "save": "Save changes"
+    },
+    "remove": {
+      "title": "Remove teacher?",
+      "description": "{name} will be removed from this school. Their account is not deleted.",
+      "bulkTitle": "Remove {count} teachers?",
+      "bulkDescription": "The selected teachers will be removed from this school."
+    },
+    "toasts": {
+      "approved": "Teacher approved.",
+      "updated": "Teacher updated.",
+      "removed": "Teacher removed.",
+      "bulkRemoved": "{count} teachers removed.",
+      "error": "Something went wrong. Please try again."
+    },
+    "empty": {
+      "title": "No teachers yet",
+      "description": "Teachers appear here once they request to join your school.",
+      "filteredTitle": "No matching teachers",
+      "filteredDescription": "Try adjusting your search or filters."
+    }
+  },
   "states": {
     "emptyTitle": "Nothing here yet",
     "emptyDescription": "When there's data to show, it will appear here.",
