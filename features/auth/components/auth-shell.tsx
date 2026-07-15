@@ -42,6 +42,20 @@ export function AuthShell({
               </li>
             ))}
           </ul>
+          <dl className="flex gap-8 border-t border-sidebar-border pt-6">
+            {[
+              { v: "1,200+", l: "students / school" },
+              { v: "99.9%", l: "uptime" },
+              { v: "EN · FR", l: "bilingual" },
+            ].map((s) => (
+              <div key={s.l}>
+                <dt className="font-heading text-xl font-bold text-sidebar-foreground">
+                  {s.v}
+                </dt>
+                <dd className="text-xs text-sidebar-foreground/55">{s.l}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
         <p className="relative text-xs text-sidebar-foreground/60">
           © {new Date(0).getFullYear() || 2026} FOBS SMS · Cameroon

@@ -62,6 +62,40 @@
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
+
+  /* Layered, navy-tinted elevation — soft and premium, not muddy */
+  --shadow-xs: 0 1px 2px -1px oklch(0.24 0.03 258 / 0.08);
+  --shadow-sm: 0 1px 2px oklch(0.24 0.03 258 / 0.05), 0 2px 6px -1px oklch(0.24 0.03 258 / 0.06);
+  --shadow-md: 0 2px 4px oklch(0.24 0.03 258 / 0.05), 0 6px 16px -3px oklch(0.24 0.03 258 / 0.09);
+  --shadow-lg: 0 4px 8px oklch(0.24 0.03 258 / 0.05), 0 14px 32px -6px oklch(0.24 0.03 258 / 0.12);
+  --shadow-xl: 0 8px 16px oklch(0.24 0.03 258 / 0.06), 0 28px 56px -12px oklch(0.24 0.03 258 / 0.16);
+  --shadow-primary: 0 6px 20px -6px oklch(0.42 0.115 257 / 0.45);
+
+  /* Motion language */
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --animate-fade-up: fade-up 0.5s var(--ease-out-expo) both;
+  --animate-fade-in: fade-in 0.4s var(--ease-out-quad) both;
+  --animate-scale-in: scale-in 0.35s var(--ease-out-expo) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }
 
 :root {
@@ -195,4 +229,76 @@
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+@layer components {
+  /* Premium surface with hover lift — the default interactive card feel */
+  .card-interactive {
+    transition:
+      transform 0.2s var(--ease-out-quad),
+      box-shadow 0.25s var(--ease-out-quad),
+      border-color 0.2s var(--ease-out-quad);
+    will-change: transform;
+  }
+  .card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: color-mix(in oklch, var(--primary) 22%, var(--border));
+  }
+
+  /* Frosted overlay — used sparingly (topbar, sticky headers) */
+  .glass {
+    background: color-mix(in oklch, var(--background) 72%, transparent);
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  }
+
+  /* Shimmer skeleton */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in oklch, var(--muted) 80%, var(--foreground) 4%);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklch, var(--background) 55%, transparent),
+      transparent
+    );
+    animation: var(--animate-shimmer);
+  }
+
+  /* Subtle ambient mesh for hero / auth panels */
+  .mesh-brand {
+    background-image:
+      radial-gradient(42% 42% at 18% 12%, color-mix(in oklch, var(--primary) 22%, transparent) 0, transparent 70%),
+      radial-gradient(38% 38% at 82% 78%, color-mix(in oklch, var(--success) 20%, transparent) 0, transparent 70%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-interactive:hover { transform: none; }
+  .skeleton::after { animation: none; }
+}
+
+/* Refined scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent) transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--foreground) 16%, transparent);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--foreground) 28%, transparent);
+  background-clip: content-box;
 }

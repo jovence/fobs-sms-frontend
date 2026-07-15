@@ -88,7 +88,18 @@
     "attendanceRate": "Taux de présence",
     "passRate": "Taux de réussite",
     "recentActivity": "Activité récente",
-    "noActivity": "Aucune activité récente."
+    "noActivity": "Aucune activité récente.",
+    "enrollmentTrend": "Évolution des inscriptions",
+    "enrollmentSubtitle": "Élèves vs. objectif · {year}",
+    "attendanceOverview": "Présences du jour",
+    "quickActions": "Actions rapides",
+    "upcomingClasses": "Prochains cours",
+    "viewAll": "Tout voir",
+    "vsLastTerm": "vs trimestre dernier",
+    "addStudent": "Ajouter un élève",
+    "recordAttendance": "Saisir les présences",
+    "enterMarks": "Saisir les notes",
+    "generateReport": "Générer un bulletin"
   },
   "states": {
     "emptyTitle": "Rien pour l'instant",

@@ -88,7 +88,18 @@
     "attendanceRate": "Attendance rate",
     "passRate": "Pass rate",
     "recentActivity": "Recent activity",
-    "noActivity": "No recent activity yet."
+    "noActivity": "No recent activity yet.",
+    "enrollmentTrend": "Enrollment trend",
+    "enrollmentSubtitle": "Students vs. target · {year}",
+    "attendanceOverview": "Attendance today",
+    "quickActions": "Quick actions",
+    "upcomingClasses": "Upcoming classes",
+    "viewAll": "View all",
+    "vsLastTerm": "vs last term",
+    "addStudent": "Add student",
+    "recordAttendance": "Record attendance",
+    "enterMarks": "Enter marks",
+    "generateReport": "Generate report"
   },
   "states": {
     "emptyTitle": "Nothing here yet",
