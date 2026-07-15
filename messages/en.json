@@ -18,7 +18,8 @@
     "language": "Language",
     "english": "English",
     "french": "Français",
-    "adminPanel": "Admin panel"
+    "adminPanel": "Admin panel",
+    "skipToContent": "Skip to content"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -1111,5 +1112,22 @@
       "filteredTitle": "No matching activity",
       "filteredDescription": "Try adjusting your search or filters."
     }
+  },
+  "table": {
+    "rows": "Rows",
+    "rangeOf": "{from}–{to} of {total}",
+    "pageOf": "Page {page} of {total}",
+    "firstPage": "First page",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "lastPage": "Last page",
+    "selected": "{count} selected",
+    "clearSelection": "Clear selection",
+    "errorTitle": "Couldn't load data",
+    "errorDescription": "Something went wrong while fetching. Please try again.",
+    "retry": "Try again",
+    "sortBy": "Sort by {title}",
+    "sortedAsc": "Sorted by {title} ascending. Activate to sort descending.",
+    "sortedDesc": "Sorted by {title} descending. Activate to clear sorting."
   }
 }

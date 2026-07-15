@@ -68,7 +68,7 @@ export function SecurityForm() {
               {...register("currentPassword")}
             />
             {errors.currentPassword && (
-              <p className="text-sm text-destructive">
+              <p role="alert" className="text-sm text-destructive">
                 {errors.currentPassword.message}
               </p>
             )}
@@ -85,7 +85,7 @@ export function SecurityForm() {
                 {...register("newPassword")}
               />
               {errors.newPassword ? (
-                <p className="text-sm text-destructive">
+                <p role="alert" className="text-sm text-destructive">
                   {errors.newPassword.message}
                 </p>
               ) : (
@@ -103,7 +103,7 @@ export function SecurityForm() {
                 {...register("confirmPassword")}
               />
               {errors.confirmPassword && (
-                <p className="text-sm text-destructive">
+                <p role="alert" className="text-sm text-destructive">
                   {errors.confirmPassword.message}
                 </p>
               )}

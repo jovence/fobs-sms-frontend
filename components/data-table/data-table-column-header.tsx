@@ -1,6 +1,7 @@
 "use client";
 
 import type { Column } from "@tanstack/react-table";
+import { useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,11 +15,18 @@ export function DataTableColumnHeader<TData, TValue>({
   title: string;
   className?: string;
 }) {
+  const t = useTranslations("table");
   if (!column.getCanSort()) {
     return <span className={className}>{title}</span>;
   }
 
   const sorted = column.getIsSorted();
+  const ariaLabel =
+    sorted === "asc"
+      ? t("sortedAsc", { title })
+      : sorted === "desc"
+        ? t("sortedDesc", { title })
+        : t("sortBy", { title });
   return (
     <button
       type="button"
@@ -28,7 +36,7 @@ export function DataTableColumnHeader<TData, TValue>({
         sorted ? "text-foreground" : "text-muted-foreground",
         className,
       )}
-      aria-label={`Sort by ${title}`}
+      aria-label={ariaLabel}
     >
       {title}
       {sorted === "asc" ? (

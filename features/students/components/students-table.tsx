@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatDate } from "@/lib/format";
+import { downloadCsv } from "@/lib/csv";
 import {
   useBulkDeleteStudents,
   useDeleteStudent,
@@ -135,15 +136,7 @@ export function StudentsTable() {
       s.className,
       s.status,
     ]);
-    const csv = [header, ...rows]
-      .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
-      .join("\n");
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `students-${Date.now()}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv(`students-${Date.now()}.csv`, header, rows);
     toast.success(t("toasts.exported"));
   }
 

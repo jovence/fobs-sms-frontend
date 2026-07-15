@@ -221,7 +221,7 @@ function Field({
       <Label htmlFor={id}>{label}</Label>
       {children}
       {error ? (
-        <p className="text-sm text-destructive">{error}</p>
+        <p role="alert" className="text-sm text-destructive">{error}</p>
       ) : hint ? (
         <p className="text-xs text-muted-foreground">{hint}</p>
       ) : null}

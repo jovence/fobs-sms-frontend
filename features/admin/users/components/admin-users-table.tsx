@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatDate } from "@/lib/format";
+import { downloadCsv } from "@/lib/csv";
 import { useAdminUsers, useBulkDeleteUsers, useDeleteUser } from "../hooks";
 import { adminUsersService } from "../api/admin-users.service";
 import type { AdminUser, AdminUserQuery, Role } from "../types";
@@ -86,13 +87,7 @@ export function AdminUsersTable() {
     const all = await adminUsersService.list({ ...query, page: 1, perPage: data?.total || 1000 });
     const header = ["Name", "Email", "Phone", "Role", "Joined"];
     const rows = all.items.map((u) => [u.name, u.email, u.phone, u.role, formatDate(u.joinedAt, locale)]);
-    const csv = [header, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `users-${Date.now()}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv(`users-${Date.now()}.csv`, header, rows);
     toast.success(t("toasts.exported"));
   }
 
@@ -137,6 +132,7 @@ export function AdminUsersTable() {
         onSortingChange={setSorting}
         onRowSelectionChange={setRowSelection}
         getRowId={(u) => u.id}
+        enableRowSelection={(row) => row.original.role !== "admin"}
         isLoading={isLoading || isFetching}
         isError={isError}
         onRetry={() => refetch()}

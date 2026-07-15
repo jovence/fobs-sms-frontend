@@ -18,7 +18,8 @@
     "language": "Langue",
     "english": "English",
     "french": "Français",
-    "adminPanel": "Panneau admin"
+    "adminPanel": "Panneau admin",
+    "skipToContent": "Aller au contenu"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -1111,5 +1112,22 @@
       "filteredTitle": "Aucune activité correspondante",
       "filteredDescription": "Ajustez votre recherche ou vos filtres."
     }
+  },
+  "table": {
+    "rows": "Lignes",
+    "rangeOf": "{from}–{to} sur {total}",
+    "pageOf": "Page {page} sur {total}",
+    "firstPage": "Première page",
+    "prevPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "lastPage": "Dernière page",
+    "selected": "{count} sélectionné(s)",
+    "clearSelection": "Effacer la sélection",
+    "errorTitle": "Impossible de charger les données",
+    "errorDescription": "Une erreur est survenue lors du chargement. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "sortBy": "Trier par {title}",
+    "sortedAsc": "Trié par {title} croissant. Activer pour trier décroissant.",
+    "sortedDesc": "Trié par {title} décroissant. Activer pour annuler le tri."
   }
 }

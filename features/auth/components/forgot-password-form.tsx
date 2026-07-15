@@ -57,7 +57,7 @@ export function ForgotPasswordForm() {
           aria-invalid={!!errors.email}
           {...register("email")}
         />
-        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+        {errors.email && <p role="alert" className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <Button type="submit" className="w-full" disabled={busy}>

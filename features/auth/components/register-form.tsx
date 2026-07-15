@@ -133,7 +133,7 @@ function Field({
         {optional && <span className="ml-1 text-xs text-muted-foreground">(optional)</span>}
       </Label>
       {children}
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
     </div>
   );
 }

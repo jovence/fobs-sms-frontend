@@ -95,7 +95,7 @@ export function ProfileForm() {
                 {...register("name")}
               />
               {errors.name && (
-                <p className="text-sm text-destructive">{errors.name.message}</p>
+                <p role="alert" className="text-sm text-destructive">{errors.name.message}</p>
               )}
             </div>
 
@@ -110,7 +110,7 @@ export function ProfileForm() {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+                <p role="alert" className="text-sm text-destructive">{errors.email.message}</p>
               )}
             </div>
           </div>

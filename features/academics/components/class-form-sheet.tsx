@@ -97,7 +97,7 @@ export function ClassFormSheet({
             <div className="space-y-2">
               <Label htmlFor="name">{t("name")}</Label>
               <Input id="name" placeholder={t("namePlaceholder")} aria-invalid={!!errors.name} {...register("name")} />
-              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+              {errors.name && <p role="alert" className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

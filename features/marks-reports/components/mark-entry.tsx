@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -50,15 +50,19 @@ export function MarkEntry() {
     useEntryRoster(selection);
   const saveMarks = useSaveMarks();
 
-  // Seed the local mark inputs whenever a fresh roster arrives.
+  // Seed the local mark inputs ONCE per selection. A post-save refetch returns the same
+  // selection, so we must NOT reseed then — that would wipe marks the teacher typed after
+  // saving. Keyed on the class/subject/exam selection, not the roster reference.
+  const seededKey = useRef<string | null>(null);
   useEffect(() => {
-    if (!roster) return;
+    if (!roster || !selection) return;
+    const key = `${selection.classId}|${selection.subjectId}|${selection.examId}`;
+    if (seededKey.current === key) return;
+    seededKey.current = key;
     setMarks(
-      Object.fromEntries(
-        roster.map((s) => [s.id, s.mark == null ? "" : String(s.mark)]),
-      ),
+      Object.fromEntries(roster.map((s) => [s.id, s.mark == null ? "" : String(s.mark)])),
     );
-  }, [roster]);
+  }, [roster, selection]);
 
   const validation = useMemo(() => {
     const errors: Record<string, string> = {};
@@ -300,7 +304,7 @@ export function MarkEntry() {
 
           <div className="flex items-center justify-end gap-3">
             {validation.hasErrors && (
-              <p className="text-sm text-destructive">{te("errors.fix")}</p>
+              <p role="alert" className="text-sm text-destructive">{te("errors.fix")}</p>
             )}
             <Button onClick={onSave} disabled={!canSave}>
               {saveMarks.isPending ? (

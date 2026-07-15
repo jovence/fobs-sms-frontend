@@ -1,9 +1,10 @@
 "use client";
 
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import {
   type ColumnDef,
   type OnChangeFn,
+  type Row,
   type RowSelectionState,
   type SortingState,
   flexRender,
@@ -11,6 +12,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import {
   Table,
@@ -46,6 +48,8 @@ interface DataTableProps<TData> {
   emptyTitle?: string;
   emptyDescription?: string;
   emptyAction?: ReactNode;
+  /** Restrict which rows can be selected (e.g. protect admin rows). */
+  enableRowSelection?: (row: Row<TData>) => boolean;
 }
 
 export function DataTable<TData>({
@@ -69,7 +73,9 @@ export function DataTable<TData>({
   emptyTitle = "No results",
   emptyDescription,
   emptyAction,
+  enableRowSelection,
 }: DataTableProps<TData>) {
+  const t = useTranslations("table");
   const table = useReactTable({
     data,
     columns,
@@ -80,12 +86,25 @@ export function DataTable<TData>({
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     manualSorting: true,
-    enableRowSelection: true,
+    enableRowSelection: enableRowSelection ?? true,
     rowCount: total,
   });
 
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  // Clamp the page when the result set shrinks (e.g. deleting the last row on the last page),
+  // so users are never stranded on an out-of-range page that reads as "no data".
+  useEffect(() => {
+    if (page > totalPages) onPageChange(totalPages);
+  }, [page, totalPages, onPageChange]);
+
   const selectedIds = Object.keys(rowSelection).filter((k) => rowSelection[k]);
-  const showEmpty = !isLoading && !isError && data.length === 0;
+  // Only show skeletons on the FIRST load (no data yet). Background refetches keep the
+  // previous rows visible (keepPreviousData) instead of flashing the skeleton.
+  const firstLoad = !!isLoading && data.length === 0;
+  const showError = !!isError && data.length === 0;
+  const showEmpty = !firstLoad && !showError && data.length === 0;
+  const skeletonRows = Math.min(pageSize, 8);
 
   return (
     <div className="space-y-3">
@@ -106,12 +125,12 @@ export function DataTable<TData>({
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => table.resetRowSelection()}
-                aria-label="Clear selection"
+                aria-label={t("clearSelection")}
               >
                 <X />
               </Button>
               <span className="text-sm font-medium tabular-nums">
-                {selectedIds.length} selected
+                {t("selected", { count: selectedIds.length })}
               </span>
               <div className="ml-auto flex items-center gap-2">
                 {bulkActions(selectedIds, () => table.resetRowSelection())}
@@ -127,19 +146,35 @@ export function DataTable<TData>({
             <TableHeader className="sticky top-0 z-10 bg-card/95 backdrop-blur">
               {table.getHeaderGroups().map((hg) => (
                 <TableRow key={hg.id} className="hover:bg-transparent">
-                  {hg.headers.map((header) => (
-                    <TableHead key={header.id} className="h-11 whitespace-nowrap">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  ))}
+                  {hg.headers.map((header) => {
+                    const sorted = header.column.getIsSorted();
+                    return (
+                      <TableHead
+                        key={header.id}
+                        scope="col"
+                        aria-sort={
+                          header.column.getCanSort()
+                            ? sorted === "asc"
+                              ? "ascending"
+                              : sorted === "desc"
+                                ? "descending"
+                                : "none"
+                            : undefined
+                        }
+                        className="h-11 whitespace-nowrap"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                Array.from({ length: 8 }).map((_, i) => (
+              {firstLoad ? (
+                Array.from({ length: skeletonRows }).map((_, i) => (
                   <TableRow key={i} className="hover:bg-transparent">
                     {columns.map((_c, ci) => (
                       <TableCell key={ci} className="py-3">
@@ -148,13 +183,14 @@ export function DataTable<TData>({
                     ))}
                   </TableRow>
                 ))
-              ) : isError ? (
+              ) : showError ? (
                 <TableRow className="hover:bg-transparent">
                   <TableCell colSpan={columns.length} className="p-0">
                     <ErrorState
-                      title="Couldn't load data"
-                      description="Something went wrong while fetching. Please try again."
+                      title={t("errorTitle")}
+                      description={t("errorDescription")}
                       onRetry={onRetry}
+                      retryLabel={t("retry")}
                       className="border-0"
                     />
                   </TableCell>

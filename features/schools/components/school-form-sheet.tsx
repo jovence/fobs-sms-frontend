@@ -90,12 +90,12 @@ export function SchoolFormSheet({
             <div className="space-y-2">
               <Label htmlFor="name">{t("name")}</Label>
               <Input id="name" aria-invalid={!!errors.name} {...register("name")} />
-              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+              {errors.name && <p role="alert" className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="acronym">{t("acronym")}</Label>
               <Input id="acronym" className="uppercase" maxLength={6} aria-invalid={!!errors.acronym} {...register("acronym")} />
-              {errors.acronym && <p className="text-sm text-destructive">{errors.acronym.message}</p>}
+              {errors.acronym && <p role="alert" className="text-sm text-destructive">{errors.acronym.message}</p>}
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -104,7 +104,7 @@ export function SchoolFormSheet({
                   <span className="ml-1 text-xs font-normal text-muted-foreground">{t("optional")}</span>
                 </Label>
                 <Input id="email" type="email" aria-invalid={!!errors.email} {...register("email")} />
-                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+                {errors.email && <p role="alert" className="text-sm text-destructive">{errors.email.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">

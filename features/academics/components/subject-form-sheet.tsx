@@ -88,13 +88,13 @@ export function SubjectFormSheet({
             <div className="space-y-2">
               <Label htmlFor="name">{t("name")}</Label>
               <Input id="name" aria-invalid={!!errors.name} {...register("name")} />
-              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+              {errors.name && <p role="alert" className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="code">{t("code")}</Label>
                 <Input id="code" className="font-mono uppercase" aria-invalid={!!errors.code} {...register("code")} />
-                {errors.code && <p className="text-sm text-destructive">{errors.code.message}</p>}
+                {errors.code && <p role="alert" className="text-sm text-destructive">{errors.code.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="series">{t("series")}</Label>

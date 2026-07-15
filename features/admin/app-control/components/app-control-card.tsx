@@ -93,7 +93,7 @@ export function AppControlCard({ settings }: { settings: AppUpdateSettings }) {
           <div className="space-y-2">
             <Label htmlFor={`version-${settings.appType}`}>{t("version")}</Label>
             <Input id={`version-${settings.appType}`} className="tabular-nums" aria-invalid={!!errors.version} {...register("version")} />
-            {errors.version && <p className="text-sm text-destructive">{errors.version.message}</p>}
+            {errors.version && <p role="alert" className="text-sm text-destructive">{errors.version.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor={`message-${settings.appType}`}>{t("message")}</Label>
@@ -102,7 +102,7 @@ export function AppControlCard({ settings }: { settings: AppUpdateSettings }) {
           <div className="space-y-2">
             <Label htmlFor={`url-${settings.appType}`}>{t("downloadUrl")}</Label>
             <Input id={`url-${settings.appType}`} type="url" aria-invalid={!!errors.downloadUrl} {...register("downloadUrl")} />
-            {errors.downloadUrl && <p className="text-sm text-destructive">{errors.downloadUrl.message}</p>}
+            {errors.downloadUrl && <p role="alert" className="text-sm text-destructive">{errors.downloadUrl.message}</p>}
           </div>
           <div className="flex justify-end">
             <Button type="submit" size="sm" disabled={save.isPending || !isDirty}>

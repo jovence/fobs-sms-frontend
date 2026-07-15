@@ -15,7 +15,6 @@ import { Shimmer } from "@/components/common/skeletons";
 import { formatPercent } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "@/i18n/navigation";
 
 const EnrollmentChart = dynamic(
   () => import("@/features/dashboard/components/enrollment-chart").then((m) => m.EnrollmentChart),
@@ -99,11 +98,8 @@ export default function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Reveal className="lg:col-span-2">
           <Card className="h-full">
-            <CardHeader className="flex-row items-center justify-between">
+            <CardHeader>
               <CardTitle className="text-base">{t("recentActivity")}</CardTitle>
-              <Link href="/settings" className="text-sm font-medium text-primary hover:underline">
-                {t("viewAll")}
-              </Link>
             </CardHeader>
             <CardContent>
               <ActivityFeed />
