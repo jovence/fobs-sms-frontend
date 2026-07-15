@@ -101,6 +101,79 @@
     "enterMarks": "Saisir les notes",
     "generateReport": "Générer un bulletin"
   },
+  "students": {
+    "title": "Élèves",
+    "subtitle": "Gérez les inscriptions, les dossiers et les statuts.",
+    "add": "Ajouter un élève",
+    "export": "Exporter",
+    "searchPlaceholder": "Rechercher par nom ou matricule…",
+    "allClasses": "Toutes les classes",
+    "allStatuses": "Tous les statuts",
+    "clearFilters": "Effacer",
+    "columns": {
+      "student": "Élève",
+      "class": "Classe",
+      "gender": "Sexe",
+      "dob": "Date de naissance",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "status": { "Approved": "Approuvé", "Pending": "En attente", "Rejected": "Rejeté" },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "setStatus": "Changer le statut",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "markPending": "Mettre en attente"
+    },
+    "form": {
+      "createTitle": "Ajouter un élève",
+      "editTitle": "Modifier l'élève",
+      "createSubtitle": "Inscrivez un nouvel élève dans une classe.",
+      "editSubtitle": "Mettez à jour le dossier de cet élève.",
+      "fullName": "Nom complet",
+      "matricule": "Matricule",
+      "gender": "Sexe",
+      "male": "Masculin",
+      "female": "Féminin",
+      "dob": "Date de naissance",
+      "placeOfBirth": "Lieu de naissance",
+      "class": "Classe",
+      "selectClass": "Choisir une classe",
+      "guardian": "Tuteur / parent",
+      "repeater": "Redouble cette classe",
+      "status": "Statut d'inscription",
+      "statusPending": "En attente",
+      "statusApproved": "Approuvé",
+      "statusRejected": "Rejeté",
+      "optional": "(facultatif)",
+      "cancel": "Annuler",
+      "create": "Créer l'élève",
+      "save": "Enregistrer"
+    },
+    "delete": {
+      "title": "Supprimer l'élève ?",
+      "description": "{name} sera définitivement supprimé. Cette action est irréversible.",
+      "bulkTitle": "Supprimer {count} élèves ?",
+      "bulkDescription": "Les élèves sélectionnés seront définitivement supprimés. Irréversible."
+    },
+    "toasts": {
+      "created": "Élève ajouté.",
+      "updated": "Élève mis à jour.",
+      "deleted": "Élève supprimé.",
+      "bulkDeleted": "{count} élèves supprimés.",
+      "statusChanged": "Statut mis à jour.",
+      "exported": "Export prêt.",
+      "error": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "empty": {
+      "title": "Aucun élève",
+      "description": "Ajoutez votre premier élève pour commencer.",
+      "filteredTitle": "Aucun élève correspondant",
+      "filteredDescription": "Ajustez votre recherche ou vos filtres."
+    }
+  },
   "states": {
     "emptyTitle": "Rien pour l'instant",
     "emptyDescription": "Les données apparaîtront ici lorsqu'elles seront disponibles.",

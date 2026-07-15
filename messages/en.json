@@ -101,6 +101,79 @@
     "enterMarks": "Enter marks",
     "generateReport": "Generate report"
   },
+  "students": {
+    "title": "Students",
+    "subtitle": "Manage enrollment, records and registration status.",
+    "add": "Add student",
+    "export": "Export",
+    "searchPlaceholder": "Search by name or matricule…",
+    "allClasses": "All classes",
+    "allStatuses": "All statuses",
+    "clearFilters": "Clear",
+    "columns": {
+      "student": "Student",
+      "class": "Class",
+      "gender": "Gender",
+      "dob": "Date of birth",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": { "Approved": "Approved", "Pending": "Pending", "Rejected": "Rejected" },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "setStatus": "Set status",
+      "approve": "Approve",
+      "reject": "Reject",
+      "markPending": "Mark pending"
+    },
+    "form": {
+      "createTitle": "Add student",
+      "editTitle": "Edit student",
+      "createSubtitle": "Register a new student into a class.",
+      "editSubtitle": "Update this student's record.",
+      "fullName": "Full name",
+      "matricule": "Matricule",
+      "gender": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "dob": "Date of birth",
+      "placeOfBirth": "Place of birth",
+      "class": "Class",
+      "selectClass": "Select a class",
+      "guardian": "Guardian / parent",
+      "repeater": "Repeating this class",
+      "status": "Registration status",
+      "statusPending": "Pending",
+      "statusApproved": "Approved",
+      "statusRejected": "Rejected",
+      "optional": "(optional)",
+      "cancel": "Cancel",
+      "create": "Create student",
+      "save": "Save changes"
+    },
+    "delete": {
+      "title": "Delete student?",
+      "description": "{name} will be permanently removed. This action cannot be undone.",
+      "bulkTitle": "Delete {count} students?",
+      "bulkDescription": "The selected students will be permanently removed. This cannot be undone."
+    },
+    "toasts": {
+      "created": "Student added.",
+      "updated": "Student updated.",
+      "deleted": "Student deleted.",
+      "bulkDeleted": "{count} students deleted.",
+      "statusChanged": "Status updated.",
+      "exported": "Export ready.",
+      "error": "Something went wrong. Please try again."
+    },
+    "empty": {
+      "title": "No students yet",
+      "description": "Add your first student to get started.",
+      "filteredTitle": "No matching students",
+      "filteredDescription": "Try adjusting your search or filters."
+    }
+  },
   "states": {
     "emptyTitle": "Nothing here yet",
     "emptyDescription": "When there's data to show, it will appear here.",
