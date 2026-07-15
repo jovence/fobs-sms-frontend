@@ -223,6 +223,94 @@
       "filteredDescription": "Ajustez votre recherche ou vos filtres."
     }
   },
+  "academics": {
+    "title": "Classes & Matières",
+    "subtitle": "Organisez les classes, sections et matières de votre établissement.",
+    "tabs": { "classes": "Classes", "subjects": "Matières" },
+    "classes": {
+      "add": "Ajouter une classe",
+      "searchPlaceholder": "Rechercher des classes…",
+      "allLevels": "Tous les niveaux",
+      "clearFilters": "Effacer",
+      "columns": { "name": "Classe", "master": "Professeur principal", "students": "Élèves", "subjects": "Matières", "actions": "Actions" },
+      "actions": { "edit": "Modifier", "delete": "Supprimer" },
+      "delete": {
+        "title": "Supprimer la classe ?",
+        "description": "{name} sera définitivement supprimée. Cette action est irréversible.",
+        "bulkTitle": "Supprimer {count} classes ?",
+        "bulkDescription": "Les classes sélectionnées seront définitivement supprimées."
+      },
+      "toasts": { "deleted": "Classe supprimée.", "bulkDeleted": "{count} classes supprimées." },
+      "empty": {
+        "title": "Aucune classe",
+        "description": "Créez votre première classe pour inscrire des élèves.",
+        "filteredTitle": "Aucune classe correspondante",
+        "filteredDescription": "Ajustez votre recherche ou vos filtres."
+      }
+    },
+    "subjects": {
+      "add": "Ajouter une matière",
+      "searchPlaceholder": "Rechercher des matières…",
+      "allSeries": "Toutes les séries",
+      "clearFilters": "Effacer",
+      "columns": { "name": "Matière", "series": "Série", "classes": "Classes", "actions": "Actions" },
+      "actions": { "edit": "Modifier", "delete": "Supprimer" },
+      "delete": {
+        "title": "Supprimer la matière ?",
+        "description": "{name} sera définitivement supprimée. Cette action est irréversible.",
+        "bulkTitle": "Supprimer {count} matières ?",
+        "bulkDescription": "Les matières sélectionnées seront définitivement supprimées."
+      },
+      "toasts": { "deleted": "Matière supprimée.", "bulkDeleted": "{count} matières supprimées." },
+      "empty": {
+        "title": "Aucune matière",
+        "description": "Créez votre première matière pour bâtir le programme.",
+        "filteredTitle": "Aucune matière correspondante",
+        "filteredDescription": "Ajustez votre recherche ou vos filtres."
+      }
+    },
+    "classForm": {
+      "createTitle": "Ajouter une classe",
+      "editTitle": "Modifier la classe",
+      "createSubtitle": "Créez une nouvelle classe pour cette année scolaire.",
+      "editSubtitle": "Mettez à jour les détails de cette classe.",
+      "name": "Nom de la classe",
+      "namePlaceholder": "ex. Form 4 Science",
+      "level": "Niveau",
+      "levelLower": "Premier cycle",
+      "levelUpper": "Second cycle",
+      "section": "Section",
+      "sectionEnglish": "Anglophone",
+      "sectionFrench": "Francophone",
+      "master": "Professeur principal",
+      "optional": "(facultatif)",
+      "cancel": "Annuler",
+      "create": "Créer la classe",
+      "save": "Enregistrer"
+    },
+    "subjectForm": {
+      "createTitle": "Ajouter une matière",
+      "editTitle": "Modifier la matière",
+      "createSubtitle": "Ajoutez une matière au programme.",
+      "editSubtitle": "Mettez à jour les détails de cette matière.",
+      "name": "Nom de la matière",
+      "code": "Code",
+      "series": "Série",
+      "seriesScience": "Scientifique",
+      "seriesArt": "Littéraire",
+      "seriesBoth": "Les deux",
+      "cancel": "Annuler",
+      "create": "Créer la matière",
+      "save": "Enregistrer"
+    },
+    "toasts": {
+      "classCreated": "Classe créée.",
+      "classUpdated": "Classe mise à jour.",
+      "subjectCreated": "Matière créée.",
+      "subjectUpdated": "Matière mise à jour.",
+      "error": "Une erreur est survenue. Veuillez réessayer."
+    }
+  },
   "states": {
     "emptyTitle": "Rien pour l'instant",
     "emptyDescription": "Les données apparaîtront ici lorsqu'elles seront disponibles.",

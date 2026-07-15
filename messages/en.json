@@ -223,6 +223,94 @@
       "filteredDescription": "Try adjusting your search or filters."
     }
   },
+  "academics": {
+    "title": "Classes & Subjects",
+    "subtitle": "Organize your school's classes, sections and subjects.",
+    "tabs": { "classes": "Classes", "subjects": "Subjects" },
+    "classes": {
+      "add": "Add class",
+      "searchPlaceholder": "Search classes…",
+      "allLevels": "All levels",
+      "clearFilters": "Clear",
+      "columns": { "name": "Class", "master": "Class master", "students": "Students", "subjects": "Subjects", "actions": "Actions" },
+      "actions": { "edit": "Edit", "delete": "Delete" },
+      "delete": {
+        "title": "Delete class?",
+        "description": "{name} will be permanently removed. This cannot be undone.",
+        "bulkTitle": "Delete {count} classes?",
+        "bulkDescription": "The selected classes will be permanently removed."
+      },
+      "toasts": { "deleted": "Class deleted.", "bulkDeleted": "{count} classes deleted." },
+      "empty": {
+        "title": "No classes yet",
+        "description": "Create your first class to start enrolling students.",
+        "filteredTitle": "No matching classes",
+        "filteredDescription": "Try adjusting your search or filters."
+      }
+    },
+    "subjects": {
+      "add": "Add subject",
+      "searchPlaceholder": "Search subjects…",
+      "allSeries": "All series",
+      "clearFilters": "Clear",
+      "columns": { "name": "Subject", "series": "Series", "classes": "Classes", "actions": "Actions" },
+      "actions": { "edit": "Edit", "delete": "Delete" },
+      "delete": {
+        "title": "Delete subject?",
+        "description": "{name} will be permanently removed. This cannot be undone.",
+        "bulkTitle": "Delete {count} subjects?",
+        "bulkDescription": "The selected subjects will be permanently removed."
+      },
+      "toasts": { "deleted": "Subject deleted.", "bulkDeleted": "{count} subjects deleted." },
+      "empty": {
+        "title": "No subjects yet",
+        "description": "Create your first subject to build the curriculum.",
+        "filteredTitle": "No matching subjects",
+        "filteredDescription": "Try adjusting your search or filters."
+      }
+    },
+    "classForm": {
+      "createTitle": "Add class",
+      "editTitle": "Edit class",
+      "createSubtitle": "Create a new class for this academic year.",
+      "editSubtitle": "Update this class's details.",
+      "name": "Class name",
+      "namePlaceholder": "e.g. Form 4 Science",
+      "level": "Level",
+      "levelLower": "Lower",
+      "levelUpper": "Upper",
+      "section": "Section",
+      "sectionEnglish": "English",
+      "sectionFrench": "French",
+      "master": "Class master",
+      "optional": "(optional)",
+      "cancel": "Cancel",
+      "create": "Create class",
+      "save": "Save changes"
+    },
+    "subjectForm": {
+      "createTitle": "Add subject",
+      "editTitle": "Edit subject",
+      "createSubtitle": "Add a subject to the curriculum.",
+      "editSubtitle": "Update this subject's details.",
+      "name": "Subject name",
+      "code": "Code",
+      "series": "Series",
+      "seriesScience": "Science",
+      "seriesArt": "Arts",
+      "seriesBoth": "Both",
+      "cancel": "Cancel",
+      "create": "Create subject",
+      "save": "Save changes"
+    },
+    "toasts": {
+      "classCreated": "Class created.",
+      "classUpdated": "Class updated.",
+      "subjectCreated": "Subject created.",
+      "subjectUpdated": "Subject updated.",
+      "error": "Something went wrong. Please try again."
+    }
+  },
   "states": {
     "emptyTitle": "Nothing here yet",
     "emptyDescription": "When there's data to show, it will appear here.",
