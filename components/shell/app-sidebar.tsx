@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 /** Fixed navy rail — the institutional signature of the dashboard. Desktop only. */
 export function AppSidebar() {
   return (
-    <aside className="hidden w-64 shrink-0 flex-col gap-5 border-r border-sidebar-border bg-sidebar px-4 py-5 lg:flex">
+    <aside className="hidden w-64 shrink-0 flex-col gap-5 border-r border-sidebar-border bg-sidebar px-4 py-5 text-sidebar-foreground lg:flex">
       <div className="px-1">
         <Logo tone="invert" />
       </div>

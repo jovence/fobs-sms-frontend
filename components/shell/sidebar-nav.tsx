@@ -27,7 +27,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
         groups[section].length ? (
           <div key={section} className="space-y-1">
             {section === "administration" && (
-              <p className="px-3 pb-1 text-[10px] font-semibold tracking-[0.14em] text-sidebar-foreground/45 uppercase">
+              <p className="px-3 pb-1 text-[10px] font-semibold tracking-[0.14em] text-sidebar-foreground/70 uppercase">
                 {t("administration")}
               </p>
             )}

@@ -50,7 +50,7 @@ export function SchoolSwitcher() {
           <span className="block truncate text-sm font-semibold text-sidebar-foreground">
             {active?.school.acronym ?? t("activeSchool")}
           </span>
-          <span className="block truncate text-xs text-sidebar-foreground/60">
+          <span className="block truncate text-xs text-sidebar-foreground/75">
             {active?.school.name}
           </span>
         </span>

@@ -31,7 +31,7 @@ export function Logo({
           <span
             className={cn(
               "text-[10px] font-medium uppercase tracking-[0.2em]",
-              tone === "invert" ? "text-sidebar-foreground/70" : "text-muted-foreground",
+              tone === "invert" ? "text-sidebar-foreground/85" : "text-muted-foreground",
             )}
           >
             School SMS

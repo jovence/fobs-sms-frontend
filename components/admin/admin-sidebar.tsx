@@ -8,7 +8,7 @@ import { AdminSidebarNav } from "./admin-sidebar-nav";
 export function AdminSidebar() {
   const t = useTranslations("admin");
   return (
-    <aside className="hidden w-64 shrink-0 flex-col gap-5 border-r border-sidebar-border bg-sidebar px-4 py-5 lg:flex">
+    <aside className="hidden w-64 shrink-0 flex-col gap-5 border-r border-sidebar-border bg-sidebar px-4 py-5 text-sidebar-foreground lg:flex">
       <div className="space-y-3 px-1">
         <Logo tone="invert" />
         <div className="inline-flex items-center gap-1.5 rounded-md bg-sidebar-primary/15 px-2 py-1 text-[11px] font-semibold tracking-wide text-sidebar-primary uppercase">

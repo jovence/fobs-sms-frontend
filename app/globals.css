@@ -144,11 +144,12 @@
   --chart-4: oklch(0.74 0.135 74);
   --chart-5: oklch(0.55 0.13 305);
 
-  /* Navy sidebar — the institutional signature of the dashboard shell */
+  /* Navy sidebar — the institutional signature of the dashboard shell.
+     Foreground + primary tuned so sidebar text clears WCAG AA on the navy ground. */
   --sidebar: oklch(0.29 0.045 259);
-  --sidebar-foreground: oklch(0.9 0.02 250);
-  --sidebar-primary: oklch(0.62 0.11 163);
-  --sidebar-primary-foreground: oklch(0.98 0.01 163);
+  --sidebar-foreground: oklch(0.95 0.015 250);
+  --sidebar-primary: oklch(0.76 0.13 163);
+  --sidebar-primary-foreground: oklch(0.24 0.04 259);
   --sidebar-accent: oklch(0.35 0.05 259);
   --sidebar-accent-foreground: oklch(0.97 0.01 250);
   --sidebar-border: oklch(0.37 0.045 259);
@@ -230,6 +231,26 @@
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* Darken sonner rich-color toast text so it clears WCAG AA (4.5:1) on the
+   light success/error/warning/info backgrounds. (!important to win over
+   sonner's own runtime-injected rich-color rules.) */
+[data-sonner-toast][data-type="success"] [data-title],
+[data-sonner-toast][data-type="success"] [data-description] {
+  color: #045c26 !important;
+}
+[data-sonner-toast][data-type="error"] [data-title],
+[data-sonner-toast][data-type="error"] [data-description] {
+  color: #9f1239 !important;
+}
+[data-sonner-toast][data-type="warning"] [data-title],
+[data-sonner-toast][data-type="warning"] [data-description] {
+  color: #854d0e !important;
+}
+[data-sonner-toast][data-type="info"] [data-title],
+[data-sonner-toast][data-type="info"] [data-description] {
+  color: #1e478e !important;
 }
 
 @layer components {
