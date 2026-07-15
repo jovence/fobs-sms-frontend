@@ -118,7 +118,11 @@
       "status": "Statut",
       "actions": "Actions"
     },
-    "status": { "Approved": "Approuvé", "Pending": "En attente", "Rejected": "Rejeté" },
+    "status": {
+      "Approved": "Approuvé",
+      "Pending": "En attente",
+      "Rejected": "Rejeté"
+    },
     "actions": {
       "edit": "Modifier",
       "delete": "Supprimer",
@@ -189,8 +193,15 @@
       "status": "Statut",
       "actions": "Actions"
     },
-    "status": { "active": "Actif", "pending": "Demande en attente" },
-    "actions": { "approve": "Approuver", "edit": "Modifier", "remove": "Retirer" },
+    "status": {
+      "active": "Actif",
+      "pending": "Demande en attente"
+    },
+    "actions": {
+      "approve": "Approuver",
+      "edit": "Modifier",
+      "remove": "Retirer"
+    },
     "form": {
       "editTitle": "Modifier l'enseignant",
       "editSubtitle": "Mettez à jour le profil de cet enseignant.",
@@ -226,21 +237,36 @@
   "academics": {
     "title": "Classes & Matières",
     "subtitle": "Organisez les classes, sections et matières de votre établissement.",
-    "tabs": { "classes": "Classes", "subjects": "Matières" },
+    "tabs": {
+      "classes": "Classes",
+      "subjects": "Matières"
+    },
     "classes": {
       "add": "Ajouter une classe",
       "searchPlaceholder": "Rechercher des classes…",
       "allLevels": "Tous les niveaux",
       "clearFilters": "Effacer",
-      "columns": { "name": "Classe", "master": "Professeur principal", "students": "Élèves", "subjects": "Matières", "actions": "Actions" },
-      "actions": { "edit": "Modifier", "delete": "Supprimer" },
+      "columns": {
+        "name": "Classe",
+        "master": "Professeur principal",
+        "students": "Élèves",
+        "subjects": "Matières",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "delete": "Supprimer"
+      },
       "delete": {
         "title": "Supprimer la classe ?",
         "description": "{name} sera définitivement supprimée. Cette action est irréversible.",
         "bulkTitle": "Supprimer {count} classes ?",
         "bulkDescription": "Les classes sélectionnées seront définitivement supprimées."
       },
-      "toasts": { "deleted": "Classe supprimée.", "bulkDeleted": "{count} classes supprimées." },
+      "toasts": {
+        "deleted": "Classe supprimée.",
+        "bulkDeleted": "{count} classes supprimées."
+      },
       "empty": {
         "title": "Aucune classe",
         "description": "Créez votre première classe pour inscrire des élèves.",
@@ -253,15 +279,26 @@
       "searchPlaceholder": "Rechercher des matières…",
       "allSeries": "Toutes les séries",
       "clearFilters": "Effacer",
-      "columns": { "name": "Matière", "series": "Série", "classes": "Classes", "actions": "Actions" },
-      "actions": { "edit": "Modifier", "delete": "Supprimer" },
+      "columns": {
+        "name": "Matière",
+        "series": "Série",
+        "classes": "Classes",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "delete": "Supprimer"
+      },
       "delete": {
         "title": "Supprimer la matière ?",
         "description": "{name} sera définitivement supprimée. Cette action est irréversible.",
         "bulkTitle": "Supprimer {count} matières ?",
         "bulkDescription": "Les matières sélectionnées seront définitivement supprimées."
       },
-      "toasts": { "deleted": "Matière supprimée.", "bulkDeleted": "{count} matières supprimées." },
+      "toasts": {
+        "deleted": "Matière supprimée.",
+        "bulkDeleted": "{count} matières supprimées."
+      },
       "empty": {
         "title": "Aucune matière",
         "description": "Créez votre première matière pour bâtir le programme.",
@@ -319,9 +356,21 @@
     "demo": "Démo",
     "errorTitle": "Impossible de charger les établissements",
     "errorDescription": "Une erreur est survenue. Veuillez réessayer.",
-    "tiers": { "free": "Gratuit", "basic": "Basique", "pro": "Pro" },
-    "stats": { "students": "Élèves", "teachers": "Enseignants", "classes": "Classes" },
-    "actions": { "menu": "Options", "edit": "Modifier", "delete": "Supprimer" },
+    "tiers": {
+      "free": "Gratuit",
+      "basic": "Basique",
+      "pro": "Pro"
+    },
+    "stats": {
+      "students": "Élèves",
+      "teachers": "Enseignants",
+      "classes": "Classes"
+    },
+    "actions": {
+      "menu": "Options",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
     "form": {
       "createTitle": "Ajouter un établissement",
       "editTitle": "Modifier l'établissement",
@@ -374,5 +423,481 @@
     "feature2Body": "Saisissez les notes par séquence et générez des bulletins conformes au GCE et au MINESEC.",
     "feature3Title": "Présences & parents",
     "feature3Body": "Suivez les présences et tenez les parents informés des progrès de leur enfant."
+  },
+  "parents": {
+    "title": "Parents",
+    "subtitle": "Gérez les parents et tuteurs liés à vos élèves.",
+    "searchPlaceholder": "Rechercher par nom, e-mail, téléphone…",
+    "clearFilters": "Effacer",
+    "export": "Exporter CSV",
+    "add": "Ajouter un parent",
+    "years": "ans",
+    "columns": {
+      "parent": "Parent",
+      "email": "E-mail",
+      "children": "Enfants",
+      "occupation": "Profession",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    },
+    "empty": {
+      "title": "Aucun parent",
+      "description": "Ajoutez votre premier parent ou tuteur pour le lier aux élèves.",
+      "filteredTitle": "Aucun parent trouvé",
+      "filteredDescription": "Aucun parent ne correspond à votre recherche. Ajustez vos filtres."
+    },
+    "remove": {
+      "title": "Supprimer le parent",
+      "description": "Voulez-vous vraiment supprimer {name} ? Cette action est irréversible.",
+      "bulkTitle": "Supprimer {count} parents",
+      "bulkDescription": "Voulez-vous vraiment supprimer les parents sélectionnés ? Cette action est irréversible."
+    },
+    "toasts": {
+      "created": "Parent ajouté avec succès.",
+      "updated": "Parent mis à jour avec succès.",
+      "removed": "Parent supprimé.",
+      "bulkRemoved": "{count} parents supprimés.",
+      "exported": "Parents exportés en CSV.",
+      "error": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "form": {
+      "createTitle": "Ajouter un parent",
+      "editTitle": "Modifier le parent",
+      "createSubtitle": "Enregistrez un nouveau parent ou tuteur.",
+      "editSubtitle": "Mettez à jour les informations de ce parent.",
+      "name": "Nom complet",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "occupation": "Profession",
+      "address": "Adresse",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "create": "Ajouter un parent"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre compte, votre sécurité et vos préférences.",
+    "tabs": {
+      "profile": "Profil",
+      "security": "Sécurité",
+      "preferences": "Préférences",
+      "notifications": "Notifications"
+    },
+    "profile": {
+      "title": "Profil",
+      "description": "Mettez à jour vos informations personnelles.",
+      "name": "Nom complet",
+      "email": "Adresse e-mail",
+      "save": "Enregistrer les modifications",
+      "saved": "Profil mis à jour",
+      "error": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "security": {
+      "title": "Mot de passe",
+      "description": "Modifiez votre mot de passe pour sécuriser votre compte.",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "hint": "Utilisez au moins 8 caractères.",
+      "save": "Mettre à jour le mot de passe",
+      "saved": "Mot de passe mis à jour",
+      "error": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "preferences": {
+      "title": "Apparence",
+      "description": "Choisissez l'apparence de l'application sur cet appareil.",
+      "theme": "Thème",
+      "lightTitle": "Clair",
+      "lightDescription": "Interface lumineuse et contrastée.",
+      "darkTitle": "Sombre",
+      "darkDescription": "Confortable dans un environnement peu éclairé.",
+      "systemTitle": "Système",
+      "systemDescription": "Suivre les réglages de votre appareil.",
+      "language": "Langue",
+      "languageNote": "Basculez entre le français et l'anglais depuis le sélecteur de langue dans la barre supérieure."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Choisissez les alertes que vous souhaitez recevoir.",
+      "emailUpdatesTitle": "Mises à jour par e-mail",
+      "emailUpdatesDescription": "Recevez les actualités et les mises à jour de compte par e-mail.",
+      "marksPublishedTitle": "Notes publiées",
+      "marksPublishedDescription": "Soyez notifié lorsque de nouvelles notes sont publiées.",
+      "attendanceAlertsTitle": "Alertes de présence",
+      "attendanceAlertsDescription": "Soyez alerté des absences et des problèmes de présence.",
+      "enabledToast": "{name} activé",
+      "disabledToast": "{name} désactivé"
+    }
+  },
+  "referrals": {
+    "title": "Parrainages",
+    "subtitle": "Invitez d'autres écoles et gagnez des récompenses pour chaque parrainage réussi.",
+    "hero": {
+      "codeLabel": "Votre code de parrainage",
+      "copy": "Copier le code",
+      "copied": "Code copié",
+      "copyError": "Impossible de copier le code",
+      "errorTitle": "Impossible de charger votre récapitulatif de parrainage",
+      "errorDescription": "Une erreur est survenue lors du chargement de vos récompenses. Veuillez réessayer.",
+      "retry": "Réessayer",
+      "info": "Les écoles parrainées bénéficient de {discount} de réduction sur leur abonnement, et vous gagnez {earning} pour chaque parrainage réussi.",
+      "totalEarnings": "Gains totaux",
+      "earningsHint": "Versés sur votre compte",
+      "successfulReferrals": "Parrainages réussis",
+      "successfulHint": "Écoles ayant souscrit"
+    },
+    "usagesTitle": "Activité de parrainage",
+    "usagesSubtitle": "Écoles inscrites à l'aide de votre code.",
+    "searchPlaceholder": "Rechercher par école…",
+    "allStatuses": "Tous les statuts",
+    "clearFilters": "Effacer",
+    "columns": {
+      "school": "École",
+      "date": "Date",
+      "discount": "Réduction",
+      "earnings": "Gains",
+      "status": "Statut"
+    },
+    "status": {
+      "Successful": "Réussi",
+      "Pending": "En attente",
+      "Expired": "Expiré"
+    },
+    "empty": {
+      "title": "Aucun parrainage pour l'instant",
+      "description": "Partagez votre code avec d'autres écoles et vos parrainages réussis apparaîtront ici.",
+      "filteredTitle": "Aucun parrainage correspondant",
+      "filteredDescription": "Essayez d'ajuster votre recherche ou vos filtres."
+    }
+  },
+  "exams": {
+    "title": "Examens",
+    "subtitle": "Configurez les séquences d'examen, la publication et la saisie des notes.",
+    "add": "Ajouter un examen",
+    "searchPlaceholder": "Rechercher par nom ou année…",
+    "allTerms": "Tous les trimestres",
+    "clearFilters": "Effacer",
+    "selectAll": "Tout sélectionner",
+    "selectRow": "Sélectionner la ligne",
+    "columns": {
+      "name": "Nom",
+      "term": "Trimestre",
+      "sequence": "Séquence",
+      "academicYear": "Année scolaire",
+      "published": "Publié",
+      "markEntry": "Saisie des notes",
+      "actions": "Actions"
+    },
+    "term": {
+      "First": "Premier",
+      "Second": "Deuxième",
+      "Third": "Troisième"
+    },
+    "published": {
+      "yes": "Oui",
+      "no": "Non"
+    },
+    "markEntry": {
+      "open": "Ouverte",
+      "closed": "Fermée"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "form": {
+      "createTitle": "Ajouter un examen",
+      "editTitle": "Modifier l'examen",
+      "createSubtitle": "Créez une nouvelle séquence d'examen pour l'année en cours.",
+      "editSubtitle": "Mettez à jour cette séquence d'examen.",
+      "name": "Nom de l'examen",
+      "namePlaceholder": "ex. Première séquence",
+      "term": "Trimestre",
+      "termFirst": "Premier",
+      "termSecond": "Deuxième",
+      "termThird": "Troisième",
+      "sequence": "Séquence",
+      "sequenceHint": "Un nombre de 1 à 6.",
+      "published": "Publié",
+      "publishedHint": "Rendre les résultats visibles aux enseignants et aux parents.",
+      "markEntry": "Saisie des notes",
+      "markEntryHint": "Autoriser les enseignants à saisir et modifier les notes.",
+      "cancel": "Annuler",
+      "create": "Créer l'examen",
+      "save": "Enregistrer"
+    },
+    "delete": {
+      "title": "Supprimer l'examen ?",
+      "description": "{name} sera définitivement supprimé. Cette action est irréversible.",
+      "bulkTitle": "Supprimer {count} examens ?",
+      "bulkDescription": "Les examens sélectionnés seront définitivement supprimés. Cette action est irréversible."
+    },
+    "toasts": {
+      "created": "Examen créé.",
+      "updated": "Examen mis à jour.",
+      "deleted": "Examen supprimé.",
+      "bulkDeleted": "{count} examens supprimés.",
+      "error": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "empty": {
+      "title": "Aucun examen",
+      "description": "Créez votre première séquence d'examen pour commencer.",
+      "filteredTitle": "Aucun examen correspondant",
+      "filteredDescription": "Essayez d'ajuster votre recherche ou vos filtres."
+    }
+  },
+  "attendance": {
+    "title": "Présence",
+    "subtitle": "Enregistrez la présence quotidienne et consultez les séances passées.",
+    "tabs": {
+      "record": "Saisie",
+      "history": "Historique"
+    },
+    "record": {
+      "class": "Classe",
+      "date": "Date",
+      "subject": "Matière",
+      "rosterTitle": "Liste de la classe",
+      "studentCount": "{count} élèves",
+      "save": "Enregistrer la présence",
+      "saved": "Présence enregistrée",
+      "error": "Une erreur est survenue. Veuillez réessayer.",
+      "errorTitle": "Impossible de charger la liste",
+      "errorDescription": "Une erreur est survenue lors du chargement des élèves.",
+      "retry": "Réessayer",
+      "emptyTitle": "Aucun élève dans cette classe",
+      "emptyDescription": "Choisissez une autre classe pour enregistrer la présence.",
+      "hoursUnit": "h",
+      "hoursFor": "Heures pour {name}",
+      "statusFor": "Statut de présence pour {name}",
+      "status": {
+        "present": "Présent",
+        "late": "En retard",
+        "absent": "Absent"
+      },
+      "summary": {
+        "present": "Présents",
+        "late": "En retard",
+        "absent": "Absents",
+        "rate": "Taux"
+      }
+    },
+    "history": {
+      "searchPlaceholder": "Rechercher par classe ou matière…",
+      "allClasses": "Toutes les classes",
+      "clearFilters": "Effacer",
+      "ofTotal": "sur",
+      "columns": {
+        "date": "Date",
+        "class": "Classe",
+        "subject": "Matière",
+        "present": "Présents",
+        "rate": "Taux",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "Voir"
+      },
+      "empty": {
+        "title": "Aucune séance",
+        "description": "Les séances de présence enregistrées apparaîtront ici.",
+        "filteredTitle": "Aucune séance correspondante",
+        "filteredDescription": "Essayez d'ajuster votre recherche ou vos filtres."
+      }
+    },
+    "detail": {
+      "title": "Détails de la séance",
+      "subtitle": "Répartition de la présence pour cette séance.",
+      "date": "Date",
+      "class": "Classe",
+      "subject": "Matière",
+      "total": "Élèves",
+      "students": "{count} élèves",
+      "rate": "Taux de présence",
+      "status": {
+        "present": "Présents",
+        "late": "En retard",
+        "absent": "Absents"
+      },
+      "close": "Fermer"
+    }
+  },
+  "billing": {
+    "title": "Facturation et forfaits",
+    "subtitle": "Gérez votre abonnement, comparez les forfaits et consultez vos factures.",
+    "unlimited": "Illimité",
+    "perYear": "/ an",
+    "forbidden": {
+      "title": "Vous n'avez pas accès à la facturation",
+      "description": "La facturation est réservée aux propriétaires et administrateurs de l'établissement. Contactez votre administrateur si vous avez besoin d'un accès."
+    },
+    "error": {
+      "title": "Impossible de charger la facturation",
+      "description": "Une erreur s'est produite lors du chargement de votre abonnement. Veuillez réessayer.",
+      "retry": "Réessayer"
+    },
+    "currentPlan": {
+      "eyebrow": "Forfait actuel",
+      "active": "Actif",
+      "renews": "Renouvellement le {date}",
+      "upgrade": "Changer de forfait",
+      "limitsTitle": "Inclus dans votre forfait",
+      "students": "Élèves",
+      "teachers": "Enseignants",
+      "sms": "SMS par mois"
+    },
+    "plans": {
+      "title": "Forfaits disponibles",
+      "subtitle": "Choisissez le forfait adapté à votre établissement. Prix facturés annuellement en XAF.",
+      "recommended": "Recommandé",
+      "currentCta": "Votre forfait actuel",
+      "cta": "Choisir {plan}",
+      "tiers": {
+        "free": {
+          "name": "Gratuit",
+          "tagline": "Pour les petits établissements qui débutent."
+        },
+        "basic": {
+          "name": "Basique",
+          "tagline": "Pour les établissements en croissance qui ont besoin de plus de capacité."
+        },
+        "pro": {
+          "name": "Pro",
+          "tagline": "Pour les grands établissements : tout, en illimité."
+        }
+      },
+      "featureList": {
+        "coreSms": "Gestion scolaire de base",
+        "studentRecords": "Dossiers et inscriptions des élèves",
+        "attendance": "Suivi des présences",
+        "reportCards": "Bulletins et relevés de notes",
+        "smsNotifications": "Notifications SMS aux parents",
+        "prioritySupport": "Support prioritaire par e-mail",
+        "advancedAnalytics": "Analyses et statistiques avancées",
+        "multiSchool": "Gestion multi-campus",
+        "apiAccess": "Accès à l'API",
+        "customBranding": "Personnalisation de la marque"
+      }
+    },
+    "upgradeDialog": {
+      "title": "Passer au forfait {plan}",
+      "description": "Confirmez votre intérêt pour le forfait {plan} et notre équipe vous contactera pour finaliser le changement.",
+      "note": "Ceci est une démonstration — aucun paiement n'est effectué. Une demande de changement notifie simplement notre équipe commerciale.",
+      "cancel": "Annuler",
+      "confirm": "Demander le changement",
+      "successToast": "Passage au forfait {plan} demandé — notre équipe vous contactera.",
+      "errorToast": "Impossible d'envoyer votre demande. Veuillez réessayer."
+    },
+    "invoices": {
+      "title": "Factures",
+      "subtitle": "Votre historique de facturation et l'état des paiements.",
+      "searchPlaceholder": "Rechercher par numéro de facture",
+      "allStatuses": "Tous les statuts",
+      "clearFilters": "Effacer",
+      "columns": {
+        "invoice": "Facture",
+        "date": "Date",
+        "description": "Description",
+        "amount": "Montant",
+        "status": "Statut"
+      },
+      "status": {
+        "paid": "Payée",
+        "pending": "En attente"
+      },
+      "descriptions": {
+        "subscription": "Forfait {plan} — abonnement annuel",
+        "smsTopup": "Recharge de crédits SMS ({count} crédits)",
+        "setupFee": "Frais d'installation uniques"
+      },
+      "empty": {
+        "title": "Aucune facture pour le moment",
+        "description": "Vos factures apparaîtront ici après le renouvellement de votre abonnement.",
+        "filteredTitle": "Aucune facture correspondante",
+        "filteredDescription": "Essayez de modifier votre recherche ou vos filtres."
+      }
+    }
+  },
+  "reports": {
+    "title": "Notes et bulletins",
+    "subtitle": "Saisissez les notes de séquence et générez les bulletins des élèves.",
+    "retry": "Réessayer",
+    "searchPlaceholder": "Rechercher par nom ou matricule",
+    "allClasses": "Toutes les classes",
+    "clearFilters": "Effacer",
+    "tabs": {
+      "markEntry": "Saisie des notes",
+      "reportCards": "Bulletins"
+    },
+    "columns": {
+      "student": "Élève",
+      "class": "Classe",
+      "average": "Moyenne",
+      "rank": "Rang",
+      "decision": "Décision",
+      "actions": "Actions"
+    },
+    "actions": {
+      "generate": "Générer",
+      "generateAll": "Tout générer",
+      "downloadAll": "Tout télécharger"
+    },
+    "toasts": {
+      "generated": "Bulletin généré",
+      "generatedAll": "{count} bulletins générés",
+      "downloaded": "{count} bulletins téléchargés",
+      "marksSaved": "{count} notes enregistrées",
+      "saveError": "Impossible d'enregistrer les notes. Veuillez réessayer."
+    },
+    "empty": {
+      "title": "Aucun résultat pour le moment",
+      "description": "Les bulletins apparaîtront ici une fois les élèves ajoutés.",
+      "filteredTitle": "Aucun élève correspondant",
+      "filteredDescription": "Aucun élève ne correspond à votre recherche ou vos filtres."
+    },
+    "decision": {
+      "Passed": "Admis",
+      "Conditional": "Conditionnel",
+      "Repeat": "Redouble"
+    },
+    "entry": {
+      "selectorsTitle": "Choisissez une classe, une matière et une évaluation",
+      "class": "Classe",
+      "subject": "Matière",
+      "exam": "Évaluation",
+      "selectClass": "Sélectionnez une classe",
+      "selectSubject": "Sélectionnez une matière",
+      "selectExam": "Sélectionnez une évaluation",
+      "sequenceLabel": "Séquence {n} · Trimestre {term}",
+      "outOf": "Noté sur {max}",
+      "markFor": "Note de {name}",
+      "rosterTitle": "Élèves",
+      "save": "Enregistrer les notes",
+      "prompt": {
+        "title": "Sélectionnez la classe, la matière et l'évaluation",
+        "description": "Choisissez une classe, une matière et une évaluation ci-dessus pour commencer la saisie."
+      },
+      "error": {
+        "title": "Impossible de charger la liste",
+        "description": "Une erreur est survenue lors du chargement des élèves. Veuillez réessayer."
+      },
+      "emptyRoster": {
+        "title": "Aucun élève dans cette classe",
+        "description": "Il n'y a aucun élève à noter pour cette sélection."
+      },
+      "summary": {
+        "average": "Moyenne de classe",
+        "passRate": "Taux de réussite",
+        "entered": "Notes saisies"
+      },
+      "errors": {
+        "range": "Saisissez une note entre 0 et {max}",
+        "fix": "Corrigez les notes en surbrillance avant d'enregistrer."
+      }
+    }
   }
 }

@@ -118,7 +118,11 @@
       "status": "Status",
       "actions": "Actions"
     },
-    "status": { "Approved": "Approved", "Pending": "Pending", "Rejected": "Rejected" },
+    "status": {
+      "Approved": "Approved",
+      "Pending": "Pending",
+      "Rejected": "Rejected"
+    },
     "actions": {
       "edit": "Edit",
       "delete": "Delete",
@@ -189,8 +193,15 @@
       "status": "Status",
       "actions": "Actions"
     },
-    "status": { "active": "Active", "pending": "Pending request" },
-    "actions": { "approve": "Approve", "edit": "Edit", "remove": "Remove" },
+    "status": {
+      "active": "Active",
+      "pending": "Pending request"
+    },
+    "actions": {
+      "approve": "Approve",
+      "edit": "Edit",
+      "remove": "Remove"
+    },
     "form": {
       "editTitle": "Edit teacher",
       "editSubtitle": "Update this teacher's profile details.",
@@ -226,21 +237,36 @@
   "academics": {
     "title": "Classes & Subjects",
     "subtitle": "Organize your school's classes, sections and subjects.",
-    "tabs": { "classes": "Classes", "subjects": "Subjects" },
+    "tabs": {
+      "classes": "Classes",
+      "subjects": "Subjects"
+    },
     "classes": {
       "add": "Add class",
       "searchPlaceholder": "Search classes…",
       "allLevels": "All levels",
       "clearFilters": "Clear",
-      "columns": { "name": "Class", "master": "Class master", "students": "Students", "subjects": "Subjects", "actions": "Actions" },
-      "actions": { "edit": "Edit", "delete": "Delete" },
+      "columns": {
+        "name": "Class",
+        "master": "Class master",
+        "students": "Students",
+        "subjects": "Subjects",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
       "delete": {
         "title": "Delete class?",
         "description": "{name} will be permanently removed. This cannot be undone.",
         "bulkTitle": "Delete {count} classes?",
         "bulkDescription": "The selected classes will be permanently removed."
       },
-      "toasts": { "deleted": "Class deleted.", "bulkDeleted": "{count} classes deleted." },
+      "toasts": {
+        "deleted": "Class deleted.",
+        "bulkDeleted": "{count} classes deleted."
+      },
       "empty": {
         "title": "No classes yet",
         "description": "Create your first class to start enrolling students.",
@@ -253,15 +279,26 @@
       "searchPlaceholder": "Search subjects…",
       "allSeries": "All series",
       "clearFilters": "Clear",
-      "columns": { "name": "Subject", "series": "Series", "classes": "Classes", "actions": "Actions" },
-      "actions": { "edit": "Edit", "delete": "Delete" },
+      "columns": {
+        "name": "Subject",
+        "series": "Series",
+        "classes": "Classes",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
       "delete": {
         "title": "Delete subject?",
         "description": "{name} will be permanently removed. This cannot be undone.",
         "bulkTitle": "Delete {count} subjects?",
         "bulkDescription": "The selected subjects will be permanently removed."
       },
-      "toasts": { "deleted": "Subject deleted.", "bulkDeleted": "{count} subjects deleted." },
+      "toasts": {
+        "deleted": "Subject deleted.",
+        "bulkDeleted": "{count} subjects deleted."
+      },
       "empty": {
         "title": "No subjects yet",
         "description": "Create your first subject to build the curriculum.",
@@ -319,9 +356,21 @@
     "demo": "Demo",
     "errorTitle": "Couldn't load schools",
     "errorDescription": "Something went wrong. Please try again.",
-    "tiers": { "free": "Free", "basic": "Basic", "pro": "Pro" },
-    "stats": { "students": "Students", "teachers": "Teachers", "classes": "Classes" },
-    "actions": { "menu": "Options", "edit": "Edit", "delete": "Delete" },
+    "tiers": {
+      "free": "Free",
+      "basic": "Basic",
+      "pro": "Pro"
+    },
+    "stats": {
+      "students": "Students",
+      "teachers": "Teachers",
+      "classes": "Classes"
+    },
+    "actions": {
+      "menu": "Options",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
     "form": {
       "createTitle": "Add school",
       "editTitle": "Edit school",
@@ -374,5 +423,481 @@
     "feature2Body": "Enter marks per sequence and generate GCE- and MINESEC-ready report cards.",
     "feature3Title": "Attendance & parents",
     "feature3Body": "Track attendance and keep parents informed on their child's progress."
+  },
+  "parents": {
+    "title": "Parents",
+    "subtitle": "Manage parents and guardians linked to your students.",
+    "searchPlaceholder": "Search by name, email, phone…",
+    "clearFilters": "Clear",
+    "export": "Export CSV",
+    "add": "Add parent",
+    "years": "yrs",
+    "columns": {
+      "parent": "Parent",
+      "email": "Email",
+      "children": "Children",
+      "occupation": "Occupation",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "remove": "Remove"
+    },
+    "empty": {
+      "title": "No parents yet",
+      "description": "Add your first parent or guardian to link them to students.",
+      "filteredTitle": "No parents found",
+      "filteredDescription": "No parents match your search. Try adjusting your filters."
+    },
+    "remove": {
+      "title": "Remove parent",
+      "description": "Are you sure you want to remove {name}? This action cannot be undone.",
+      "bulkTitle": "Remove {count} parents",
+      "bulkDescription": "Are you sure you want to remove the selected parents? This action cannot be undone."
+    },
+    "toasts": {
+      "created": "Parent added successfully.",
+      "updated": "Parent updated successfully.",
+      "removed": "Parent removed.",
+      "bulkRemoved": "{count} parents removed.",
+      "exported": "Parents exported to CSV.",
+      "error": "Something went wrong. Please try again."
+    },
+    "form": {
+      "createTitle": "Add parent",
+      "editTitle": "Edit parent",
+      "createSubtitle": "Register a new parent or guardian.",
+      "editSubtitle": "Update this parent's details.",
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "occupation": "Occupation",
+      "address": "Address",
+      "cancel": "Cancel",
+      "save": "Save changes",
+      "create": "Add parent"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account, security and preferences.",
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "preferences": "Preferences",
+      "notifications": "Notifications"
+    },
+    "profile": {
+      "title": "Profile",
+      "description": "Update your personal information.",
+      "name": "Full name",
+      "email": "Email address",
+      "save": "Save changes",
+      "saved": "Profile updated",
+      "error": "Something went wrong. Please try again."
+    },
+    "security": {
+      "title": "Password",
+      "description": "Change your password to keep your account secure.",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "hint": "Use at least 8 characters.",
+      "save": "Update password",
+      "saved": "Password updated",
+      "error": "Something went wrong. Please try again."
+    },
+    "preferences": {
+      "title": "Appearance",
+      "description": "Choose how the app looks on this device.",
+      "theme": "Theme",
+      "lightTitle": "Light",
+      "lightDescription": "Bright, high-contrast interface.",
+      "darkTitle": "Dark",
+      "darkDescription": "Easy on the eyes in low light.",
+      "systemTitle": "System",
+      "systemDescription": "Match your device settings.",
+      "language": "Language",
+      "languageNote": "Switch between English and French from the language selector in the top bar."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Decide which alerts you want to receive.",
+      "emailUpdatesTitle": "Email updates",
+      "emailUpdatesDescription": "Receive product news and account updates by email.",
+      "marksPublishedTitle": "Marks published",
+      "marksPublishedDescription": "Get notified when new marks are published.",
+      "attendanceAlertsTitle": "Attendance alerts",
+      "attendanceAlertsDescription": "Be alerted about absences and attendance issues.",
+      "enabledToast": "{name} enabled",
+      "disabledToast": "{name} disabled"
+    }
+  },
+  "referrals": {
+    "title": "Referrals",
+    "subtitle": "Invite other schools and earn rewards for every successful referral.",
+    "hero": {
+      "codeLabel": "Your referral code",
+      "copy": "Copy code",
+      "copied": "Code copied",
+      "copyError": "Couldn't copy the code",
+      "errorTitle": "Couldn't load your referral summary",
+      "errorDescription": "Something went wrong while fetching your rewards. Please try again.",
+      "retry": "Try again",
+      "info": "Referred schools get {discount} off their subscription, and you earn {earning} for every successful referral.",
+      "totalEarnings": "Total earnings",
+      "earningsHint": "Paid out to your account",
+      "successfulReferrals": "Successful referrals",
+      "successfulHint": "Schools that subscribed"
+    },
+    "usagesTitle": "Referral activity",
+    "usagesSubtitle": "Schools that signed up using your code.",
+    "searchPlaceholder": "Search by school…",
+    "allStatuses": "All statuses",
+    "clearFilters": "Clear",
+    "columns": {
+      "school": "School",
+      "date": "Date",
+      "discount": "Discount",
+      "earnings": "Earnings",
+      "status": "Status"
+    },
+    "status": {
+      "Successful": "Successful",
+      "Pending": "Pending",
+      "Expired": "Expired"
+    },
+    "empty": {
+      "title": "No referrals yet",
+      "description": "Share your code with other schools and your successful referrals will show up here.",
+      "filteredTitle": "No matching referrals",
+      "filteredDescription": "Try adjusting your search or filters."
+    }
+  },
+  "exams": {
+    "title": "Exams",
+    "subtitle": "Configure exam sequences, publication and mark entry.",
+    "add": "Add exam",
+    "searchPlaceholder": "Search by name or year…",
+    "allTerms": "All terms",
+    "clearFilters": "Clear",
+    "selectAll": "Select all",
+    "selectRow": "Select row",
+    "columns": {
+      "name": "Name",
+      "term": "Term",
+      "sequence": "Sequence",
+      "academicYear": "Academic year",
+      "published": "Published",
+      "markEntry": "Mark entry",
+      "actions": "Actions"
+    },
+    "term": {
+      "First": "First",
+      "Second": "Second",
+      "Third": "Third"
+    },
+    "published": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "markEntry": {
+      "open": "Open",
+      "closed": "Closed"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "form": {
+      "createTitle": "Add exam",
+      "editTitle": "Edit exam",
+      "createSubtitle": "Create a new exam sequence for the current year.",
+      "editSubtitle": "Update this exam sequence.",
+      "name": "Exam name",
+      "namePlaceholder": "e.g. First Sequence",
+      "term": "Term",
+      "termFirst": "First",
+      "termSecond": "Second",
+      "termThird": "Third",
+      "sequence": "Sequence",
+      "sequenceHint": "A number from 1 to 6.",
+      "published": "Published",
+      "publishedHint": "Make results visible to teachers and parents.",
+      "markEntry": "Mark entry",
+      "markEntryHint": "Allow teachers to enter and edit marks.",
+      "cancel": "Cancel",
+      "create": "Create exam",
+      "save": "Save changes"
+    },
+    "delete": {
+      "title": "Delete exam?",
+      "description": "{name} will be permanently removed. This action cannot be undone.",
+      "bulkTitle": "Delete {count} exams?",
+      "bulkDescription": "The selected exams will be permanently removed. This cannot be undone."
+    },
+    "toasts": {
+      "created": "Exam created.",
+      "updated": "Exam updated.",
+      "deleted": "Exam deleted.",
+      "bulkDeleted": "{count} exams deleted.",
+      "error": "Something went wrong. Please try again."
+    },
+    "empty": {
+      "title": "No exams yet",
+      "description": "Create your first exam sequence to get started.",
+      "filteredTitle": "No matching exams",
+      "filteredDescription": "Try adjusting your search or filters."
+    }
+  },
+  "attendance": {
+    "title": "Attendance",
+    "subtitle": "Record daily attendance and review past sessions.",
+    "tabs": {
+      "record": "Record",
+      "history": "History"
+    },
+    "record": {
+      "class": "Class",
+      "date": "Date",
+      "subject": "Subject",
+      "rosterTitle": "Class roster",
+      "studentCount": "{count} students",
+      "save": "Save attendance",
+      "saved": "Attendance saved",
+      "error": "Something went wrong. Please try again.",
+      "errorTitle": "Couldn't load roster",
+      "errorDescription": "Something went wrong while loading students.",
+      "retry": "Try again",
+      "emptyTitle": "No students in this class",
+      "emptyDescription": "Choose another class to record attendance.",
+      "hoursUnit": "h",
+      "hoursFor": "Hours for {name}",
+      "statusFor": "Attendance status for {name}",
+      "status": {
+        "present": "Present",
+        "late": "Late",
+        "absent": "Absent"
+      },
+      "summary": {
+        "present": "Present",
+        "late": "Late",
+        "absent": "Absent",
+        "rate": "Rate"
+      }
+    },
+    "history": {
+      "searchPlaceholder": "Search by class or subject…",
+      "allClasses": "All classes",
+      "clearFilters": "Clear",
+      "ofTotal": "of",
+      "columns": {
+        "date": "Date",
+        "class": "Class",
+        "subject": "Subject",
+        "present": "Present",
+        "rate": "Rate",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View"
+      },
+      "empty": {
+        "title": "No sessions yet",
+        "description": "Recorded attendance sessions will appear here.",
+        "filteredTitle": "No matching sessions",
+        "filteredDescription": "Try adjusting your search or filters."
+      }
+    },
+    "detail": {
+      "title": "Session details",
+      "subtitle": "Attendance breakdown for this session.",
+      "date": "Date",
+      "class": "Class",
+      "subject": "Subject",
+      "total": "Students",
+      "students": "{count} students",
+      "rate": "Attendance rate",
+      "status": {
+        "present": "Present",
+        "late": "Late",
+        "absent": "Absent"
+      },
+      "close": "Close"
+    }
+  },
+  "billing": {
+    "title": "Billing & plans",
+    "subtitle": "Manage your subscription, compare plans, and review past invoices.",
+    "unlimited": "Unlimited",
+    "perYear": "/ year",
+    "forbidden": {
+      "title": "You don't have access to billing",
+      "description": "Billing is only available to school owners and administrators. Contact your administrator if you need access."
+    },
+    "error": {
+      "title": "Couldn't load billing",
+      "description": "Something went wrong while loading your subscription details. Please try again.",
+      "retry": "Try again"
+    },
+    "currentPlan": {
+      "eyebrow": "Current plan",
+      "active": "Active",
+      "renews": "Renews on {date}",
+      "upgrade": "Upgrade plan",
+      "limitsTitle": "Included in your plan",
+      "students": "Students",
+      "teachers": "Teachers",
+      "sms": "SMS per month"
+    },
+    "plans": {
+      "title": "Available plans",
+      "subtitle": "Pick the plan that fits your school. Prices are billed annually in XAF.",
+      "recommended": "Recommended",
+      "currentCta": "Your current plan",
+      "cta": "Choose {plan}",
+      "tiers": {
+        "free": {
+          "name": "Free",
+          "tagline": "For small schools getting started."
+        },
+        "basic": {
+          "name": "Basic",
+          "tagline": "For growing schools that need more capacity."
+        },
+        "pro": {
+          "name": "Pro",
+          "tagline": "For large schools that need everything, unlimited."
+        }
+      },
+      "featureList": {
+        "coreSms": "Core school management",
+        "studentRecords": "Student records & enrolment",
+        "attendance": "Attendance tracking",
+        "reportCards": "Report cards & transcripts",
+        "smsNotifications": "SMS notifications to parents",
+        "prioritySupport": "Priority email support",
+        "advancedAnalytics": "Advanced analytics & insights",
+        "multiSchool": "Multi-campus management",
+        "apiAccess": "API access",
+        "customBranding": "Custom branding"
+      }
+    },
+    "upgradeDialog": {
+      "title": "Upgrade to {plan}",
+      "description": "Confirm your interest in the {plan} plan and our team will reach out to complete the change.",
+      "note": "This is a demo flow — no payment is taken. Requesting an upgrade simply notifies our sales team to contact you.",
+      "cancel": "Cancel",
+      "confirm": "Request upgrade",
+      "successToast": "Upgrade to {plan} requested — our team will be in touch.",
+      "errorToast": "Couldn't send your request. Please try again."
+    },
+    "invoices": {
+      "title": "Invoices",
+      "subtitle": "Your billing history and payment status.",
+      "searchPlaceholder": "Search by invoice number",
+      "allStatuses": "All statuses",
+      "clearFilters": "Clear",
+      "columns": {
+        "invoice": "Invoice",
+        "date": "Date",
+        "description": "Description",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "status": {
+        "paid": "Paid",
+        "pending": "Pending"
+      },
+      "descriptions": {
+        "subscription": "{plan} plan — annual subscription",
+        "smsTopup": "SMS credit top-up ({count} credits)",
+        "setupFee": "One-time setup fee"
+      },
+      "empty": {
+        "title": "No invoices yet",
+        "description": "Your invoices will appear here once your subscription renews.",
+        "filteredTitle": "No matching invoices",
+        "filteredDescription": "Try adjusting your search or filters."
+      }
+    }
+  },
+  "reports": {
+    "title": "Marks & report cards",
+    "subtitle": "Enter sequence marks and generate student report cards.",
+    "retry": "Try again",
+    "searchPlaceholder": "Search by name or matricule",
+    "allClasses": "All classes",
+    "clearFilters": "Clear",
+    "tabs": {
+      "markEntry": "Mark entry",
+      "reportCards": "Report cards"
+    },
+    "columns": {
+      "student": "Student",
+      "class": "Class",
+      "average": "Average",
+      "rank": "Rank",
+      "decision": "Decision",
+      "actions": "Actions"
+    },
+    "actions": {
+      "generate": "Generate",
+      "generateAll": "Generate all",
+      "downloadAll": "Download all"
+    },
+    "toasts": {
+      "generated": "Report card generated",
+      "generatedAll": "{count} report cards generated",
+      "downloaded": "{count} report cards downloaded",
+      "marksSaved": "{count} marks saved",
+      "saveError": "Could not save marks. Please try again."
+    },
+    "empty": {
+      "title": "No results yet",
+      "description": "Report cards will appear here once students are added.",
+      "filteredTitle": "No matching students",
+      "filteredDescription": "No student matches your search or filters."
+    },
+    "decision": {
+      "Passed": "Passed",
+      "Conditional": "Conditional",
+      "Repeat": "Repeat"
+    },
+    "entry": {
+      "selectorsTitle": "Choose a class, subject and exam",
+      "class": "Class",
+      "subject": "Subject",
+      "exam": "Exam",
+      "selectClass": "Select a class",
+      "selectSubject": "Select a subject",
+      "selectExam": "Select an exam",
+      "sequenceLabel": "Sequence {n} · Term {term}",
+      "outOf": "Marked out of {max}",
+      "markFor": "Mark for {name}",
+      "rosterTitle": "Students",
+      "save": "Save marks",
+      "prompt": {
+        "title": "Select class, subject and exam",
+        "description": "Pick a class, subject and exam above to start entering marks."
+      },
+      "error": {
+        "title": "Couldn't load the roster",
+        "description": "Something went wrong while fetching students. Please try again."
+      },
+      "emptyRoster": {
+        "title": "No students in this class",
+        "description": "There are no students to grade for this selection."
+      },
+      "summary": {
+        "average": "Class average",
+        "passRate": "Pass rate",
+        "entered": "Marks entered"
+      },
+      "errors": {
+        "range": "Enter a mark between 0 and {max}",
+        "fix": "Fix the highlighted marks before saving."
+      }
+    }
   }
 }
