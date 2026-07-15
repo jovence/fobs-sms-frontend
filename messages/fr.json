@@ -311,6 +311,47 @@
       "error": "Une erreur est survenue. Veuillez réessayer."
     }
   },
+  "schools": {
+    "title": "Établissements",
+    "subtitle": "Gérez les établissements que vous possédez et basculez entre eux.",
+    "add": "Ajouter un établissement",
+    "count": "{count, plural, =0 {Aucun établissement} one {# établissement} other {# établissements}}",
+    "demo": "Démo",
+    "errorTitle": "Impossible de charger les établissements",
+    "errorDescription": "Une erreur est survenue. Veuillez réessayer.",
+    "tiers": { "free": "Gratuit", "basic": "Basique", "pro": "Pro" },
+    "stats": { "students": "Élèves", "teachers": "Enseignants", "classes": "Classes" },
+    "actions": { "menu": "Options", "edit": "Modifier", "delete": "Supprimer" },
+    "form": {
+      "createTitle": "Ajouter un établissement",
+      "editTitle": "Modifier l'établissement",
+      "createSubtitle": "Créez un nouvel établissement sur votre compte.",
+      "editSubtitle": "Mettez à jour les détails de cet établissement.",
+      "name": "Nom de l'établissement",
+      "acronym": "Sigle",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "optional": "(facultatif)",
+      "cancel": "Annuler",
+      "create": "Créer l'établissement",
+      "save": "Enregistrer"
+    },
+    "delete": {
+      "title": "Supprimer l'établissement ?",
+      "description": "{name} et ses données seront définitivement supprimés. Cette action est irréversible."
+    },
+    "toasts": {
+      "created": "Établissement créé.",
+      "updated": "Établissement mis à jour.",
+      "deleted": "Établissement supprimé.",
+      "error": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "empty": {
+      "title": "Aucun établissement",
+      "description": "Créez votre premier établissement pour commencer."
+    }
+  },
   "states": {
     "emptyTitle": "Rien pour l'instant",
     "emptyDescription": "Les données apparaîtront ici lorsqu'elles seront disponibles.",

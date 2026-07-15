@@ -311,6 +311,47 @@
       "error": "Something went wrong. Please try again."
     }
   },
+  "schools": {
+    "title": "Schools",
+    "subtitle": "Manage the schools you own and switch between them.",
+    "add": "Add school",
+    "count": "{count, plural, =0 {No schools} one {# school} other {# schools}}",
+    "demo": "Demo",
+    "errorTitle": "Couldn't load schools",
+    "errorDescription": "Something went wrong. Please try again.",
+    "tiers": { "free": "Free", "basic": "Basic", "pro": "Pro" },
+    "stats": { "students": "Students", "teachers": "Teachers", "classes": "Classes" },
+    "actions": { "menu": "Options", "edit": "Edit", "delete": "Delete" },
+    "form": {
+      "createTitle": "Add school",
+      "editTitle": "Edit school",
+      "createSubtitle": "Create a new school on your account.",
+      "editSubtitle": "Update this school's details.",
+      "name": "School name",
+      "acronym": "Acronym",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "optional": "(optional)",
+      "cancel": "Cancel",
+      "create": "Create school",
+      "save": "Save changes"
+    },
+    "delete": {
+      "title": "Delete school?",
+      "description": "{name} and its data will be permanently removed. This cannot be undone."
+    },
+    "toasts": {
+      "created": "School created.",
+      "updated": "School updated.",
+      "deleted": "School deleted.",
+      "error": "Something went wrong. Please try again."
+    },
+    "empty": {
+      "title": "No schools yet",
+      "description": "Create your first school to get started."
+    }
+  },
   "states": {
     "emptyTitle": "Nothing here yet",
     "emptyDescription": "When there's data to show, it will appear here.",
