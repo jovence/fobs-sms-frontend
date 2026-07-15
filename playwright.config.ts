@@ -22,7 +22,23 @@ export default defineConfig({
     locale: "en-US",
   },
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    // Deterministic critical-journey + a11y gate.
+    {
+      name: "chromium",
+      testIgnore: "**/sim/**",
+      use: { ...devices["Desktop Chrome"] },
+    },
+    // Autonomous human-simulation sessions — full evidence capture.
+    {
+      name: "human-sim",
+      testMatch: "**/sim/*.spec.ts",
+      use: {
+        ...devices["Desktop Chrome"],
+        trace: "on",
+        video: "on",
+        screenshot: "on",
+      },
+    },
     // Firefox/WebKit are part of the cross-browser gate; enable once their
     // system deps are provisioned in CI (`playwright install --with-deps`).
     // { name: "firefox", use: { ...devices["Desktop Firefox"] } },
