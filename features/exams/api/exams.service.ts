@@ -8,6 +8,8 @@ import { seedExams } from "../mock-data";
 
 export interface ExamsService {
   list(query: ExamQuery): Promise<Paginated<Exam>>;
+  /** Lightweight {id,name} list for dropdowns, scoped to the active school. */
+  options(): Promise<Array<{ id: string; name: string }>>;
   get(id: string): Promise<Exam>;
   create(input: ExamInput): Promise<Exam>;
   update(id: string, input: ExamInput): Promise<Exam>;
@@ -55,6 +57,13 @@ const mockExamsService: ExamsService = {
     return withLatency(
       { items, page, perPage, total, totalPages: Math.ceil(total / perPage) || 1 },
       450,
+    );
+  },
+
+  async options() {
+    return withLatency(
+      db().map((e) => ({ id: e.id, name: e.name })),
+      200,
     );
   },
 

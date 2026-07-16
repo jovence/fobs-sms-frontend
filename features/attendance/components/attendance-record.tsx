@@ -18,8 +18,8 @@ import { Reveal, AnimatedNumber } from "@/components/common/motion";
 import { Shimmer } from "@/components/common/skeletons";
 import { EmptyState, ErrorState } from "@/components/common/states";
 import { cn } from "@/lib/utils";
+import { useClassOptions, useSubjectOptions } from "@/features/academics/hooks";
 import { useRoster, useSaveSession } from "../hooks";
-import { mockClasses, mockSubjects } from "../mock-data";
 import {
   attendanceRate,
   type AttendanceRecord,
@@ -36,10 +36,20 @@ function today(): string {
 export function AttendanceRecord() {
   const t = useTranslations("attendance.record");
 
-  const [classId, setClassId] = useState(mockClasses[0].id);
-  const [subjectId, setSubjectId] = useState(mockSubjects[0].id);
+  const { data: classes = [] } = useClassOptions();
+  const { data: subjects = [] } = useSubjectOptions();
+  const [classId, setClassId] = useState("");
+  const [subjectId, setSubjectId] = useState("");
   const [date, setDate] = useState(today);
   const [entries, setEntries] = useState<Record<string, RosterEntry>>({});
+
+  // Default to the first real class/subject once they load (empty for a fresh school).
+  useEffect(() => {
+    if (!classId && classes.length) setClassId(classes[0].id);
+  }, [classes, classId]);
+  useEffect(() => {
+    if (!subjectId && subjects.length) setSubjectId(subjects[0].id);
+  }, [subjects, subjectId]);
 
   const { data: roster, isLoading, isError, refetch } = useRoster(classId);
   const save = useSaveSession();
@@ -118,7 +128,7 @@ export function AttendanceRecord() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {mockClasses.map((c) => (
+                {classes.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
                     {c.name}
                   </SelectItem>
@@ -149,7 +159,7 @@ export function AttendanceRecord() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {mockSubjects.map((s) => (
+                {subjects.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.name}
                   </SelectItem>

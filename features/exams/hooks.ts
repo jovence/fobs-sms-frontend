@@ -22,6 +22,14 @@ export function useExams(query: ExamQuery) {
   });
 }
 
+/** {id,name} exam list for dropdowns (scoped to the active school). */
+export function useExamOptions() {
+  return useQuery({
+    queryKey: ["exams", "options"],
+    queryFn: () => examsService.options(),
+  });
+}
+
 export function useCreateExam() {
   const qc = useQueryClient();
   return useMutation({

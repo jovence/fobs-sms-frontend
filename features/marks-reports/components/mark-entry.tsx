@@ -29,7 +29,8 @@ import { Shimmer } from "@/components/common/skeletons";
 import { cn } from "@/lib/utils";
 import { initials } from "@/lib/format";
 import { useEntryRoster, useSaveMarks } from "../hooks";
-import { mockClasses, mockExams, mockSubjects } from "../mock-data";
+import { useClassOptions, useSubjectOptions } from "@/features/academics/hooks";
+import { useExamOptions } from "@/features/exams/hooks";
 import { MARK_MAX, PASS_MARK, type EntrySelection } from "../types";
 import { validateMark } from "../schemas";
 
@@ -38,6 +39,9 @@ export function MarkEntry() {
   const te = useTranslations("reports.entry");
   const teErrors = useTranslations("reports.entry.errors");
 
+  const { data: classes = [] } = useClassOptions();
+  const { data: subjects = [] } = useSubjectOptions();
+  const { data: exams = [] } = useExamOptions();
   const [classId, setClassId] = useState("");
   const [subjectId, setSubjectId] = useState("");
   const [examId, setExamId] = useState("");
@@ -128,7 +132,7 @@ export function MarkEntry() {
                   <SelectValue placeholder={te("selectClass")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockClasses.map((c) => (
+                  {classes.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.name}
                     </SelectItem>
@@ -143,7 +147,7 @@ export function MarkEntry() {
                   <SelectValue placeholder={te("selectSubject")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockSubjects.map((s) => (
+                  {subjects.map((s) => (
                     <SelectItem key={s.id} value={s.id}>
                       {s.name}
                     </SelectItem>
@@ -158,9 +162,9 @@ export function MarkEntry() {
                   <SelectValue placeholder={te("selectExam")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockExams.map((e) => (
+                  {exams.map((e) => (
                     <SelectItem key={e.id} value={e.id}>
-                      {te("sequenceLabel", { n: e.sequence, term: e.term })}
+                      {e.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

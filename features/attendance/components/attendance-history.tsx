@@ -14,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useClassOptions } from "@/features/academics/hooks";
 import { useSessions } from "../hooks";
-import { mockClasses } from "../mock-data";
 import type { AttendanceQuery, AttendanceSession } from "../types";
 import { getAttendanceColumns } from "./attendance-columns";
 import { SessionDetailSheet } from "./session-detail-sheet";
@@ -31,6 +31,7 @@ const SORT_MAP: Record<string, AttendanceQuery["sortBy"]> = {
 export function AttendanceHistory() {
   const t = useTranslations("attendance.history");
   const locale = useLocale();
+  const { data: classes = [] } = useClassOptions();
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
@@ -121,7 +122,7 @@ export function AttendanceHistory() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("allClasses")}</SelectItem>
-            {mockClasses.map((c) => (
+            {classes.map((c) => (
               <SelectItem key={c.id} value={c.id}>
                 {c.name}
               </SelectItem>

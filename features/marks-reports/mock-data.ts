@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { seedClasses } from "@/features/academics/mock-data";
 import type {
   ClassOption,
   Decision,
@@ -8,16 +9,12 @@ import type {
 } from "./types";
 import { CONDITIONAL_MARK, PASS_MARK } from "./types";
 
-export const mockClasses: ClassOption[] = [
-  { id: "cls_1", name: "Form 1" },
-  { id: "cls_2", name: "Form 2" },
-  { id: "cls_3", name: "Form 3" },
-  { id: "cls_4", name: "Form 4 Science" },
-  { id: "cls_5", name: "Form 4 Arts" },
-  { id: "cls_6", name: "Form 5" },
-  { id: "cls_7", name: "Lower Sixth" },
-  { id: "cls_8", name: "Upper Sixth" },
-];
+// Same demo classes as the Academics module (matching IDs) so report rows / rosters line
+// up with the class dropdowns (which read the real academics classes).
+export const mockClasses: ClassOption[] = seedClasses.map((c) => ({
+  id: c.id,
+  name: c.name,
+}));
 
 export const mockSubjects: SubjectOption[] = [
   { id: "sub_1", name: "Mathematics", code: "MATH" },

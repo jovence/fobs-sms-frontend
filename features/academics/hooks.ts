@@ -70,6 +70,14 @@ export function useSubjects(query: SubjectQuery) {
     placeholderData: keepPreviousData,
   });
 }
+
+/** {id,name} subject list for dropdowns/filters (scoped to the active school). */
+export function useSubjectOptions() {
+  return useQuery({
+    queryKey: ["subjects", "options"],
+    queryFn: () => subjectsService.options(),
+  });
+}
 export function useCreateSubject() {
   const qc = useQueryClient();
   return useMutation({

@@ -15,14 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useClassOptions } from "@/features/academics/hooks";
 import { useGenerateAll, useGenerateReportCard, useReportRows } from "../hooks";
-import { mockClasses } from "../mock-data";
 import type { ReportQuery, ReportRow } from "../types";
 import { getReportColumns } from "./report-cards-columns";
 
 export function ReportCardsTable() {
   const t = useTranslations("reports");
   const locale = useLocale();
+  const { data: classes = [] } = useClassOptions();
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
@@ -131,7 +132,7 @@ export function ReportCardsTable() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("allClasses")}</SelectItem>
-            {mockClasses.map((c) => (
+            {classes.map((c) => (
               <SelectItem key={c.id} value={c.id}>
                 {c.name}
               </SelectItem>

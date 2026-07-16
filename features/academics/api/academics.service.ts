@@ -30,6 +30,8 @@ export interface ClassesService {
 
 export interface SubjectsService {
   list(query: SubjectQuery): Promise<Paginated<Subject>>;
+  /** Lightweight {id,name} list for dropdowns, scoped to the active school. */
+  options(): Promise<ClassOption[]>;
   create(input: SubjectInput): Promise<Subject>;
   update(id: string, input: SubjectInput): Promise<Subject>;
   remove(id: string): Promise<void>;
@@ -134,6 +136,11 @@ function subjectCommit(next: Subject[]) {
   mockStore.set(scopedKey("subjects"), next);
 }
 
+/** Synchronous subject-name lookup for the active school. */
+export function subjectNameFor(id: string): string {
+  return subjectDb().find((s) => s.id === id)?.name ?? "—";
+}
+
 const mockSubjectsService: SubjectsService = {
   async list(query) {
     let rows = [...subjectDb()];
@@ -146,6 +153,12 @@ const mockSubjectsService: SubjectsService = {
     if (query.series) rows = rows.filter((r) => r.series === query.series);
     rows = sortRows(rows, query.sortBy, query.sortDir);
     return withLatency(paginate(rows, query.page, query.perPage), 400);
+  },
+  async options() {
+    return withLatency(
+      subjectDb().map((s) => ({ id: s.id, name: s.name })),
+      200,
+    );
   },
   async create(input) {
     const subject: Subject = {

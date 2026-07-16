@@ -10,12 +10,8 @@ import {
   type RosterStudent,
   type SaveSessionInput,
 } from "../types";
-import {
-  mockClasses,
-  mockSubjects,
-  rosterForClass,
-  seedSessions,
-} from "../mock-data";
+import { classNameFor, subjectNameFor } from "@/features/academics/api/academics.service";
+import { rosterForClass, seedSessions } from "../mock-data";
 
 export interface AttendanceService {
   getRoster(classId: string): Promise<RosterStudent[]>;
@@ -36,10 +32,10 @@ function commit(next: AttendanceSession[]) {
   mockStore.set(scopedKey("attendance"), next);
 }
 function className(classId: string) {
-  return mockClasses.find((c) => c.id === classId)?.name ?? "—";
+  return classNameFor(classId);
 }
 function subjectName(subjectId: string) {
-  return mockSubjects.find((s) => s.id === subjectId)?.name ?? "—";
+  return subjectNameFor(subjectId);
 }
 
 const mockAttendanceService: AttendanceService = {
