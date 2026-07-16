@@ -1,5 +1,6 @@
 import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
+import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type {
   EntrySelection,
@@ -28,25 +29,20 @@ export interface MarksService {
 /** Saved marks, keyed by "classId|subjectId|examId" -> { studentId: mark }. */
 type MarksStore = Record<string, Record<string, number>>;
 
-const STORE_KEY = "marks";
-
 function selectionKey({ classId, subjectId, examId }: EntrySelection): string {
   return `${classId}|${subjectId}|${examId}`;
 }
 
-let cache: MarksStore | null = null;
 function store(): MarksStore {
-  if (!cache) cache = mockStore.get<MarksStore>(STORE_KEY, {});
-  return cache;
+  return mockStore.get<MarksStore>(scopedKey("marks"), {});
 }
 function commit(next: MarksStore) {
-  cache = next;
-  mockStore.set(STORE_KEY, next);
+  mockStore.set(scopedKey("marks"), next);
 }
 
 const mockMarksService: MarksService = {
   async listReportRows(query) {
-    let rows = [...seedReportRows];
+    let rows = isDemoSchool() ? [...seedReportRows] : [];
     const { search, classId, sortBy, sortDir, page, perPage } = query;
 
     if (search) {

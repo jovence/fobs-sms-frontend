@@ -1,5 +1,6 @@
 import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
+import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type { Student, StudentInput, StudentQuery } from "../types";
 import { mockClasses, seedStudents } from "../mock-data";
@@ -16,14 +17,11 @@ export interface StudentsService {
 
 // ---- Mock implementation (persists to localStorage so edits survive reloads) ----
 
-let cache: Student[] | null = null;
 function db(): Student[] {
-  if (!cache) cache = mockStore.get<Student[]>("students", seedStudents);
-  return cache;
+  return mockStore.get<Student[]>(scopedKey("students"), isDemoSchool() ? seedStudents : []);
 }
 function commit(next: Student[]) {
-  cache = next;
-  mockStore.set("students", next);
+  mockStore.set(scopedKey("students"), next);
 }
 function className(classId: string) {
   return mockClasses.find((c) => c.id === classId)?.name ?? "—";

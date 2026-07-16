@@ -1,5 +1,6 @@
 import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
+import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type { Parent, ParentInput, ParentQuery } from "../types";
 import { seedParents } from "../mock-data";
@@ -14,14 +15,11 @@ export interface ParentsService {
 
 // ---- Mock implementation (persists to localStorage so edits survive reloads) ----
 
-let cache: Parent[] | null = null;
 function db(): Parent[] {
-  if (!cache) cache = mockStore.get<Parent[]>("parents", seedParents);
-  return cache;
+  return mockStore.get<Parent[]>(scopedKey("parents"), isDemoSchool() ? seedParents : []);
 }
 function commit(next: Parent[]) {
-  cache = next;
-  mockStore.set("parents", next);
+  mockStore.set(scopedKey("parents"), next);
 }
 
 const mockParentsService: ParentsService = {

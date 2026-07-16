@@ -3,10 +3,30 @@ import type { StudentsService } from "./students.service";
 
 const SEED_TOTAL = 86;
 
-/** Re-import the module fresh each time so its in-memory cache reseeds from the fixtures. */
+/**
+ * Re-import the module fresh each time, with a demo school active so the mock seeds its
+ * fixtures (entity data is scoped to the active school; non-demo schools start empty).
+ */
 async function freshService(): Promise<StudentsService> {
   vi.resetModules();
   localStorage.clear();
+  const { useAuthStore } = await import("@/features/auth/store");
+  useAuthStore.setState({
+    session: {
+      user: {
+        id: "usr_owner",
+        name: "Demo Owner",
+        email: "owner@fobs.cm",
+        phone: null,
+        role: "owner",
+        emailVerifiedAt: null,
+        createdAt: "2025-01-01T00:00:00.000Z",
+      },
+      token: "test",
+      memberships: [],
+      activeSchoolId: "sch_1", // a demo school → seeded data
+    },
+  });
   const mod = await import("./students.service");
   return mod.studentsService;
 }

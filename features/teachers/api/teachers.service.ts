@@ -1,5 +1,6 @@
 import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
+import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type { Teacher, TeacherInput, TeacherQuery } from "../types";
 import { seedTeachers } from "../mock-data";
@@ -12,14 +13,11 @@ export interface TeachersService {
   bulkRemove(ids: string[]): Promise<void>;
 }
 
-let cache: Teacher[] | null = null;
 function db(): Teacher[] {
-  if (!cache) cache = mockStore.get<Teacher[]>("teachers", seedTeachers);
-  return cache;
+  return mockStore.get<Teacher[]>(scopedKey("teachers"), isDemoSchool() ? seedTeachers : []);
 }
 function commit(next: Teacher[]) {
-  cache = next;
-  mockStore.set("teachers", next);
+  mockStore.set(scopedKey("teachers"), next);
 }
 
 const mockTeachersService: TeachersService = {

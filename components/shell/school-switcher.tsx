@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store";
 import { useActiveSchool } from "@/features/auth/hooks";
@@ -22,6 +23,13 @@ export function SchoolSwitcher() {
   const { data: schools, isLoading } = useSchools();
   const active = useActiveSchool();
   const setActiveSchool = useAuthStore((s) => s.setActiveSchool);
+  const qc = useQueryClient();
+
+  function switchTo(id: string) {
+    setActiveSchool(id);
+    // Entity lists are scoped to the active school — drop their cache so they refetch.
+    qc.removeQueries({ predicate: (q) => q.queryKey[0] !== "schools" });
+  }
 
   // No schools yet → offer to create one (matches the Schools page).
   if (!isLoading && (schools?.length ?? 0) === 0) {
@@ -62,7 +70,7 @@ export function SchoolSwitcher() {
         {(schools ?? []).map((s) => (
           <DropdownMenuItem
             key={s.id}
-            onClick={() => setActiveSchool(s.id)}
+            onClick={() => switchTo(s.id)}
             className="gap-2.5"
           >
             <span className="grid size-7 place-items-center rounded-md bg-muted text-[11px] font-bold">

@@ -1,6 +1,7 @@
 import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { currentAcademicYear } from "@/lib/format";
+import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type { Exam, ExamInput, ExamQuery } from "../types";
 import { seedExams } from "../mock-data";
@@ -16,14 +17,11 @@ export interface ExamsService {
 
 // ---- Mock implementation (persists to localStorage so edits survive reloads) ----
 
-let cache: Exam[] | null = null;
 function db(): Exam[] {
-  if (!cache) cache = mockStore.get<Exam[]>("exams", seedExams);
-  return cache;
+  return mockStore.get<Exam[]>(scopedKey("exams"), isDemoSchool() ? seedExams : []);
 }
 function commit(next: Exam[]) {
-  cache = next;
-  mockStore.set("exams", next);
+  mockStore.set(scopedKey("exams"), next);
 }
 
 const mockExamsService: ExamsService = {

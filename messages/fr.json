@@ -101,7 +101,12 @@
     "addStudent": "Ajouter un élève",
     "recordAttendance": "Saisir les présences",
     "enterMarks": "Saisir les notes",
-    "generateReport": "Générer un bulletin"
+    "generateReport": "Générer un bulletin",
+    "setupTitle": "Créez votre premier établissement",
+    "setupBody": "Vous n'avez encore aucun établissement. Créez-en un pour gérer élèves, enseignants et classes.",
+    "createSchool": "Créer un établissement",
+    "noDataTitle": "Votre tableau de bord est prêt",
+    "noDataBody": "Ajoutez des élèves, enseignants et classes à {school} pour voir les analyses en temps réel."
   },
   "students": {
     "title": "Élèves",

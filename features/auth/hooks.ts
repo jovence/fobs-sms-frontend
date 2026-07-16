@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSchools } from "@/features/schools/hooks";
 import { authService } from "./api/auth.service";
 import { useAuthStore } from "./store";
@@ -44,17 +44,25 @@ export function useAuthHydrated() {
 
 export function useLogin() {
   const setSession = useAuthStore((s) => s.setSession);
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (input: LoginInput) => authService.login(input),
-    onSuccess: (session) => setSession(session),
+    onSuccess: (session) => {
+      qc.clear(); // drop any previous account's cached data (schools, lists…)
+      setSession(session);
+    },
   });
 }
 
 export function useRegister() {
   const setSession = useAuthStore((s) => s.setSession);
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (input: RegisterInput) => authService.register(input),
-    onSuccess: (session) => setSession(session),
+    onSuccess: (session) => {
+      qc.clear();
+      setSession(session);
+    },
   });
 }
 
@@ -66,8 +74,12 @@ export function useForgotPassword() {
 
 export function useLogout() {
   const clearSession = useAuthStore((s) => s.clearSession);
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: () => authService.logout(),
-    onSuccess: () => clearSession(),
+    onSuccess: () => {
+      clearSession();
+      qc.clear();
+    },
   });
 }

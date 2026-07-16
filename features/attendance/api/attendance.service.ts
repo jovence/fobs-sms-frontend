@@ -1,5 +1,6 @@
 import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
+import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import {
   attendanceRate,
@@ -25,14 +26,14 @@ export interface AttendanceService {
 
 // ---- Mock implementation (persists to localStorage so saves survive reloads) ----
 
-let cache: AttendanceSession[] | null = null;
 function db(): AttendanceSession[] {
-  if (!cache) cache = mockStore.get<AttendanceSession[]>("attendance", seedSessions);
-  return cache;
+  return mockStore.get<AttendanceSession[]>(
+    scopedKey("attendance"),
+    isDemoSchool() ? seedSessions : [],
+  );
 }
 function commit(next: AttendanceSession[]) {
-  cache = next;
-  mockStore.set("attendance", next);
+  mockStore.set(scopedKey("attendance"), next);
 }
 function className(classId: string) {
   return mockClasses.find((c) => c.id === classId)?.name ?? "—";

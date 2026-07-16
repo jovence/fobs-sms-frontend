@@ -1,28 +1,41 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * Regression for the tenancy disconnect: a freshly-registered owner must see the school
- * switcher (not the "Create a school" fallback) and be able to switch — the switcher and the
- * Schools page now read the same source, with the first school auto-selected.
+ * A freshly-registered account must start EMPTY — no schools it never created, and an empty
+ * dashboard. Creating a school makes it the active school, and the dashboard then shows the
+ * honest "no data yet" state (real zeros) rather than demo analytics.
  */
-test.describe("Tenancy · school switcher", () => {
-  test("a newly-registered owner sees the switcher and can switch schools", async ({ page }) => {
+test.describe("Tenancy · a new account starts empty", () => {
+  test("register → empty dashboard → create a school → it becomes active", async ({ page }) => {
     await page.goto("/register");
-    await page.getByLabel("Full name").fill("Tenancy Tester");
-    await page.getByLabel("Email address").fill(`tenancy_${Date.now()}@fobs.cm`);
+    await page.getByLabel("Full name").fill("Fresh Owner");
+    await page.getByLabel("Email address").fill(`fresh_${Date.now()}@fobs.cm`);
     await page.getByLabel("Password", { exact: true }).fill("password123");
     await page.getByLabel("Confirm password").fill("password123");
     await page.getByRole("button", { name: "Create account" }).click();
     await expect(page).toHaveURL(/\/dashboard$/);
 
-    // The switcher shows an auto-selected active school — NOT the empty "Create a school" state.
+    // No schools yet → the dashboard shows the first-run "create your first school" prompt,
+    // NOT demo schools or fake KPIs.
+    await expect(page.getByText("Create your first school")).toBeVisible();
+
+    // Create a school.
+    await page.goto("/schools");
+    await page.getByRole("button", { name: "Add school" }).first().click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await dialog.getByLabel("School name").fill("My New Academy");
+    await dialog.getByLabel("Acronym").fill("MNA");
+    await dialog.getByRole("button", { name: "Create school" }).click();
+    await expect(dialog).toBeHidden();
+
+    // The switcher now shows the created school as active.
     const switcher = page.getByRole("button", { name: "Switch school" });
     await expect(switcher).toBeVisible();
-    await expect(switcher).toContainText("GBHS");
+    await expect(switcher).toContainText("MNA");
 
-    // Switch to the other school and confirm the active school changes.
-    await switcher.click();
-    await page.getByRole("menuitem", { name: /Collège Bilingue La Semence/ }).click();
-    await expect(switcher).toContainText("CBLS");
+    // The dashboard reflects a real, empty school (no fake analytics).
+    await page.goto("/dashboard");
+    await expect(page.getByText("Your dashboard is ready")).toBeVisible();
   });
 });

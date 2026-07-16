@@ -101,7 +101,12 @@
     "addStudent": "Add student",
     "recordAttendance": "Record attendance",
     "enterMarks": "Enter marks",
-    "generateReport": "Generate report"
+    "generateReport": "Generate report",
+    "setupTitle": "Create your first school",
+    "setupBody": "You don't have any schools yet. Create one to start managing students, teachers and classes.",
+    "createSchool": "Create a school",
+    "noDataTitle": "Your dashboard is ready",
+    "noDataBody": "Add students, teachers and classes to {school} to see live analytics here."
   },
   "students": {
     "title": "Students",

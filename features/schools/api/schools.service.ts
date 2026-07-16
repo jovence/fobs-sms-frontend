@@ -1,6 +1,7 @@
 import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { currentAcademicYear } from "@/lib/format";
+import { useAuthStore } from "@/features/auth/store";
 import type { School } from "@/types";
 import type { SchoolInput } from "../types";
 import { seedSchools } from "../mock-data";
@@ -12,14 +13,22 @@ export interface SchoolsService {
   remove(id: string): Promise<void>;
 }
 
-let cache: School[] | null = null;
-function db() {
-  if (!cache) cache = mockStore.get<School[]>("schools", seedSchools);
-  return cache;
+const DEMO_OWNER_ID = "usr_owner";
+
+/** Schools are scoped to the signed-in account. Only the demo owner starts with seed data;
+ *  every other (e.g. freshly-registered) account starts empty and builds its own. */
+function ownerId(): string {
+  return useAuthStore.getState().session?.user?.id ?? "guest";
+}
+function storeKey(id: string): string {
+  return `schools:${id}`;
+}
+function db(): School[] {
+  const id = ownerId();
+  return mockStore.get<School[]>(storeKey(id), id === DEMO_OWNER_ID ? seedSchools : []);
 }
 function commit(next: School[]) {
-  cache = next;
-  mockStore.set("schools", next);
+  mockStore.set(storeKey(ownerId()), next);
 }
 function code(acronym: string) {
   return `${acronym.toUpperCase().slice(0, 5)}-${Math.floor(1000 + Math.abs(hash(acronym)) % 9000)}`;
@@ -40,7 +49,7 @@ const mockSchoolsService: SchoolsService = {
       name: input.name.trim(),
       acronym: input.acronym.trim().toUpperCase(),
       code: code(input.acronym),
-      ownerId: "usr_owner",
+      ownerId: ownerId(),
       email: input.email?.trim() || null,
       phone: input.phone?.trim() || null,
       address: input.address?.trim() || null,

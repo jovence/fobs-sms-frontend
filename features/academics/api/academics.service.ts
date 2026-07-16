@@ -1,5 +1,6 @@
 import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
+import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type {
   ClassQuery,
@@ -51,14 +52,11 @@ function sortRows<T>(rows: T[], sortBy?: keyof T, sortDir?: "asc" | "desc") {
 }
 
 // ---- Classes ----
-let classCache: SchoolClass[] | null = null;
 function classDb() {
-  if (!classCache) classCache = mockStore.get<SchoolClass[]>("classes", seedClasses);
-  return classCache;
+  return mockStore.get<SchoolClass[]>(scopedKey("classes"), isDemoSchool() ? seedClasses : []);
 }
 function classCommit(next: SchoolClass[]) {
-  classCache = next;
-  mockStore.set("classes", next);
+  mockStore.set(scopedKey("classes"), next);
 }
 
 const mockClassesService: ClassesService = {
@@ -111,14 +109,11 @@ const mockClassesService: ClassesService = {
 };
 
 // ---- Subjects ----
-let subjectCache: Subject[] | null = null;
 function subjectDb() {
-  if (!subjectCache) subjectCache = mockStore.get<Subject[]>("subjects", seedSubjects);
-  return subjectCache;
+  return mockStore.get<Subject[]>(scopedKey("subjects"), isDemoSchool() ? seedSubjects : []);
 }
 function subjectCommit(next: Subject[]) {
-  subjectCache = next;
-  mockStore.set("subjects", next);
+  mockStore.set(scopedKey("subjects"), next);
 }
 
 const mockSubjectsService: SubjectsService = {
