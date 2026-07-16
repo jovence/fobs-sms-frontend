@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useSchools } from "@/features/schools/hooks";
 import { authService } from "./api/auth.service";
 import { useAuthStore } from "./store";
 import type { ForgotPasswordInput, LoginInput, RegisterInput } from "./types";
@@ -14,14 +16,26 @@ export function useCurrentUser() {
   return useAuthStore((s) => s.session?.user ?? null);
 }
 
+/**
+ * The active school (tenancy). Single source of truth = the schools list (same source as
+ * the Schools page), with the selected id kept in the auth store. Auto-selects the first
+ * school when none is chosen or the chosen one no longer exists, so switching works on any
+ * account — including a freshly-registered one — and a newly-created school shows up here.
+ */
 export function useActiveSchool() {
-  return useAuthStore((s) => {
-    const session = s.session;
-    if (!session) return null;
-    return (
-      session.memberships.find((m) => m.school.id === session.activeSchoolId) ?? null
-    );
-  });
+  const { data: schools } = useSchools();
+  const activeId = useAuthStore((s) => s.session?.activeSchoolId ?? null);
+  const setActiveSchool = useAuthStore((s) => s.setActiveSchool);
+
+  useEffect(() => {
+    if (!schools?.length) return;
+    if (!activeId || !schools.some((x) => x.id === activeId)) {
+      setActiveSchool(schools[0].id);
+    }
+  }, [schools, activeId, setActiveSchool]);
+
+  if (!schools?.length) return null;
+  return schools.find((x) => x.id === activeId) ?? schools[0];
 }
 
 export function useAuthHydrated() {

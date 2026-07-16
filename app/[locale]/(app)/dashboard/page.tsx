@@ -24,8 +24,7 @@ const EnrollmentChart = dynamic(
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
   const user = useCurrentUser();
-  const active = useActiveSchool();
-  const school = active?.school;
+  const school = useActiveSchool();
   const deltaLabel = t("vsLastTerm");
 
   return (

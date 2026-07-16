@@ -1,11 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Check, ChevronsUpDown, Plus, School as SchoolIcon } from "lucide-react";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store";
-import { useActiveSchool, useSession } from "@/features/auth/hooks";
+import { useActiveSchool } from "@/features/auth/hooks";
+import { useSchools } from "@/features/schools/hooks";
 import { initials } from "@/lib/format";
-import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -19,13 +19,12 @@ import {
 
 export function SchoolSwitcher() {
   const t = useTranslations("tenancy");
-  const session = useSession();
+  const { data: schools, isLoading } = useSchools();
   const active = useActiveSchool();
   const setActiveSchool = useAuthStore((s) => s.setActiveSchool);
 
-  const memberships = session?.memberships ?? [];
-
-  if (memberships.length === 0) {
+  // No schools yet → offer to create one (matches the Schools page).
+  if (!isLoading && (schools?.length ?? 0) === 0) {
     return (
       <Link
         href="/schools"
@@ -44,14 +43,14 @@ export function SchoolSwitcher() {
         aria-label={t("switchSchool")}
       >
         <span className="grid size-8 shrink-0 place-items-center rounded-md bg-sidebar-primary/15 text-xs font-bold text-sidebar-primary">
-          {active ? initials(active.school.name) : <SchoolIcon className="size-4" />}
+          {active ? initials(active.name) : "—"}
         </span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-semibold text-sidebar-foreground">
-            {active?.school.acronym ?? t("activeSchool")}
+            {active?.acronym ?? t("activeSchool")}
           </span>
           <span className="block truncate text-xs text-sidebar-foreground/75">
-            {active?.school.name}
+            {active?.name ?? "…"}
           </span>
         </span>
         <ChevronsUpDown className="size-4 shrink-0 text-sidebar-foreground/50" />
@@ -60,29 +59,25 @@ export function SchoolSwitcher() {
         <DropdownMenuLabel className="text-xs text-muted-foreground">
           {t("switchSchool")}
         </DropdownMenuLabel>
-        {memberships.map((m) => (
+        {(schools ?? []).map((s) => (
           <DropdownMenuItem
-            key={m.school.id}
-            onClick={() => setActiveSchool(m.school.id)}
+            key={s.id}
+            onClick={() => setActiveSchool(s.id)}
             className="gap-2.5"
           >
             <span className="grid size-7 place-items-center rounded-md bg-muted text-[11px] font-bold">
-              {initials(m.school.name)}
+              {initials(s.name)}
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-medium">{m.school.name}</span>
-              <span className="block truncate text-xs text-muted-foreground">
-                {m.school.code}
-              </span>
+              <span className="block truncate text-sm font-medium">{s.name}</span>
+              <span className="block truncate text-xs text-muted-foreground">{s.code}</span>
             </span>
-            {m.school.isDemo && (
+            {s.isDemo && (
               <Badge variant="secondary" className="text-[10px]">
                 {t("demo")}
               </Badge>
             )}
-            {active?.school.id === m.school.id && (
-              <Check className="size-4 text-primary" />
-            )}
+            {active?.id === s.id && <Check className="size-4 text-primary" />}
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
