@@ -1,8 +1,9 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { withLatency } from "@/lib/mock";
 import { ApiError, type Session } from "@/types";
 import type { ForgotPasswordInput, LoginInput, RegisterInput } from "../types";
 import { mockAccounts } from "../mock-data";
+import { httpAuthService } from "./auth.http";
 
 /**
  * The auth contract. The mock and the (future) live implementation both satisfy it,
@@ -79,6 +80,5 @@ const mockAuthService: AuthService = {
   },
 };
 
-// Live implementation is wired here later; the UI import never changes.
-export const authService: AuthService =
-  API_MODE === "live" ? mockAuthService : mockAuthService;
+// The UI depends only on this export; `pickService` swaps mock↔live via NEXT_PUBLIC_API_MODE.
+export const authService: AuthService = pickService(mockAuthService, httpAuthService);

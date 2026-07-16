@@ -1,4 +1,4 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
@@ -12,6 +12,7 @@ import {
 } from "../types";
 import { classNameFor, subjectNameFor } from "@/features/academics/api/academics.service";
 import { rosterForClass, seedSessions } from "../mock-data";
+import { httpAttendanceService } from "./attendance.http";
 
 export interface AttendanceService {
   getRoster(classId: string): Promise<RosterStudent[]>;
@@ -110,5 +111,7 @@ const mockAttendanceService: AttendanceService = {
   },
 };
 
-export const attendanceService: AttendanceService =
-  API_MODE === "live" ? mockAttendanceService : mockAttendanceService;
+export const attendanceService: AttendanceService = pickService(
+  mockAttendanceService,
+  httpAttendanceService,
+);

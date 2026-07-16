@@ -1,4 +1,4 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { currentAcademicYear } from "@/lib/format";
 import { useAuthStore } from "@/features/auth/store";
@@ -6,6 +6,7 @@ import { SEED_DEMO } from "@/features/auth/tenancy";
 import type { School } from "@/types";
 import type { SchoolInput } from "../types";
 import { seedSchools } from "../mock-data";
+import { httpSchoolsService } from "./schools.http";
 
 export interface SchoolsService {
   list(): Promise<School[]>;
@@ -92,5 +93,7 @@ const mockSchoolsService: SchoolsService = {
   },
 };
 
-export const schoolsService: SchoolsService =
-  API_MODE === "live" ? mockSchoolsService : mockSchoolsService;
+export const schoolsService: SchoolsService = pickService(
+  mockSchoolsService,
+  httpSchoolsService,
+);

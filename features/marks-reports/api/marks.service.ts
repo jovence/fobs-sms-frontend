@@ -1,4 +1,4 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
@@ -10,6 +10,7 @@ import type {
   SaveMarksInput,
 } from "../types";
 import { seedReportRows } from "../mock-data";
+import { httpMarksService } from "./marks.http";
 
 export interface MarksService {
   /** Aggregated per-student results for the Report Cards table. */
@@ -106,5 +107,7 @@ const mockMarksService: MarksService = {
   },
 };
 
-export const marksService: MarksService =
-  API_MODE === "live" ? mockMarksService : mockMarksService;
+export const marksService: MarksService = pickService(
+  mockMarksService,
+  httpMarksService,
+);

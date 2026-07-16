@@ -1,4 +1,4 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
@@ -12,6 +12,7 @@ import type {
 } from "../types";
 import { currentAcademicYear } from "@/lib/format";
 import { seedClasses, seedSubjects } from "../mock-data";
+import { httpClassesService, httpSubjectsService } from "./academics.http";
 
 export interface ClassOption {
   id: string;
@@ -195,7 +196,11 @@ const mockSubjectsService: SubjectsService = {
   },
 };
 
-export const classesService: ClassesService =
-  API_MODE === "live" ? mockClassesService : mockClassesService;
-export const subjectsService: SubjectsService =
-  API_MODE === "live" ? mockSubjectsService : mockSubjectsService;
+export const classesService: ClassesService = pickService(
+  mockClassesService,
+  httpClassesService,
+);
+export const subjectsService: SubjectsService = pickService(
+  mockSubjectsService,
+  httpSubjectsService,
+);

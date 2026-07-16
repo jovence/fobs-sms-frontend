@@ -1,8 +1,9 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import type { Paginated } from "@/types";
 import type { AdminSchool, AdminSchoolQuery, SubscriptionTier } from "../types";
 import { seedAdminSchools } from "../mock-data";
+import { httpAdminSchoolsService } from "./admin-schools.http";
 
 export interface AdminSchoolsService {
   list(query: AdminSchoolQuery): Promise<Paginated<AdminSchool>>;
@@ -63,5 +64,7 @@ const mock: AdminSchoolsService = {
   },
 };
 
-export const adminSchoolsService: AdminSchoolsService =
-  API_MODE === "live" ? mock : mock;
+export const adminSchoolsService: AdminSchoolsService = pickService(
+  mock,
+  httpAdminSchoolsService,
+);

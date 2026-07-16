@@ -1,10 +1,11 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { currentAcademicYear } from "@/lib/format";
 import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type { Exam, ExamInput, ExamQuery } from "../types";
 import { seedExams } from "../mock-data";
+import { httpExamsService } from "./exams.http";
 
 export interface ExamsService {
   list(query: ExamQuery): Promise<Paginated<Exam>>;
@@ -120,5 +121,7 @@ const mockExamsService: ExamsService = {
   },
 };
 
-export const examsService: ExamsService =
-  API_MODE === "live" ? mockExamsService : mockExamsService;
+export const examsService: ExamsService = pickService(
+  mockExamsService,
+  httpExamsService,
+);

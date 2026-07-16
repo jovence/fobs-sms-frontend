@@ -1,9 +1,10 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type { Teacher, TeacherInput, TeacherQuery } from "../types";
 import { seedTeachers } from "../mock-data";
+import { httpTeachersService } from "./teachers.http";
 
 export interface TeachersService {
   list(query: TeacherQuery): Promise<Paginated<Teacher>>;
@@ -97,5 +98,7 @@ const mockTeachersService: TeachersService = {
   },
 };
 
-export const teachersService: TeachersService =
-  API_MODE === "live" ? mockTeachersService : mockTeachersService;
+export const teachersService: TeachersService = pickService(
+  mockTeachersService,
+  httpTeachersService,
+);

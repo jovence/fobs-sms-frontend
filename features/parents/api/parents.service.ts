@@ -1,9 +1,10 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type { Parent, ParentInput, ParentQuery } from "../types";
 import { seedParents } from "../mock-data";
+import { httpParentsService } from "./parents.http";
 
 export interface ParentsService {
   list(query: ParentQuery): Promise<Paginated<Parent>>;
@@ -109,5 +110,7 @@ const mockParentsService: ParentsService = {
   },
 };
 
-export const parentsService: ParentsService =
-  API_MODE === "live" ? mockParentsService : mockParentsService;
+export const parentsService: ParentsService = pickService(
+  mockParentsService,
+  httpParentsService,
+);

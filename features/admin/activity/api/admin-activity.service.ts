@@ -1,8 +1,9 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import type { Paginated } from "@/types";
 import type { ActivityEntry, ActivityQuery } from "../types";
 import { seedActivity } from "../mock-data";
+import { httpAdminActivityService } from "./admin-activity.http";
 
 export interface AdminActivityService {
   list(query: ActivityQuery): Promise<Paginated<ActivityEntry>>;
@@ -45,5 +46,7 @@ const mock: AdminActivityService = {
   },
 };
 
-export const adminActivityService: AdminActivityService =
-  API_MODE === "live" ? mock : mock;
+export const adminActivityService: AdminActivityService = pickService(
+  mock,
+  httpAdminActivityService,
+);

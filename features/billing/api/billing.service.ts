@@ -1,4 +1,4 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import type { Paginated } from "@/types";
 import type {
@@ -8,6 +8,7 @@ import type {
   SubscriptionTier,
 } from "../types";
 import { currentSubscription, plans, seedInvoices } from "../mock-data";
+import { httpBillingService } from "./billing.http";
 
 export interface BillingService {
   overview(): Promise<BillingOverview>;
@@ -74,5 +75,7 @@ const mockBillingService: BillingService = {
   },
 };
 
-export const billingService: BillingService =
-  API_MODE === "live" ? mockBillingService : mockBillingService;
+export const billingService: BillingService = pickService(
+  mockBillingService,
+  httpBillingService,
+);

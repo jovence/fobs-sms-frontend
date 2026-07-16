@@ -1,8 +1,9 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import type { Paginated } from "@/types";
 import type { AdminReferralQuery, AdminReferrer, ReferralStats } from "../types";
 import { seedReferrers } from "../mock-data";
+import { httpAdminReferralsService } from "./admin-referrals.http";
 
 export interface AdminReferralsService {
   list(query: AdminReferralQuery): Promise<Paginated<AdminReferrer>>;
@@ -74,5 +75,7 @@ const mock: AdminReferralsService = {
   },
 };
 
-export const adminReferralsService: AdminReferralsService =
-  API_MODE === "live" ? mock : mock;
+export const adminReferralsService: AdminReferralsService = pickService(
+  mock,
+  httpAdminReferralsService,
+);

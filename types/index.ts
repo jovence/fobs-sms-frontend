@@ -67,6 +67,32 @@ export interface Paginated<T> {
   totalPages: number;
 }
 
+/**
+ * Pagination metadata as the Laravel backend sends it (snake_case) in the envelope's `meta`.
+ * @see lib/api-client — mapped to the UI's {@link Paginated} shape by `apiList`.
+ */
+export interface ApiMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number | null;
+  to: number | null;
+}
+
+/**
+ * The exact response envelope every backend API endpoint returns:
+ * `{ success, message, data, meta, errors }`. The live (`.http`) services unwrap `data`
+ * (and `meta` for lists) via the helpers in `lib/api-client`; the UI never sees the envelope.
+ */
+export interface ApiEnvelope<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  meta: ApiMeta | null;
+  errors: Record<string, string[]> | null;
+}
+
 /** A typed error the UI can branch on (invalid credentials, validation, etc.). */
 export class ApiError extends Error {
   constructor(

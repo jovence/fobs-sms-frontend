@@ -1,6 +1,7 @@
-import { API_MODE } from "@/lib/api-client";
+import { pickService } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import type { AppType, AppUpdateInput, AppUpdatesMap } from "../types";
+import { httpAppControlService } from "./app-control.http";
 
 export interface AppControlService {
   getAll(): Promise<AppUpdatesMap>;
@@ -56,5 +57,7 @@ const mock: AppControlService = {
   },
 };
 
-export const appControlService: AppControlService =
-  API_MODE === "live" ? mock : mock;
+export const appControlService: AppControlService = pickService(
+  mock,
+  httpAppControlService,
+);
