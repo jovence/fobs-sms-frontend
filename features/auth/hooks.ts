@@ -26,13 +26,22 @@ export function useActiveSchool() {
   const { data: schools } = useSchools();
   const activeId = useAuthStore((s) => s.session?.activeSchoolId ?? null);
   const setActiveSchool = useAuthStore((s) => s.setActiveSchool);
+  const qc = useQueryClient();
 
   useEffect(() => {
-    if (!schools?.length) return;
-    if (!activeId || !schools.some((x) => x.id === activeId)) {
-      setActiveSchool(schools[0].id);
+    if (!schools) return; // still loading — don't touch the selection
+    // Reconcile the selected school with the schools this account actually owns:
+    // none → clear (so a no-school account shows nothing, not a stale demo school);
+    // invalid/unset → pick the first. Then drop the scoped list caches so they refetch.
+    let nextId: string | null = activeId;
+    if (schools.length === 0) nextId = null;
+    else if (!activeId || !schools.some((x) => x.id === activeId)) nextId = schools[0].id;
+
+    if (nextId !== activeId) {
+      setActiveSchool(nextId);
+      qc.removeQueries({ predicate: (q) => q.queryKey[0] !== "schools" });
     }
-  }, [schools, activeId, setActiveSchool]);
+  }, [schools, activeId, setActiveSchool, qc]);
 
   if (!schools?.length) return null;
   return schools.find((x) => x.id === activeId) ?? schools[0];

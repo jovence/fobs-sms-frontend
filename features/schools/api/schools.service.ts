@@ -2,6 +2,7 @@ import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { currentAcademicYear } from "@/lib/format";
 import { useAuthStore } from "@/features/auth/store";
+import { SEED_DEMO } from "@/features/auth/tenancy";
 import type { School } from "@/types";
 import type { SchoolInput } from "../types";
 import { seedSchools } from "../mock-data";
@@ -25,7 +26,8 @@ function storeKey(id: string): string {
 }
 function db(): School[] {
   const id = ownerId();
-  return mockStore.get<School[]>(storeKey(id), id === DEMO_OWNER_ID ? seedSchools : []);
+  const seed = SEED_DEMO && id === DEMO_OWNER_ID ? seedSchools : [];
+  return mockStore.get<School[]>(storeKey(id), seed);
 }
 function commit(next: School[]) {
   mockStore.set(storeKey(ownerId()), next);

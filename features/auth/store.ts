@@ -8,7 +8,7 @@ interface AuthState {
   hydrated: boolean;
   setSession: (session: Session) => void;
   clearSession: () => void;
-  setActiveSchool: (schoolId: string) => void;
+  setActiveSchool: (schoolId: string | null) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
