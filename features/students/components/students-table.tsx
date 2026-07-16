@@ -26,7 +26,7 @@ import {
   useUpdateStudentStatus,
 } from "../hooks";
 import { studentsService } from "../api/students.service";
-import { mockClasses } from "../mock-data";
+import { useClassOptions } from "@/features/academics/hooks";
 import type { RegistrationStatus, Student, StudentQuery } from "../types";
 import { getStudentColumns } from "./students-columns";
 import { StudentFormSheet } from "./student-form-sheet";
@@ -37,6 +37,7 @@ export function StudentsTable() {
   const t = useTranslations("students");
   const tf = useTranslations("students.form");
   const locale = useLocale();
+  const { data: classOptions = [] } = useClassOptions();
 
   // Query state
   const [page, setPage] = useState(1);
@@ -159,7 +160,7 @@ export function StudentsTable() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("allClasses")}</SelectItem>
-            {mockClasses.map((c) => (
+            {classOptions.map((c) => (
               <SelectItem key={c.id} value={c.id}>
                 {c.name}
               </SelectItem>
@@ -252,7 +253,7 @@ export function StudentsTable() {
         open={formOpen}
         onOpenChange={setFormOpen}
         student={editing}
-        classes={mockClasses}
+        classes={classOptions}
       />
 
       <ConfirmDialog

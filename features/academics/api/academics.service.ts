@@ -13,8 +13,15 @@ import type {
 import { currentAcademicYear } from "@/lib/format";
 import { seedClasses, seedSubjects } from "../mock-data";
 
+export interface ClassOption {
+  id: string;
+  name: string;
+}
+
 export interface ClassesService {
   list(query: ClassQuery): Promise<Paginated<SchoolClass>>;
+  /** Lightweight {id,name} list for dropdowns, scoped to the active school. */
+  options(): Promise<ClassOption[]>;
   create(input: SchoolClassInput): Promise<SchoolClass>;
   update(id: string, input: SchoolClassInput): Promise<SchoolClass>;
   remove(id: string): Promise<void>;
@@ -59,6 +66,11 @@ function classCommit(next: SchoolClass[]) {
   mockStore.set(scopedKey("classes"), next);
 }
 
+/** Synchronous class-name lookup for the active school (used to denormalize into students). */
+export function classNameFor(id: string): string {
+  return classDb().find((c) => c.id === id)?.name ?? "—";
+}
+
 const mockClassesService: ClassesService = {
   async list(query) {
     let rows = [...classDb()];
@@ -69,6 +81,12 @@ const mockClassesService: ClassesService = {
     if (query.level) rows = rows.filter((r) => r.level === query.level);
     rows = sortRows(rows, query.sortBy, query.sortDir);
     return withLatency(paginate(rows, query.page, query.perPage), 400);
+  },
+  async options() {
+    return withLatency(
+      classDb().map((c) => ({ id: c.id, name: c.name })),
+      200,
+    );
   },
   async create(input) {
     const cls: SchoolClass = {

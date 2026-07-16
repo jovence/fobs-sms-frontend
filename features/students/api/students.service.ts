@@ -2,8 +2,9 @@ import { API_MODE } from "@/lib/api-client";
 import { mockStore, withLatency } from "@/lib/mock";
 import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
+import { classNameFor } from "@/features/academics/api/academics.service";
 import type { Student, StudentInput, StudentQuery } from "../types";
-import { mockClasses, seedStudents } from "../mock-data";
+import { seedStudents } from "../mock-data";
 
 export interface StudentsService {
   list(query: StudentQuery): Promise<Paginated<Student>>;
@@ -24,7 +25,7 @@ function commit(next: Student[]) {
   mockStore.set(scopedKey("students"), next);
 }
 function className(classId: string) {
-  return mockClasses.find((c) => c.id === classId)?.name ?? "—";
+  return classNameFor(classId);
 }
 
 const mockStudentsService: StudentsService = {

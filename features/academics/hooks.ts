@@ -25,6 +25,14 @@ export function useClasses(query: ClassQuery) {
   });
 }
 
+/** {id,name} class list for dropdowns/filters (scoped to the active school). */
+export function useClassOptions() {
+  return useQuery({
+    queryKey: ["classes", "options"],
+    queryFn: () => classesService.options(),
+  });
+}
+
 export function useCreateClass() {
   const qc = useQueryClient();
   return useMutation({
