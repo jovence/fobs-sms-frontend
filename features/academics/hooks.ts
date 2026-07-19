@@ -7,15 +7,16 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { classesService, subjectsService } from "./api/academics.service";
-import type {
-  ClassQuery,
-  SchoolClassInput,
-  SubjectInput,
-  SubjectQuery,
-} from "./types";
+import type { ClassQuery, SchoolClassInput, SubjectInput, SubjectQuery } from "./types";
 
-const classKeys = { all: ["classes"] as const, list: (q: ClassQuery) => ["classes", q] as const };
-const subjectKeys = { all: ["subjects"] as const, list: (q: SubjectQuery) => ["subjects", q] as const };
+const classKeys = {
+  all: ["classes"] as const,
+  list: (q: ClassQuery) => ["classes", q] as const,
+};
+const subjectKeys = {
+  all: ["subjects"] as const,
+  list: (q: SubjectQuery) => ["subjects", q] as const,
+};
 
 export function useClasses(query: ClassQuery) {
   return useQuery({
@@ -38,6 +39,8 @@ export function useCreateClass() {
   return useMutation({
     mutationFn: (input: SchoolClassInput) => classesService.create(input),
     onSuccess: () => qc.invalidateQueries({ queryKey: classKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 export function useUpdateClass() {
@@ -46,6 +49,8 @@ export function useUpdateClass() {
     mutationFn: ({ id, input }: { id: string; input: SchoolClassInput }) =>
       classesService.update(id, input),
     onSuccess: () => qc.invalidateQueries({ queryKey: classKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 export function useDeleteClass() {
@@ -83,6 +88,8 @@ export function useCreateSubject() {
   return useMutation({
     mutationFn: (input: SubjectInput) => subjectsService.create(input),
     onSuccess: () => qc.invalidateQueries({ queryKey: subjectKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 export function useUpdateSubject() {
@@ -91,6 +98,8 @@ export function useUpdateSubject() {
     mutationFn: ({ id, input }: { id: string; input: SubjectInput }) =>
       subjectsService.update(id, input),
     onSuccess: () => qc.invalidateQueries({ queryKey: subjectKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 export function useDeleteSubject() {

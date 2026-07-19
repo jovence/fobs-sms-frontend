@@ -35,6 +35,8 @@ export function useCreateExam() {
   return useMutation({
     mutationFn: (input: ExamInput) => examsService.create(input),
     onSuccess: () => qc.invalidateQueries({ queryKey: examKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 
@@ -44,6 +46,8 @@ export function useUpdateExam() {
     mutationFn: ({ id, input }: { id: string; input: ExamInput }) =>
       examsService.update(id, input),
     onSuccess: () => qc.invalidateQueries({ queryKey: examKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 

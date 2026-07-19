@@ -35,5 +35,7 @@ export function useRequestUpgrade() {
   return useMutation({
     mutationFn: (tier: SubscriptionTier) => billingService.requestUpgrade(tier),
     onSuccess: () => qc.invalidateQueries({ queryKey: billingKeys.all }),
+    // Upgrade dialog shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }

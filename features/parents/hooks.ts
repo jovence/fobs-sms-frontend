@@ -27,6 +27,8 @@ export function useCreateParent() {
   return useMutation({
     mutationFn: (input: ParentInput) => parentsService.create(input),
     onSuccess: () => qc.invalidateQueries({ queryKey: parentKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 
@@ -36,6 +38,8 @@ export function useUpdateParent() {
     mutationFn: ({ id, input }: { id: string; input: ParentInput }) =>
       parentsService.update(id, input),
     onSuccess: () => qc.invalidateQueries({ queryKey: parentKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 

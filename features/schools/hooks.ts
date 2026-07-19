@@ -15,6 +15,8 @@ export function useCreateSchool() {
   return useMutation({
     mutationFn: (input: SchoolInput) => schoolsService.create(input),
     onSuccess: () => qc.invalidateQueries({ queryKey: schoolKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 
@@ -24,6 +26,8 @@ export function useUpdateSchool() {
     mutationFn: ({ id, input }: { id: string; input: SchoolInput }) =>
       schoolsService.update(id, input),
     onSuccess: () => qc.invalidateQueries({ queryKey: schoolKeys.all }),
+    // Form sheet shows its own contextual/translated error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 
