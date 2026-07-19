@@ -13,6 +13,7 @@
     "back": "Retour",
     "next": "Suivant",
     "retry": "Réessayer",
+    "actionFailed": "Cela n'a pas fonctionné. Veuillez réessayer.",
     "signOut": "Se déconnecter",
     "theme": "Thème",
     "language": "Langue",

@@ -13,6 +13,7 @@
     "back": "Back",
     "next": "Next",
     "retry": "Try again",
+    "actionFailed": "That didn't work. Please try again.",
     "signOut": "Sign out",
     "theme": "Theme",
     "language": "Language",
