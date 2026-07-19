@@ -892,8 +892,8 @@
       "rosterTitle": "Students",
       "save": "Save marks",
       "prompt": {
-        "title": "Select class, subject and exam",
-        "description": "Pick a class, subject and exam above to start entering marks."
+        "title": "Select an exam to load the roster",
+        "description": "The class and subject are ready — choose the exam above to start entering marks."
       },
       "error": {
         "title": "Couldn't load the roster",

@@ -892,8 +892,8 @@
       "rosterTitle": "Élèves",
       "save": "Enregistrer les notes",
       "prompt": {
-        "title": "Sélectionnez la classe, la matière et l'évaluation",
-        "description": "Choisissez une classe, une matière et une évaluation ci-dessus pour commencer la saisie."
+        "title": "Sélectionnez une évaluation pour charger la liste",
+        "description": "La classe et la matière sont prêtes — choisissez l'évaluation ci-dessus pour commencer la saisie."
       },
       "error": {
         "title": "Impossible de charger la liste",
