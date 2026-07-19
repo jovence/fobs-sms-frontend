@@ -36,5 +36,7 @@ export function useSaveSession() {
   return useMutation({
     mutationFn: (input: SaveSessionInput) => attendanceService.saveSession(input),
     onSuccess: () => qc.invalidateQueries({ queryKey: attendanceKeys.all }),
+    // Shows its own contextual save-error toast; opt out of the global one.
+    meta: { suppressErrorToast: true },
   });
 }

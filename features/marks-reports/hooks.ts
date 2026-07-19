@@ -25,9 +25,7 @@ export function useReportRows(query: ReportQuery) {
 
 export function useEntryRoster(selection: EntrySelection | null) {
   return useQuery({
-    queryKey: marksKeys.roster(
-      selection ?? { classId: "", subjectId: "", examId: "" },
-    ),
+    queryKey: marksKeys.roster(selection ?? { classId: "", subjectId: "", examId: "" }),
     queryFn: () => marksService.listEntryRoster(selection as EntrySelection),
     enabled: !!selection,
   });
@@ -38,6 +36,8 @@ export function useSaveMarks() {
   return useMutation({
     mutationFn: (input: SaveMarksInput) => marksService.saveMarks(input),
     onSuccess: () => qc.invalidateQueries({ queryKey: marksKeys.all }),
+    // Shows its own contextual save-error toast; opt out of the global one.
+    meta: { suppressErrorToast: true },
   });
 }
 
