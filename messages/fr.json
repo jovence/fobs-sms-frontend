@@ -14,6 +14,14 @@
     "next": "Suivant",
     "retry": "Réessayer",
     "actionFailed": "Cela n'a pas fonctionné. Veuillez réessayer.",
+    "errors": {
+      "network": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
+      "notFound": "Cet élément n'existe plus. Actualisez et réessayez.",
+      "forbidden": "Vous n'avez pas la permission de faire cela.",
+      "conflict": "Cela entre en conflit avec l'état actuel. Actualisez et réessayez.",
+      "validation": "Certaines informations sont invalides. Veuillez vérifier et réessayer.",
+      "generic": "Cela n'a pas fonctionné. Veuillez réessayer."
+    },
     "signOut": "Se déconnecter",
     "theme": "Thème",
     "language": "Langue",

@@ -14,6 +14,14 @@
     "next": "Next",
     "retry": "Try again",
     "actionFailed": "That didn't work. Please try again.",
+    "errors": {
+      "network": "Can't reach the server. Check your connection and try again.",
+      "notFound": "That item no longer exists. Refresh and try again.",
+      "forbidden": "You don't have permission to do that.",
+      "conflict": "That conflicts with the current state. Refresh and try again.",
+      "validation": "Some details are invalid. Please check and try again.",
+      "generic": "That didn't work. Please try again."
+    },
     "signOut": "Sign out",
     "theme": "Theme",
     "language": "Language",
