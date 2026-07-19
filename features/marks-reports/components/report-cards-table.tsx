@@ -15,8 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { downloadCsv } from "@/lib/csv";
 import { useClassOptions } from "@/features/academics/hooks";
-import { useGenerateAll, useGenerateReportCard, useReportRows } from "../hooks";
+import { useReportRows } from "../hooks";
+import { marksService } from "../api/marks.service";
 import type { ReportQuery, ReportRow } from "../types";
 import { getReportColumns } from "./report-cards-columns";
 
@@ -33,8 +35,7 @@ export function ReportCardsTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const generateOne = useGenerateReportCard();
-  const generateAll = useGenerateAll();
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const id = setTimeout(() => {
@@ -67,6 +68,31 @@ export function ReportCardsTable() {
     [locale],
   );
 
+  // "Matricule" is the same term in en and fr (Cameroon), so it needs no key.
+  const reportCsvHeader = useMemo(
+    () => [
+      t("columns.student"),
+      "Matricule",
+      t("columns.class"),
+      t("columns.average"),
+      t("columns.rank"),
+      t("columns.decision"),
+    ],
+    [t],
+  );
+
+  const rowToCsv = useCallback(
+    (r: ReportRow) => [
+      r.fullName,
+      r.matricule ?? "",
+      r.className,
+      formatAverage(r.average),
+      `${r.rank}/${r.total}`,
+      r.decision,
+    ],
+    [formatAverage],
+  );
+
   const columns = useMemo(
     () =>
       getReportColumns({
@@ -81,12 +107,15 @@ export function ReportCardsTable() {
         },
         formatAverage,
         formatRank: (rank, total) => `${rank}/${total}`,
-        onGenerate: async (row) => {
-          await generateOne.mutateAsync(row.id);
+        // Download a real file for this student's report card instead of a no-op toast.
+        onGenerate: (row) => {
+          downloadCsv(`report-card-${row.matricule ?? row.id}.csv`, reportCsvHeader, [
+            rowToCsv(row),
+          ]);
           toast.success(t("toasts.generated"));
         },
       }),
-    [t, formatAverage, generateOne],
+    [t, formatAverage, reportCsvHeader, rowToCsv],
   );
 
   const hasFilters = !!search || classId !== "all";
@@ -98,20 +127,44 @@ export function ReportCardsTable() {
     setPage(1);
   }
 
-  async function onGenerateAll() {
-    await generateAll.mutateAsync(query);
-    toast.success(t("toasts.generatedAll", { count: data?.total ?? 0 }));
+  // Fetch every report row (not just the current page) and download a real CSV.
+  async function exportAllReportCards(): Promise<number> {
+    const all = await marksService.listReportRows({
+      ...query,
+      page: 1,
+      perPage: data?.total || 1000,
+    });
+    downloadCsv(
+      `report-cards-${Date.now()}.csv`,
+      reportCsvHeader,
+      all.items.map(rowToCsv),
+    );
+    return all.items.length;
   }
 
-  function onDownloadAll() {
-    toast.success(t("toasts.downloaded", { count: data?.total ?? 0 }));
+  async function onDownloadAll() {
+    setExporting(true);
+    try {
+      toast.success(t("toasts.downloaded", { count: await exportAllReportCards() }));
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function onGenerateAll() {
+    setExporting(true);
+    try {
+      toast.success(t("toasts.generatedAll", { count: await exportAllReportCards() }));
+    } finally {
+      setExporting(false);
+    }
   }
 
   const toolbar = (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-1 flex-wrap items-center gap-2">
         <div className="relative w-full sm:w-64">
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -150,15 +203,11 @@ export function ReportCardsTable() {
           variant="outline"
           size="sm"
           onClick={onDownloadAll}
-          disabled={!data?.total}
+          disabled={!data?.total || exporting}
         >
           <Download /> {t("actions.downloadAll")}
         </Button>
-        <Button
-          size="sm"
-          onClick={onGenerateAll}
-          disabled={!data?.total || generateAll.isPending}
-        >
+        <Button size="sm" onClick={onGenerateAll} disabled={!data?.total || exporting}>
           <FileText /> {t("actions.generateAll")}
         </Button>
       </div>
