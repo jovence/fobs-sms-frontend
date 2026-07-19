@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { ApiError } from "@/types";
+import { authErrorMessageKey } from "../error-message";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +44,8 @@ export function RegisterForm() {
         setError("email", { message: t("emailTaken") });
         return;
       }
-      setFormError(t("emailTaken"));
+      // Any other failure is not "email already taken" — show an accurate message.
+      setFormError(t(authErrorMessageKey(err)));
     }
   }
 
@@ -59,7 +61,12 @@ export function RegisterForm() {
       )}
 
       <Field id="name" label={t("name")} error={errors.name?.message}>
-        <Input id="name" autoComplete="name" aria-invalid={!!errors.name} {...register("name")} />
+        <Input
+          id="name"
+          autoComplete="name"
+          aria-invalid={!!errors.name}
+          {...register("name")}
+        />
       </Field>
 
       <Field id="email" label={t("email")} error={errors.email?.message}>
@@ -74,7 +81,13 @@ export function RegisterForm() {
       </Field>
 
       <Field id="phone" label={t("phone")} error={errors.phone?.message} optional>
-        <Input id="phone" type="tel" autoComplete="tel" placeholder="+237 6XX XXX XXX" {...register("phone")} />
+        <Input
+          id="phone"
+          type="tel"
+          autoComplete="tel"
+          placeholder="+237 6XX XXX XXX"
+          {...register("phone")}
+        />
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -87,7 +100,11 @@ export function RegisterForm() {
             {...register("password")}
           />
         </Field>
-        <Field id="confirmPassword" label={t("confirmPassword")} error={errors.confirmPassword?.message}>
+        <Field
+          id="confirmPassword"
+          label={t("confirmPassword")}
+          error={errors.confirmPassword?.message}
+        >
           <Input
             id="confirmPassword"
             type="password"
@@ -103,9 +120,9 @@ export function RegisterForm() {
         {busy ? t("creatingAccount") : t("signUp")}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         {t("haveAccount")}{" "}
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link href="/login" className="text-primary font-medium hover:underline">
           {t("signIn")}
         </Link>
       </p>
@@ -130,10 +147,16 @@ function Field({
     <div className="space-y-2">
       <Label htmlFor={id}>
         {label}
-        {optional && <span className="ml-1 text-xs text-muted-foreground">(optional)</span>}
+        {optional && (
+          <span className="text-muted-foreground ml-1 text-xs">(optional)</span>
+        )}
       </Label>
       {children}
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <p role="alert" className="text-destructive text-sm">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

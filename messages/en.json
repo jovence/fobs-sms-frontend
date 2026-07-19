@@ -63,7 +63,9 @@
     "invalidCredentials": "The email or password is incorrect.",
     "emailTaken": "An account with this email already exists.",
     "signedOut": "You have been signed out.",
-    "welcome": "Welcome, {name}"
+    "welcome": "Welcome, {name}",
+    "networkError": "Can't reach the server. Check your connection and try again.",
+    "genericError": "Something went wrong. Please try again."
   },
   "validation": {
     "required": "This field is required",

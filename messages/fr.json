@@ -63,7 +63,9 @@
     "invalidCredentials": "L'e-mail ou le mot de passe est incorrect.",
     "emailTaken": "Un compte avec cet e-mail existe déjà.",
     "signedOut": "Vous avez été déconnecté.",
-    "welcome": "Bienvenue, {name}"
+    "welcome": "Bienvenue, {name}",
+    "networkError": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
+    "genericError": "Une erreur s'est produite. Veuillez réessayer."
   },
   "validation": {
     "required": "Ce champ est obligatoire",

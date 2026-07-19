@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { ApiError } from "@/types";
+import { authErrorMessageKey } from "../error-message";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,11 +42,16 @@ export function LoginForm() {
       toast.success(t("welcome", { name: session.user.name.split(" ")[0] }));
       router.replace("/dashboard");
     } catch (err) {
-      const message =
-        err instanceof ApiError && err.code === "invalid_credentials"
-          ? t("invalidCredentials")
-          : t("invalidCredentials");
-      setFormError(message);
+      // Distinguish "wrong credentials" from connectivity/server failures so a
+      // user on a flaky connection isn't told their (correct) password is wrong.
+      const invalidCredentials =
+        err instanceof ApiError &&
+        (err.code === "invalid_credentials" ||
+          err.code === "unauthorized" ||
+          err.status === 401);
+      setFormError(
+        invalidCredentials ? t("invalidCredentials") : t(authErrorMessageKey(err)),
+      );
     }
   }
 
@@ -72,7 +78,7 @@ export function LoginForm() {
           {...register("email")}
         />
         {errors.email && (
-          <p id="email-error" className="text-sm text-destructive">
+          <p id="email-error" className="text-destructive text-sm">
             {errors.email.message}
           </p>
         )}
@@ -83,7 +89,7 @@ export function LoginForm() {
           <Label htmlFor="password">{t("password")}</Label>
           <Link
             href="/forgot-password"
-            className="text-sm font-medium text-primary hover:underline"
+            className="text-primary text-sm font-medium hover:underline"
           >
             {t("forgotPassword")}
           </Link>
@@ -101,14 +107,14 @@ export function LoginForm() {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute inset-y-0 right-0 grid w-10 place-items-center text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground absolute inset-y-0 right-0 grid w-10 place-items-center"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </button>
         </div>
         {errors.password && (
-          <p id="password-error" className="text-sm text-destructive">
+          <p id="password-error" className="text-destructive text-sm">
             {errors.password.message}
           </p>
         )}
@@ -118,7 +124,7 @@ export function LoginForm() {
         control={control}
         name="remember"
         render={({ field }) => (
-          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+          <label className="text-muted-foreground flex items-center gap-2 text-sm">
             <Checkbox
               checked={field.value}
               onCheckedChange={(v) => field.onChange(v === true)}
@@ -133,14 +139,14 @@ export function LoginForm() {
         {busy ? t("signingIn") : t("signIn")}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         {t("noAccount")}{" "}
-        <Link href="/register" className="font-medium text-primary hover:underline">
+        <Link href="/register" className="text-primary font-medium hover:underline">
           {t("signUp")}
         </Link>
       </p>
 
-      <p className="rounded-md bg-muted px-3 py-2 text-center text-xs text-muted-foreground">
+      <p className="bg-muted text-muted-foreground rounded-md px-3 py-2 text-center text-xs">
         Demo · <span className="font-mono">owner@fobs.cm</span> /{" "}
         <span className="font-mono">password</span>
       </p>
