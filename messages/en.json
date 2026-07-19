@@ -74,7 +74,8 @@
     "signedOut": "You have been signed out.",
     "welcome": "Welcome, {name}",
     "networkError": "Can't reach the server. Check your connection and try again.",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "optional": "(optional)"
   },
   "validation": {
     "required": "This field is required",

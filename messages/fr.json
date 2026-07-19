@@ -74,7 +74,8 @@
     "signedOut": "Vous avez été déconnecté.",
     "welcome": "Bienvenue, {name}",
     "networkError": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
-    "genericError": "Une erreur s'est produite. Veuillez réessayer."
+    "genericError": "Une erreur s'est produite. Veuillez réessayer.",
+    "optional": "(facultatif)"
   },
   "validation": {
     "required": "Ce champ est obligatoire",
