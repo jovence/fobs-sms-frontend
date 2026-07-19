@@ -110,7 +110,9 @@
     "noDataTitle": "Your dashboard is ready",
     "noDataBody": "Add students, teachers and classes to {school} to see live analytics here.",
     "loadErrorTitle": "We couldn't load your dashboard",
-    "loadErrorBody": "Something went wrong while loading your schools. Please check your connection and try again."
+    "loadErrorBody": "Something went wrong while loading your schools. Please check your connection and try again.",
+    "comingSoon": "Analytics coming soon",
+    "comingSoonBody": "Live analytics will appear here once the reporting service is connected."
   },
   "students": {
     "title": "Students",

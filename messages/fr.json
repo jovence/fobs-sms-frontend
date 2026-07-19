@@ -110,7 +110,9 @@
     "noDataTitle": "Votre tableau de bord est prêt",
     "noDataBody": "Ajoutez des élèves, enseignants et classes à {school} pour voir les analyses en temps réel.",
     "loadErrorTitle": "Impossible de charger votre tableau de bord",
-    "loadErrorBody": "Une erreur s'est produite lors du chargement de vos établissements. Vérifiez votre connexion et réessayez."
+    "loadErrorBody": "Une erreur s'est produite lors du chargement de vos établissements. Vérifiez votre connexion et réessayez.",
+    "comingSoon": "Analyses bientôt disponibles",
+    "comingSoonBody": "Les analyses en temps réel s'afficheront ici une fois le service de rapports connecté."
   },
   "students": {
     "title": "Élèves",
