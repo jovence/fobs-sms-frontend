@@ -18,13 +18,10 @@ import { Reveal, AnimatedNumber } from "@/components/common/motion";
 import { Shimmer } from "@/components/common/skeletons";
 import { EmptyState, ErrorState } from "@/components/common/states";
 import { cn } from "@/lib/utils";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { useClassOptions, useSubjectOptions } from "@/features/academics/hooks";
 import { useRoster, useSaveSession } from "../hooks";
-import {
-  attendanceRate,
-  type AttendanceRecord,
-  type AttendanceStatus,
-} from "../types";
+import { attendanceRate, type AttendanceRecord, type AttendanceStatus } from "../types";
 import { RosterRow, type RosterEntry } from "./roster-row";
 
 const DEFAULT_HOURS = 4;
@@ -42,6 +39,7 @@ export function AttendanceRecord() {
   const [subjectId, setSubjectId] = useState("");
   const [date, setDate] = useState(today);
   const [entries, setEntries] = useState<Record<string, RosterEntry>>({});
+  const [isDirty, setIsDirty] = useState(false);
 
   // Default to the first real class/subject once they load (empty for a fresh school).
   useEffect(() => {
@@ -53,6 +51,7 @@ export function AttendanceRecord() {
 
   const { data: roster, isLoading, isError, refetch } = useRoster(classId);
   const save = useSaveSession();
+  useUnsavedChangesWarning(isDirty);
 
   // Reset the roster marks whenever the loaded class changes.
   useEffect(() => {
@@ -76,10 +75,17 @@ export function AttendanceRecord() {
       else absent += 1;
     }
     const total = list.length;
-    return { present, late, absent, total, rate: attendanceRate({ present, late, absent, total }) };
+    return {
+      present,
+      late,
+      absent,
+      total,
+      rate: attendanceRate({ present, late, absent, total }),
+    };
   }, [roster, entries]);
 
   function setStatus(studentId: string, status: AttendanceStatus) {
+    setIsDirty(true);
     setEntries((prev) => {
       const current = prev[studentId] ?? { status: "Present", hours: DEFAULT_HOURS };
       return {
@@ -93,6 +99,7 @@ export function AttendanceRecord() {
   }
 
   function setHours(studentId: string, hours: number) {
+    setIsDirty(true);
     setEntries((prev) => ({
       ...prev,
       [studentId]: {
@@ -111,6 +118,7 @@ export function AttendanceRecord() {
     try {
       await save.mutateAsync({ date, classId, subjectId, records });
       toast.success(t("saved"));
+      setIsDirty(false);
     } catch {
       toast.error(t("error"));
     }
@@ -120,10 +128,16 @@ export function AttendanceRecord() {
     <div className="space-y-4">
       {/* Selectors */}
       <Reveal>
-        <div className="grid gap-4 rounded-xl border bg-card p-4 shadow-[var(--shadow-sm)] sm:grid-cols-3">
+        <div className="bg-card grid gap-4 rounded-xl border p-4 shadow-[var(--shadow-sm)] sm:grid-cols-3">
           <div className="space-y-2">
             <Label htmlFor="att-class">{t("class")}</Label>
-            <Select value={classId} onValueChange={setClassId}>
+            <Select
+              value={classId}
+              onValueChange={(v) => {
+                setIsDirty(false);
+                setClassId(v);
+              }}
+            >
               <SelectTrigger id="att-class" className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -140,7 +154,7 @@ export function AttendanceRecord() {
           <div className="space-y-2">
             <Label htmlFor="att-date">{t("date")}</Label>
             <div className="relative">
-              <CalendarDays className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <CalendarDays className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
               <Input
                 id="att-date"
                 type="date"
@@ -154,7 +168,13 @@ export function AttendanceRecord() {
 
           <div className="space-y-2">
             <Label htmlFor="att-subject">{t("subject")}</Label>
-            <Select value={subjectId} onValueChange={setSubjectId}>
+            <Select
+              value={subjectId}
+              onValueChange={(v) => {
+                setIsDirty(false);
+                setSubjectId(v);
+              }}
+            >
               <SelectTrigger id="att-subject" className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -171,11 +191,11 @@ export function AttendanceRecord() {
       </Reveal>
 
       {/* Roster */}
-      <div className="overflow-hidden rounded-xl border bg-card shadow-[var(--shadow-sm)]">
+      <div className="bg-card overflow-hidden rounded-xl border shadow-[var(--shadow-sm)]">
         <div className="flex items-center justify-between border-b px-4 py-3">
           <h2 className="font-heading text-sm font-semibold">{t("rosterTitle")}</h2>
           {roster && !isLoading && (
-            <span className="text-xs text-muted-foreground tabular-nums">
+            <span className="text-muted-foreground text-xs tabular-nums">
               {t("studentCount", { count: roster.length })}
             </span>
           )}
@@ -228,7 +248,7 @@ export function AttendanceRecord() {
 
       {/* Sticky summary bar */}
       <div className="sticky bottom-4 z-20">
-        <div className="flex flex-col gap-3 rounded-xl border bg-card/95 p-3 shadow-[var(--shadow-md)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+        <div className="bg-card/95 flex flex-col gap-3 rounded-xl border p-3 shadow-[var(--shadow-md)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <SummaryStat
               label={t("summary.present")}
@@ -242,7 +262,7 @@ export function AttendanceRecord() {
               tone="destructive"
             />
             <div className="flex items-center gap-2 border-l pl-5">
-              <span className="text-xs text-muted-foreground">{t("summary.rate")}</span>
+              <span className="text-muted-foreground text-xs">{t("summary.rate")}</span>
               <AnimatedNumber
                 value={summary.rate}
                 format={(n) => `${Math.round(n)}%`}
@@ -287,7 +307,7 @@ function SummaryStat({
           tone === "destructive" && "bg-destructive",
         )}
       />
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground text-xs">{label}</span>
       <AnimatedNumber
         value={value}
         className="font-heading text-lg font-bold tabular-nums"

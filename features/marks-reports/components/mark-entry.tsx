@@ -26,6 +26,7 @@ import { useClassOptions, useSubjectOptions } from "@/features/academics/hooks";
 import { useExamOptions } from "@/features/exams/hooks";
 import { MARK_MAX, PASS_MARK, type EntrySelection } from "../types";
 import { validateMark } from "../schemas";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 
 export function MarkEntry() {
   const t = useTranslations("reports");
@@ -39,6 +40,7 @@ export function MarkEntry() {
   const [subjectId, setSubjectId] = useState("");
   const [examId, setExamId] = useState("");
   const [marks, setMarks] = useState<Record<string, string>>({});
+  const [isDirty, setIsDirty] = useState(false);
 
   // Default the class and subject selectors to the first available option so the
   // teacher lands on a ready-to-use screen (instead of opening three dropdowns).
@@ -60,6 +62,7 @@ export function MarkEntry() {
 
   const { data: roster, isLoading, isError, refetch } = useEntryRoster(selection);
   const saveMarks = useSaveMarks();
+  useUnsavedChangesWarning(isDirty);
 
   // Seed the local mark inputs ONCE per selection. A post-save refetch returns the same
   // selection, so we must NOT reseed then — that would wipe marks the teacher typed after
@@ -115,6 +118,7 @@ export function MarkEntry() {
     try {
       await saveMarks.mutateAsync({ ...selection, marks: payload });
       toast.success(t("toasts.marksSaved", { count: payload.length }));
+      setIsDirty(false);
     } catch {
       toast.error(t("toasts.saveError"));
     }
@@ -134,7 +138,13 @@ export function MarkEntry() {
           <CardContent className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="me-class">{te("class")}</Label>
-              <Select value={effectiveClassId || undefined} onValueChange={setClassId}>
+              <Select
+                value={effectiveClassId || undefined}
+                onValueChange={(v) => {
+                  setIsDirty(false);
+                  setClassId(v);
+                }}
+              >
                 <SelectTrigger id="me-class" className="w-full">
                   <SelectValue placeholder={te("selectClass")} />
                 </SelectTrigger>
@@ -151,7 +161,10 @@ export function MarkEntry() {
               <Label htmlFor="me-subject">{te("subject")}</Label>
               <Select
                 value={effectiveSubjectId || undefined}
-                onValueChange={setSubjectId}
+                onValueChange={(v) => {
+                  setIsDirty(false);
+                  setSubjectId(v);
+                }}
               >
                 <SelectTrigger id="me-subject" className="w-full">
                   <SelectValue placeholder={te("selectSubject")} />
@@ -167,7 +180,13 @@ export function MarkEntry() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="me-exam">{te("exam")}</Label>
-              <Select value={examId || undefined} onValueChange={setExamId}>
+              <Select
+                value={examId || undefined}
+                onValueChange={(v) => {
+                  setIsDirty(false);
+                  setExamId(v);
+                }}
+              >
                 <SelectTrigger id="me-exam" className="w-full">
                   <SelectValue placeholder={te("selectExam")} />
                 </SelectTrigger>
@@ -284,12 +303,13 @@ export function MarkEntry() {
                             aria-label={te("markFor", {
                               name: student.fullName,
                             })}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              setIsDirty(true);
                               setMarks((prev) => ({
                                 ...prev,
                                 [student.id]: e.target.value,
-                              }))
-                            }
+                              }));
+                            }}
                             className={cn(
                               "text-right tabular-nums",
                               error && "border-destructive",
