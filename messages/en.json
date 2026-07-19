@@ -896,6 +896,7 @@
       "selectExam": "Select an exam",
       "sequenceLabel": "Sequence {n} · Term {term}",
       "outOf": "Marked out of {max}",
+      "gradingFor": "Entering marks for:",
       "markFor": "Mark for {name}",
       "rosterTitle": "Students",
       "save": "Save marks",

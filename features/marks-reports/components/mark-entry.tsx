@@ -52,6 +52,12 @@ export function MarkEntry() {
   const effectiveClassId = classId || classes[0]?.id || "";
   const effectiveSubjectId = subjectId || subjects[0]?.id || "";
 
+  // Names of the current selection — shown above the roster so a teacher whose
+  // class/subject were auto-selected can see exactly which class they're grading.
+  const selectedClass = classes.find((c) => c.id === effectiveClassId)?.name;
+  const selectedSubject = subjects.find((s) => s.id === effectiveSubjectId)?.name;
+  const selectedExam = exams.find((e) => e.id === examId)?.name;
+
   const selection: EntrySelection | null = useMemo(
     () =>
       effectiveClassId && effectiveSubjectId && examId
@@ -263,6 +269,13 @@ export function MarkEntry() {
                   {te("outOf", { max: MARK_MAX })}
                 </span>
               </CardTitle>
+              <p className="text-sm">
+                <span className="text-muted-foreground">{te("gradingFor")} </span>
+                <span className="text-foreground font-medium">
+                  {selectedClass ?? "—"} · {selectedSubject ?? "—"} ·{" "}
+                  {selectedExam ?? "—"}
+                </span>
+              </p>
             </CardHeader>
             <CardContent className="p-0">
               <Stagger className="divide-y">

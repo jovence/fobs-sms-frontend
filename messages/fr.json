@@ -896,6 +896,7 @@
       "selectExam": "Sélectionnez une évaluation",
       "sequenceLabel": "Séquence {n} · Trimestre {term}",
       "outOf": "Noté sur {max}",
+      "gradingFor": "Saisie des notes pour :",
       "markFor": "Note de {name}",
       "rosterTitle": "Élèves",
       "save": "Enregistrer les notes",
