@@ -1,31 +1,35 @@
 "use client";
 
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSchoolScope } from "@/lib/query-keys";
 import { marksService } from "./api/marks.service";
 import type { EntrySelection, ReportQuery, SaveMarksInput } from "./types";
 
 export const marksKeys = {
-  all: ["marks"] as const,
-  reports: (q: ReportQuery) => ["marks", "reports", q] as const,
-  roster: (s: EntrySelection) => ["marks", "roster", s] as const,
+  all: (school: string) => ["school", school, "marks"] as const,
+  reports: (school: string, q: ReportQuery) =>
+    ["school", school, "marks", "reports", q] as const,
+  roster: (school: string, s: EntrySelection) =>
+    ["school", school, "marks", "roster", s] as const,
 };
 
 export function useReportRows(query: ReportQuery) {
+  const school = useSchoolScope();
   return useQuery({
-    queryKey: marksKeys.reports(query),
+    queryKey: marksKeys.reports(school, query),
     queryFn: () => marksService.listReportRows(query),
-    placeholderData: keepPreviousData,
+    placeholderData: (prev, prevQuery) =>
+      prevQuery && prevQuery.queryKey[1] === school ? prev : undefined,
   });
 }
 
 export function useEntryRoster(selection: EntrySelection | null) {
+  const school = useSchoolScope();
   return useQuery({
-    queryKey: marksKeys.roster(selection ?? { classId: "", subjectId: "", examId: "" }),
+    queryKey: marksKeys.roster(
+      school,
+      selection ?? { classId: "", subjectId: "", examId: "" },
+    ),
     queryFn: () => marksService.listEntryRoster(selection as EntrySelection),
     enabled: !!selection,
   });
@@ -33,9 +37,10 @@ export function useEntryRoster(selection: EntrySelection | null) {
 
 export function useSaveMarks() {
   const qc = useQueryClient();
+  const school = useSchoolScope();
   return useMutation({
     mutationFn: (input: SaveMarksInput) => marksService.saveMarks(input),
-    onSuccess: () => qc.invalidateQueries({ queryKey: marksKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: marksKeys.all(school) }),
     // Shows its own contextual save-error toast; opt out of the global one.
     meta: { suppressErrorToast: true },
   });
