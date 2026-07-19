@@ -60,6 +60,9 @@ export function useLogin() {
       qc.clear(); // drop any previous account's cached data (schools, lists…)
       setSession(session);
     },
+    // The form shows its own translated inline error; opt out of the global toast
+    // so a failure isn't also surfaced as a second, untranslated toast.
+    meta: { suppressErrorToast: true },
   });
 }
 
@@ -72,6 +75,8 @@ export function useRegister() {
       qc.clear();
       setSession(session);
     },
+    // The form shows its own translated inline error; opt out of the global toast.
+    meta: { suppressErrorToast: true },
   });
 }
 

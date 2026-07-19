@@ -17,7 +17,9 @@ export function makeQueryClient() {
             ? error.message
             : "Something went wrong. Please try again.";
 
-        toast.error(message);
+        // Error toasts do not auto-dismiss (the Toaster shows a close button), so a
+        // slow reader isn't left with a failed write they never saw.
+        toast.error(message, { duration: Infinity });
       },
     }),
     defaultOptions: {

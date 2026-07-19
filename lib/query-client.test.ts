@@ -21,7 +21,10 @@ describe("makeQueryClient global mutation error handling", () => {
 
     await observer.mutate().catch(() => {});
 
-    expect(toast.error).toHaveBeenCalledWith("Approve failed");
+    expect(toast.error).toHaveBeenCalledWith(
+      "Approve failed",
+      expect.objectContaining({ duration: Infinity }),
+    );
   });
 
   it("stays silent when the mutation opts out via meta.suppressErrorToast", async () => {
@@ -44,6 +47,9 @@ describe("makeQueryClient global mutation error handling", () => {
 
     await observer.mutate().catch(() => {});
 
-    expect(toast.error).toHaveBeenCalledWith("Something went wrong. Please try again.");
+    expect(toast.error).toHaveBeenCalledWith(
+      "Something went wrong. Please try again.",
+      expect.objectContaining({ duration: Infinity }),
+    );
   });
 });
