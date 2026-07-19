@@ -2,7 +2,14 @@
 
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { CalendarCheck, GraduationCap, LineChart, School as SchoolIcon, Trophy, Users } from "lucide-react";
+import {
+  CalendarCheck,
+  GraduationCap,
+  LineChart,
+  School as SchoolIcon,
+  Trophy,
+  Users,
+} from "lucide-react";
 import { useActiveSchool, useCurrentUser } from "@/features/auth/hooks";
 import { useSchools } from "@/features/schools/hooks";
 import { StatCard } from "@/features/dashboard/components/stat-card";
@@ -12,7 +19,7 @@ import { ActivityFeed } from "@/features/dashboard/components/activity-feed";
 import { UpcomingClasses } from "@/features/dashboard/components/upcoming-classes";
 import { attendanceBreakdown, sparks } from "@/features/dashboard/mock-data";
 import { Reveal, Stagger, StaggerItem } from "@/components/common/motion";
-import { EmptyState } from "@/components/common/states";
+import { EmptyState, ErrorState } from "@/components/common/states";
 import { Shimmer } from "@/components/common/skeletons";
 import { formatPercent } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
@@ -21,21 +28,47 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const EnrollmentChart = dynamic(
-  () => import("@/features/dashboard/components/enrollment-chart").then((m) => m.EnrollmentChart),
+  () =>
+    import("@/features/dashboard/components/enrollment-chart").then(
+      (m) => m.EnrollmentChart,
+    ),
   { ssr: false, loading: () => <Shimmer className="h-64 w-full" /> },
 );
 
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
+  const tCommon = useTranslations("common");
   const user = useCurrentUser();
-  const { data: schools, isLoading } = useSchools();
+  const { data: schools, isLoading, isError, refetch } = useSchools();
   const school = useActiveSchool();
   const deltaLabel = t("vsLastTerm");
 
   const firstName = user?.name.split(" ")[0] ?? "";
 
-  // First run: the account has no schools yet.
-  if (!isLoading && (schools?.length ?? 0) === 0) {
+  // A failed fetch is an error state with a retry — never the "create your first
+  // school" onboarding screen, which would falsely imply the account is empty.
+  if (!isLoading && isError) {
+    return (
+      <div className="space-y-6">
+        <h1 className="font-heading text-2xl font-bold tracking-tight">
+          {t("greeting", { name: firstName })}
+        </h1>
+        <Card>
+          <CardContent className="py-4">
+            <ErrorState
+              title={t("loadErrorTitle")}
+              description={t("loadErrorBody")}
+              retryLabel={tCommon("retry")}
+              onRetry={() => refetch()}
+            />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // First run: the account genuinely has no schools yet (loaded, not an error).
+  if (!isLoading && !isError && (schools?.length ?? 0) === 0) {
     return (
       <div className="space-y-6">
         <h1 className="font-heading text-2xl font-bold tracking-tight">
@@ -69,7 +102,7 @@ export default function DashboardPage() {
           <h1 className="font-heading text-2xl font-bold tracking-tight">
             {t("greeting", { name: firstName })}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {t("subtitle", { school: school?.name ?? "—" })}
           </p>
         </div>
@@ -87,16 +120,50 @@ export default function DashboardPage() {
       {/* KPIs — real per-school counts; deltas/sparklines only when there's history to show. */}
       <Stagger className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StaggerItem>
-          <StatCard label={t("students")} value={school?.studentCount ?? 0} icon={Users} delta={hasData ? 4.2 : undefined} spark={hasData ? sparks.students : undefined} accent="primary" deltaLabel={deltaLabel} />
+          <StatCard
+            label={t("students")}
+            value={school?.studentCount ?? 0}
+            icon={Users}
+            delta={hasData ? 4.2 : undefined}
+            spark={hasData ? sparks.students : undefined}
+            accent="primary"
+            deltaLabel={deltaLabel}
+          />
         </StaggerItem>
         <StaggerItem>
-          <StatCard label={t("teachers")} value={school?.teacherCount ?? 0} icon={GraduationCap} delta={hasData ? 1.1 : undefined} spark={hasData ? sparks.teachers : undefined} accent="info" deltaLabel={deltaLabel} />
+          <StatCard
+            label={t("teachers")}
+            value={school?.teacherCount ?? 0}
+            icon={GraduationCap}
+            delta={hasData ? 1.1 : undefined}
+            spark={hasData ? sparks.teachers : undefined}
+            accent="info"
+            deltaLabel={deltaLabel}
+          />
         </StaggerItem>
         <StaggerItem>
-          <StatCard label={t("attendanceRate")} value={hasData ? 93.4 : 0} icon={CalendarCheck} delta={hasData ? 0.8 : undefined} spark={hasData ? sparks.attendance : undefined} accent="success" format={(n) => formatPercent(n)} deltaLabel={deltaLabel} />
+          <StatCard
+            label={t("attendanceRate")}
+            value={hasData ? 93.4 : 0}
+            icon={CalendarCheck}
+            delta={hasData ? 0.8 : undefined}
+            spark={hasData ? sparks.attendance : undefined}
+            accent="success"
+            format={(n) => formatPercent(n)}
+            deltaLabel={deltaLabel}
+          />
         </StaggerItem>
         <StaggerItem>
-          <StatCard label={t("passRate")} value={hasData ? 78.2 : 0} icon={Trophy} delta={hasData ? -1.4 : undefined} spark={hasData ? sparks.pass : undefined} accent="warning" format={(n) => formatPercent(n)} deltaLabel={deltaLabel} />
+          <StatCard
+            label={t("passRate")}
+            value={hasData ? 78.2 : 0}
+            icon={Trophy}
+            delta={hasData ? -1.4 : undefined}
+            spark={hasData ? sparks.pass : undefined}
+            accent="warning"
+            format={(n) => formatPercent(n)}
+            deltaLabel={deltaLabel}
+          />
         </StaggerItem>
       </Stagger>
 
@@ -107,7 +174,7 @@ export default function DashboardPage() {
               <Card className="h-full">
                 <CardHeader>
                   <CardTitle className="text-base">{t("enrollmentTrend")}</CardTitle>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {t("enrollmentSubtitle", { year: school?.academicYear ?? "" })}
                   </p>
                 </CardHeader>

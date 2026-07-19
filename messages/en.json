@@ -106,7 +106,9 @@
     "setupBody": "You don't have any schools yet. Create one to start managing students, teachers and classes.",
     "createSchool": "Create a school",
     "noDataTitle": "Your dashboard is ready",
-    "noDataBody": "Add students, teachers and classes to {school} to see live analytics here."
+    "noDataBody": "Add students, teachers and classes to {school} to see live analytics here.",
+    "loadErrorTitle": "We couldn't load your dashboard",
+    "loadErrorBody": "Something went wrong while loading your schools. Please check your connection and try again."
   },
   "students": {
     "title": "Students",

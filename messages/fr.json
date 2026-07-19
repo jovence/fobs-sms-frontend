@@ -106,7 +106,9 @@
     "setupBody": "Vous n'avez encore aucun établissement. Créez-en un pour gérer élèves, enseignants et classes.",
     "createSchool": "Créer un établissement",
     "noDataTitle": "Votre tableau de bord est prêt",
-    "noDataBody": "Ajoutez des élèves, enseignants et classes à {school} pour voir les analyses en temps réel."
+    "noDataBody": "Ajoutez des élèves, enseignants et classes à {school} pour voir les analyses en temps réel.",
+    "loadErrorTitle": "Impossible de charger votre tableau de bord",
+    "loadErrorBody": "Une erreur s'est produite lors du chargement de vos établissements. Vérifiez votre connexion et réessayez."
   },
   "students": {
     "title": "Élèves",
