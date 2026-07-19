@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -123,63 +123,77 @@ export function StudentFormSheet({
         >
           <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
             <Field id="fullName" label={t("fullName")} error={errors.fullName?.message}>
-              <Input id="fullName" autoComplete="off" aria-invalid={!!errors.fullName} {...register("fullName")} />
+              {(aria) => <Input autoComplete="off" {...aria} {...register("fullName")} />}
             </Field>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field id="matricule" label={t("matricule")} optional>
+              <Field id="matricule" label={t("matricule")} optionalLabel={t("optional")}>
                 <Input id="matricule" autoComplete="off" {...register("matricule")} />
               </Field>
               <Field id="gender" label={t("gender")} error={errors.gender?.message}>
-                <Controller
-                  control={control}
-                  name="gender"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="gender" className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Male">{t("male")}</SelectItem>
-                        <SelectItem value="Female">{t("female")}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
+                {(aria) => (
+                  <Controller
+                    control={control}
+                    name="gender"
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger {...aria} className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Male">{t("male")}</SelectItem>
+                          <SelectItem value="Female">{t("female")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                )}
               </Field>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field id="dateOfBirth" label={t("dob")} error={errors.dateOfBirth?.message}>
-                <Input id="dateOfBirth" type="date" aria-invalid={!!errors.dateOfBirth} {...register("dateOfBirth")} />
+              <Field
+                id="dateOfBirth"
+                label={t("dob")}
+                error={errors.dateOfBirth?.message}
+              >
+                {(aria) => <Input type="date" {...aria} {...register("dateOfBirth")} />}
               </Field>
-              <Field id="placeOfBirth" label={t("placeOfBirth")} error={errors.placeOfBirth?.message}>
-                <Input id="placeOfBirth" autoComplete="off" aria-invalid={!!errors.placeOfBirth} {...register("placeOfBirth")} />
+              <Field
+                id="placeOfBirth"
+                label={t("placeOfBirth")}
+                error={errors.placeOfBirth?.message}
+              >
+                {(aria) => (
+                  <Input autoComplete="off" {...aria} {...register("placeOfBirth")} />
+                )}
               </Field>
             </div>
 
             <Field id="classId" label={t("class")} error={errors.classId?.message}>
-              <Controller
-                control={control}
-                name="classId"
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger id="classId" className="w-full">
-                      <SelectValue placeholder={t("selectClass")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {classes.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+              {(aria) => (
+                <Controller
+                  control={control}
+                  name="classId"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger {...aria} className="w-full">
+                        <SelectValue placeholder={t("selectClass")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {classes.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              )}
             </Field>
 
-            <Field id="guardianName" label={t("guardian")} optional>
+            <Field id="guardianName" label={t("guardian")} optionalLabel={t("optional")}>
               <Input id="guardianName" autoComplete="off" {...register("guardianName")} />
             </Field>
 
@@ -231,35 +245,5 @@ export function StudentFormSheet({
         </form>
       </SheetContent>
     </Sheet>
-  );
-}
-
-function Field({
-  id,
-  label,
-  error,
-  optional,
-  children,
-}: {
-  id: string;
-  label: string;
-  error?: string;
-  optional?: boolean;
-  children: React.ReactNode;
-}) {
-  const t = useTranslations("students.form");
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>
-        {label}
-        {optional && (
-          <span className="ml-1 text-xs font-normal text-muted-foreground">
-            {t("optional")}
-          </span>
-        )}
-      </Label>
-      {children}
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-    </div>
   );
 }

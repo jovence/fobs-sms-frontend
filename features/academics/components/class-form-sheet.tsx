@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -28,7 +29,12 @@ import { useCreateClass, useUpdateClass } from "../hooks";
 import { classSchema, type ClassValues } from "../schemas";
 import type { SchoolClass } from "../types";
 
-const EMPTY: ClassValues = { name: "", level: "lower", section: "english", classMaster: "" };
+const EMPTY: ClassValues = {
+  name: "",
+  level: "lower",
+  section: "english",
+  classMaster: "",
+};
 
 export function ClassFormSheet({
   open,
@@ -52,7 +58,10 @@ export function ClassFormSheet({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ClassValues>({ resolver: zodResolver(classSchema(tv)), defaultValues: EMPTY });
+  } = useForm<ClassValues>({
+    resolver: zodResolver(classSchema(tv)),
+    defaultValues: EMPTY,
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -90,15 +99,25 @@ export function ClassFormSheet({
       <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-md">
         <SheetHeader className="border-b">
           <SheetTitle>{isEdit ? t("editTitle") : t("createTitle")}</SheetTitle>
-          <SheetDescription>{isEdit ? t("editSubtitle") : t("createSubtitle")}</SheetDescription>
+          <SheetDescription>
+            {isEdit ? t("editSubtitle") : t("createSubtitle")}
+          </SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex min-h-0 flex-1 flex-col"
+          noValidate
+        >
           <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">{t("name")}</Label>
-              <Input id="name" placeholder={t("namePlaceholder")} aria-invalid={!!errors.name} {...register("name")} />
-              {errors.name && <p role="alert" className="text-sm text-destructive">{errors.name.message}</p>}
-            </div>
+            <Field id="name" label={t("name")} error={errors.name?.message}>
+              {(aria) => (
+                <Input
+                  placeholder={t("namePlaceholder")}
+                  {...aria}
+                  {...register("name")}
+                />
+              )}
+            </Field>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="level">{t("level")}</Label>
@@ -107,7 +126,9 @@ export function ClassFormSheet({
                   name="level"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="level" className="w-full"><SelectValue /></SelectTrigger>
+                      <SelectTrigger id="level" className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="lower">{t("levelLower")}</SelectItem>
                         <SelectItem value="upper">{t("levelUpper")}</SelectItem>
@@ -123,7 +144,9 @@ export function ClassFormSheet({
                   name="section"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="section" className="w-full"><SelectValue /></SelectTrigger>
+                      <SelectTrigger id="section" className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="english">{t("sectionEnglish")}</SelectItem>
                         <SelectItem value="french">{t("sectionFrench")}</SelectItem>
@@ -136,13 +159,17 @@ export function ClassFormSheet({
             <div className="space-y-2">
               <Label htmlFor="classMaster">
                 {t("master")}
-                <span className="ml-1 text-xs font-normal text-muted-foreground">{t("optional")}</span>
+                <span className="text-muted-foreground ml-1 text-xs font-normal">
+                  {t("optional")}
+                </span>
               </Label>
               <Input id="classMaster" {...register("classMaster")} />
             </div>
           </div>
           <SheetFooter className="flex-row justify-end gap-2 border-t">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("cancel")}</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              {t("cancel")}
+            </Button>
             <Button type="submit" disabled={busy}>
               {busy && <Loader2 className="size-4 animate-spin" />}
               {isEdit ? t("save") : t("create")}

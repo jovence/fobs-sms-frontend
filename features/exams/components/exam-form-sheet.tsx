@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -113,33 +114,36 @@ export function ExamFormSheet({
         >
           <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
             <Field id="name" label={t("name")} error={errors.name?.message}>
-              <Input
-                id="name"
-                autoComplete="off"
-                placeholder={t("namePlaceholder")}
-                aria-invalid={!!errors.name}
-                {...register("name")}
-              />
+              {(aria) => (
+                <Input
+                  autoComplete="off"
+                  placeholder={t("namePlaceholder")}
+                  {...aria}
+                  {...register("name")}
+                />
+              )}
             </Field>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Field id="term" label={t("term")} error={errors.term?.message}>
-                <Controller
-                  control={control}
-                  name="term"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="term" className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="First">{t("termFirst")}</SelectItem>
-                        <SelectItem value="Second">{t("termSecond")}</SelectItem>
-                        <SelectItem value="Third">{t("termThird")}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
+                {(aria) => (
+                  <Controller
+                    control={control}
+                    name="term"
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger {...aria} className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="First">{t("termFirst")}</SelectItem>
+                          <SelectItem value="Second">{t("termSecond")}</SelectItem>
+                          <SelectItem value="Third">{t("termThird")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                )}
               </Field>
               <Field
                 id="sequence"
@@ -147,15 +151,16 @@ export function ExamFormSheet({
                 error={errors.sequence?.message}
                 hint={t("sequenceHint")}
               >
-                <Input
-                  id="sequence"
-                  type="number"
-                  min={1}
-                  max={6}
-                  inputMode="numeric"
-                  aria-invalid={!!errors.sequence}
-                  {...register("sequence", { valueAsNumber: true })}
-                />
+                {(aria) => (
+                  <Input
+                    type="number"
+                    min={1}
+                    max={6}
+                    inputMode="numeric"
+                    {...aria}
+                    {...register("sequence", { valueAsNumber: true })}
+                  />
+                )}
               </Field>
             </div>
 
@@ -203,32 +208,6 @@ export function ExamFormSheet({
   );
 }
 
-function Field({
-  id,
-  label,
-  error,
-  hint,
-  children,
-}: {
-  id: string;
-  label: string;
-  error?: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      {children}
-      {error ? (
-        <p role="alert" className="text-sm text-destructive">{error}</p>
-      ) : hint ? (
-        <p className="text-xs text-muted-foreground">{hint}</p>
-      ) : null}
-    </div>
-  );
-}
-
 function ToggleRow({
   id,
   label,
@@ -243,12 +222,12 @@ function ToggleRow({
   onCheckedChange: (checked: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-lg border bg-card px-4 py-3 shadow-[var(--shadow-sm)]">
+    <div className="bg-card flex items-center justify-between gap-4 rounded-lg border px-4 py-3 shadow-[var(--shadow-sm)]">
       <div className="space-y-0.5">
         <Label htmlFor={id} className="cursor-pointer">
           {label}
         </Label>
-        <p className="text-xs text-muted-foreground">{description}</p>
+        <p className="text-muted-foreground text-xs">{description}</p>
       </div>
       <Switch id={id} checked={checked} onCheckedChange={onCheckedChange} />
     </div>

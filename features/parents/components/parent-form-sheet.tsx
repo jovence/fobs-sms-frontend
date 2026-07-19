@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateParent, useUpdateParent } from "../hooks";
 import { parentSchema, type ParentValues } from "../schemas";
@@ -105,51 +105,39 @@ export function ParentFormSheet({
         >
           <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
             <Field id="name" label={t("name")} error={errors.name?.message}>
-              <Input
-                id="name"
-                autoComplete="off"
-                aria-invalid={!!errors.name}
-                {...register("name")}
-              />
+              {(aria) => <Input autoComplete="off" {...aria} {...register("name")} />}
             </Field>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Field id="email" label={t("email")} error={errors.email?.message}>
-                <Input
-                  id="email"
-                  type="email"
-                  autoComplete="off"
-                  aria-invalid={!!errors.email}
-                  {...register("email")}
-                />
+                {(aria) => (
+                  <Input
+                    type="email"
+                    autoComplete="off"
+                    {...aria}
+                    {...register("email")}
+                  />
+                )}
               </Field>
               <Field id="phone" label={t("phone")} error={errors.phone?.message}>
-                <Input
-                  id="phone"
-                  type="tel"
-                  autoComplete="off"
-                  aria-invalid={!!errors.phone}
-                  {...register("phone")}
-                />
+                {(aria) => (
+                  <Input type="tel" autoComplete="off" {...aria} {...register("phone")} />
+                )}
               </Field>
             </div>
 
-            <Field id="occupation" label={t("occupation")} error={errors.occupation?.message}>
-              <Input
-                id="occupation"
-                autoComplete="off"
-                aria-invalid={!!errors.occupation}
-                {...register("occupation")}
-              />
+            <Field
+              id="occupation"
+              label={t("occupation")}
+              error={errors.occupation?.message}
+            >
+              {(aria) => (
+                <Input autoComplete="off" {...aria} {...register("occupation")} />
+              )}
             </Field>
 
             <Field id="address" label={t("address")} error={errors.address?.message}>
-              <Textarea
-                id="address"
-                rows={3}
-                aria-invalid={!!errors.address}
-                {...register("address")}
-              />
+              {(aria) => <Textarea rows={3} {...aria} {...register("address")} />}
             </Field>
           </div>
 
@@ -165,25 +153,5 @@ export function ParentFormSheet({
         </form>
       </SheetContent>
     </Sheet>
-  );
-}
-
-function Field({
-  id,
-  label,
-  error,
-  children,
-}: {
-  id: string;
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      {children}
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-    </div>
   );
 }
