@@ -9,6 +9,8 @@ export const examKeys = {
   all: (school: string) => ["school", school, "exams"] as const,
   list: (school: string, q: ExamQuery) => ["school", school, "exams", "list", q] as const,
   options: (school: string) => ["school", school, "exams", "options"] as const,
+  dashboard: (school: string, id: string) =>
+    ["school", school, "exams", "dashboard", id] as const,
 };
 
 export function useExams(query: ExamQuery) {
@@ -27,6 +29,15 @@ export function useExamOptions() {
   return useQuery({
     queryKey: examKeys.options(school),
     queryFn: () => examsService.options(),
+  });
+}
+
+/** Exam detail + analytics for the dashboard page (school-scoped). */
+export function useExamDashboard(id: string) {
+  const school = useSchoolScope();
+  return useQuery({
+    queryKey: examKeys.dashboard(school, id),
+    queryFn: () => examsService.getDashboard(id),
   });
 }
 
@@ -58,6 +69,26 @@ export function useDeleteExam() {
   const school = useSchoolScope();
   return useMutation({
     mutationFn: (id: string) => examsService.remove(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: examKeys.all(school) }),
+  });
+}
+
+/** Publish / unpublish an exam. Global toast surfaces any failure; caller toasts on success. */
+export function useTogglePublish() {
+  const qc = useQueryClient();
+  const school = useSchoolScope();
+  return useMutation({
+    mutationFn: (id: string) => examsService.togglePublish(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: examKeys.all(school) }),
+  });
+}
+
+/** Open / close mark entry for an exam. Global toast surfaces any failure; caller toasts on success. */
+export function useToggleMarkFill() {
+  const qc = useQueryClient();
+  const school = useSchoolScope();
+  return useMutation({
+    mutationFn: (id: string) => examsService.toggleMarkFill(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: examKeys.all(school) }),
   });
 }

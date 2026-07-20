@@ -25,15 +25,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCreateClass, useUpdateClass } from "../hooks";
+import { useCreateClass, useTeacherOptions, useUpdateClass } from "../hooks";
 import { classSchema, type ClassValues } from "../schemas";
-import type { SchoolClass } from "../types";
+import type { SchoolClass, SchoolClassInput } from "../types";
+
+/** Sentinel Select value for "no class master" (Radix forbids an empty-string item value). */
+const NONE = "none";
 
 const EMPTY: ClassValues = {
   name: "",
   level: "lower",
   section: "english",
-  classMaster: "",
+  classMasterId: "",
 };
 
 export function ClassFormSheet({
@@ -50,6 +53,7 @@ export function ClassFormSheet({
   const tt = useTranslations("academics.toasts");
   const create = useCreateClass();
   const update = useUpdateClass();
+  const teachers = useTeacherOptions();
   const isEdit = !!schoolClass;
 
   const {
@@ -71,19 +75,27 @@ export function ClassFormSheet({
             name: schoolClass.name,
             level: schoolClass.level,
             section: schoolClass.section,
-            classMaster: schoolClass.classMaster ?? "",
+            classMasterId: schoolClass.classMasterId ?? "",
           }
         : EMPTY,
     );
   }, [open, schoolClass, reset]);
 
   async function onSubmit(values: ClassValues) {
+    const master = teachers.data?.find((o) => o.id === values.classMasterId);
+    const input: SchoolClassInput = {
+      name: values.name,
+      level: values.level,
+      section: values.section,
+      classMasterId: values.classMasterId || null,
+      classMasterName: master?.name ?? null,
+    };
     try {
       if (isEdit && schoolClass) {
-        await update.mutateAsync({ id: schoolClass.id, input: values });
+        await update.mutateAsync({ id: schoolClass.id, input });
         toast.success(tt("classUpdated"));
       } else {
-        await create.mutateAsync(values);
+        await create.mutateAsync(input);
         toast.success(tt("classCreated"));
       }
       onOpenChange(false);
@@ -163,7 +175,29 @@ export function ClassFormSheet({
                   {t("optional")}
                 </span>
               </Label>
-              <Input id="classMaster" {...register("classMaster")} />
+              <Controller
+                control={control}
+                name="classMasterId"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? field.value : NONE}
+                    onValueChange={(v) => field.onChange(v === NONE ? "" : v)}
+                    disabled={teachers.isLoading}
+                  >
+                    <SelectTrigger id="classMaster" className="w-full">
+                      <SelectValue placeholder={t("masterPlaceholder")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NONE}>{t("masterNone")}</SelectItem>
+                      {teachers.data?.map((teacher) => (
+                        <SelectItem key={teacher.id} value={teacher.id}>
+                          {teacher.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
           <SheetFooter className="flex-row justify-end gap-2 border-t">

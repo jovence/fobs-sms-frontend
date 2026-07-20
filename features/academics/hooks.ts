@@ -2,6 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSchoolScope } from "@/lib/query-keys";
+import { teachersService } from "@/features/teachers/api/teachers.service";
+import type { TeacherOption } from "@/features/teachers/types";
 import { classesService, subjectsService } from "./api/academics.service";
 import type { ClassQuery, SchoolClassInput, SubjectInput, SubjectQuery } from "./types";
 
@@ -9,12 +11,31 @@ const classKeys = {
   all: (school: string) => ["school", school, "classes"] as const,
   list: (school: string, q: ClassQuery) => ["school", school, "classes", q] as const,
   options: (school: string) => ["school", school, "classes", "options"] as const,
+  stats: (school: string) => ["school", school, "classes", "stats"] as const,
 };
 const subjectKeys = {
   all: (school: string) => ["school", school, "subjects"] as const,
   list: (school: string, q: SubjectQuery) => ["school", school, "subjects", q] as const,
   options: (school: string) => ["school", school, "subjects", "options"] as const,
+  assignments: (school: string, id: string) =>
+    ["school", school, "subjects", "assignments", id] as const,
 };
+
+/**
+ * {id,name} teacher list for the class-master / subject class-teacher pickers, scoped to the
+ * active school. Reuses the teachers list service (mock + live) rather than a dedicated options
+ * endpoint so no cross-feature service change is required.
+ */
+export function useTeacherOptions() {
+  const school = useSchoolScope();
+  return useQuery({
+    queryKey: ["school", school, "teachers", "options"] as const,
+    queryFn: async (): Promise<TeacherOption[]> => {
+      const res = await teachersService.list({ page: 1, perPage: 200 });
+      return res.items.map((teacher) => ({ id: teacher.id, name: teacher.name }));
+    },
+  });
+}
 
 export function useClasses(query: ClassQuery) {
   const school = useSchoolScope();
@@ -32,6 +53,15 @@ export function useClassOptions() {
   return useQuery({
     queryKey: classKeys.options(school),
     queryFn: () => classesService.options(),
+  });
+}
+
+/** Aggregate figures for the classes stat cards (scoped to the active school). */
+export function useClassStats() {
+  const school = useSchoolScope();
+  return useQuery({
+    queryKey: classKeys.stats(school),
+    queryFn: () => classesService.stats(),
   });
 }
 
@@ -89,6 +119,16 @@ export function useSubjectOptions() {
   return useQuery({
     queryKey: subjectKeys.options(school),
     queryFn: () => subjectsService.options(),
+  });
+}
+
+/** Assigned class rows for a subject, used to prefill the edit form (skipped for create). */
+export function useSubjectAssignments(id: string | undefined) {
+  const school = useSchoolScope();
+  return useQuery({
+    queryKey: subjectKeys.assignments(school, id ?? ""),
+    queryFn: () => subjectsService.getAssignments(id as string),
+    enabled: !!id,
   });
 }
 export function useCreateSubject() {

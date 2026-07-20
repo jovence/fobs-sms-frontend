@@ -3,8 +3,8 @@ import { mockStore, withLatency } from "@/lib/mock";
 import { currentAcademicYear } from "@/lib/format";
 import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
-import type { Exam, ExamInput, ExamQuery } from "../types";
-import { seedExams } from "../mock-data";
+import type { Exam, ExamDashboard, ExamInput, ExamQuery } from "../types";
+import { buildExamDashboard, seedExams } from "../mock-data";
 import { httpExamsService } from "./exams.http";
 
 export interface ExamsService {
@@ -16,6 +16,12 @@ export interface ExamsService {
   update(id: string, input: ExamInput): Promise<Exam>;
   remove(id: string): Promise<void>;
   bulkRemove(ids: string[]): Promise<void>;
+  /** Exam detail + analytics for the dashboard page. */
+  getDashboard(id: string): Promise<ExamDashboard>;
+  /** Flip the publication status; returns the updated exam. */
+  togglePublish(id: string): Promise<Exam>;
+  /** Flip whether mark entry is open; returns the updated exam. */
+  toggleMarkFill(id: string): Promise<Exam>;
 }
 
 // ---- Mock implementation (persists to localStorage so edits survive reloads) ----
@@ -118,6 +124,38 @@ const mockExamsService: ExamsService = {
     const set = new Set(ids);
     commit(db().filter((r) => !set.has(r.id)));
     return withLatency(undefined, 500);
+  },
+
+  async getDashboard(id) {
+    const found = db().find((r) => r.id === id);
+    if (!found) throw new Error("Exam not found");
+    return withLatency(buildExamDashboard(found), 500);
+  },
+
+  async togglePublish(id) {
+    let updated: Exam | undefined;
+    commit(
+      db().map((r) => {
+        if (r.id !== id) return r;
+        updated = { ...r, published: !r.published };
+        return updated;
+      }),
+    );
+    if (!updated) throw new Error("Exam not found");
+    return withLatency(updated, 350);
+  },
+
+  async toggleMarkFill(id) {
+    let updated: Exam | undefined;
+    commit(
+      db().map((r) => {
+        if (r.id !== id) return r;
+        updated = { ...r, markEntryAllowed: !r.markEntryAllowed };
+        return updated;
+      }),
+    );
+    if (!updated) throw new Error("Exam not found");
+    return withLatency(updated, 350);
   },
 };
 

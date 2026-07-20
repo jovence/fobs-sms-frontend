@@ -1,6 +1,12 @@
 import { faker } from "@faker-js/faker";
 import { currentAcademicYear } from "@/lib/format";
-import type { SchoolClass, Subject } from "./types";
+import { seedTeachers } from "@/features/teachers/mock-data";
+import type {
+  SchoolClass,
+  Subject,
+  SubjectClassAssignment,
+  SubjectLevel,
+} from "./types";
 
 const year = currentAcademicYear();
 
@@ -20,19 +26,24 @@ const CLASS_DEFS: Array<{ name: string; level: SchoolClass["level"]; section: Sc
 
 function generateClasses(): SchoolClass[] {
   faker.seed(777);
-  return CLASS_DEFS.map((def, i) => ({
-    id: `cls_${(i + 1).toString().padStart(2, "0")}`,
-    name: def.name,
-    level: def.level,
-    section: def.section,
-    academicYear: year,
-    classMaster: faker.datatype.boolean(0.75)
-      ? `${faker.person.lastName()}`
-      : null,
-    studentsCount: faker.number.int({ min: 22, max: 68 }),
-    subjectsCount: faker.number.int({ min: 6, max: 12 }),
-    createdAt: faker.date.recent({ days: 300 }).toISOString(),
-  }));
+  return CLASS_DEFS.map((def, i) => {
+    // Wire ~75% of classes to a real seed teacher so the demo picker prefills on edit.
+    const master = faker.datatype.boolean(0.75)
+      ? faker.helpers.arrayElement(seedTeachers)
+      : null;
+    return {
+      id: `cls_${(i + 1).toString().padStart(2, "0")}`,
+      name: def.name,
+      level: def.level,
+      section: def.section,
+      academicYear: year,
+      classMaster: master?.name ?? null,
+      classMasterId: master?.id ?? null,
+      studentsCount: faker.number.int({ min: 22, max: 68 }),
+      subjectsCount: faker.number.int({ min: 6, max: 12 }),
+      createdAt: faker.date.recent({ days: 300 }).toISOString(),
+    } satisfies SchoolClass;
+  });
 }
 
 const SUBJECT_DEFS: Array<{ name: string; code: string; series: Subject["series"] }> = [
@@ -54,17 +65,44 @@ const SUBJECT_DEFS: Array<{ name: string; code: string; series: Subject["series"
   { name: "Religious Studies", code: "REL", series: "art" },
 ];
 
-function generateSubjects(): Subject[] {
+/** Mirror the backend: single unique level → that level; mixed/none → "both". */
+export function deriveSubjectLevel(
+  assignedClassIds: string[],
+  classes: SchoolClass[],
+): SubjectLevel {
+  const levels = new Set(
+    assignedClassIds
+      .map((id) => classes.find((c) => c.id === id)?.level)
+      .filter((l): l is SchoolClass["level"] => !!l),
+  );
+  if (levels.size === 1) return [...levels][0];
+  return "both";
+}
+
+function generateSubjects(classes: SchoolClass[]): Subject[] {
   faker.seed(778);
-  return SUBJECT_DEFS.map((def, i) => ({
-    id: `sub_${(i + 1).toString().padStart(2, "0")}`,
-    name: def.name,
-    code: def.code,
-    series: def.series,
-    classesCount: faker.number.int({ min: 1, max: 8 }),
-    createdAt: faker.date.recent({ days: 300 }).toISOString(),
-  }));
+  return SUBJECT_DEFS.map((def, i) => {
+    const picked = faker.helpers.arrayElements(classes, { min: 1, max: 6 });
+    const assignments: SubjectClassAssignment[] = picked.map((c) => ({
+      classId: c.id,
+      assigned: true,
+      coefficient: faker.helpers.arrayElement([1, 1, 2, 2, 3, 4]),
+      minWeeklyHours: faker.number.int({ min: 1, max: 8 }),
+      teacherId: c.classMasterId,
+    }));
+    const assignedIds = assignments.map((a) => a.classId);
+    return {
+      id: `sub_${(i + 1).toString().padStart(2, "0")}`,
+      name: def.name,
+      code: def.code,
+      series: def.series,
+      level: deriveSubjectLevel(assignedIds, classes),
+      classesCount: assignments.length,
+      createdAt: faker.date.recent({ days: 300 }).toISOString(),
+      assignments,
+    } satisfies Subject;
+  });
 }
 
 export const seedClasses = generateClasses();
-export const seedSubjects = generateSubjects();
+export const seedSubjects = generateSubjects(seedClasses);

@@ -4,14 +4,17 @@ import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
 import type { Paginated } from "@/types";
 import type {
   ClassQuery,
+  ClassStats,
   SchoolClass,
   SchoolClassInput,
   Subject,
+  SubjectClassAssignment,
   SubjectInput,
   SubjectQuery,
+  SubjectStats,
 } from "../types";
 import { currentAcademicYear } from "@/lib/format";
-import { seedClasses, seedSubjects } from "../mock-data";
+import { deriveSubjectLevel, seedClasses, seedSubjects } from "../mock-data";
 import { httpClassesService, httpSubjectsService } from "./academics.http";
 
 export interface ClassOption {
@@ -19,10 +22,17 @@ export interface ClassOption {
   name: string;
 }
 
+/** Paginated subjects plus the index summary counts (surfaced for the stat cards). */
+export interface SubjectListResult extends Paginated<Subject> {
+  stats: SubjectStats;
+}
+
 export interface ClassesService {
   list(query: ClassQuery): Promise<Paginated<SchoolClass>>;
   /** Lightweight {id,name} list for dropdowns, scoped to the active school. */
   options(): Promise<ClassOption[]>;
+  /** Aggregate figures for the stat cards, scoped to the active school. */
+  stats(): Promise<ClassStats>;
   create(input: SchoolClassInput): Promise<SchoolClass>;
   update(id: string, input: SchoolClassInput): Promise<SchoolClass>;
   remove(id: string): Promise<void>;
@@ -30,9 +40,11 @@ export interface ClassesService {
 }
 
 export interface SubjectsService {
-  list(query: SubjectQuery): Promise<Paginated<Subject>>;
+  list(query: SubjectQuery): Promise<SubjectListResult>;
   /** Lightweight {id,name} list for dropdowns, scoped to the active school. */
   options(): Promise<ClassOption[]>;
+  /** The assigned class rows for a subject (used to prefill the edit form). */
+  getAssignments(id: string): Promise<SubjectClassAssignment[]>;
   create(input: SubjectInput): Promise<Subject>;
   update(id: string, input: SubjectInput): Promise<Subject>;
   remove(id: string): Promise<void>;
@@ -91,6 +103,18 @@ const mockClassesService: ClassesService = {
       200,
     );
   },
+  async stats() {
+    const rows = classDb();
+    return withLatency(
+      {
+        totalClasses: rows.length,
+        upperCount: rows.filter((r) => r.level === "upper").length,
+        lowerCount: rows.filter((r) => r.level === "lower").length,
+        totalStudents: rows.reduce((sum, r) => sum + r.studentsCount, 0),
+      },
+      200,
+    );
+  },
   async create(input) {
     const cls: SchoolClass = {
       id: `cls_${Date.now().toString(36)}`,
@@ -98,7 +122,8 @@ const mockClassesService: ClassesService = {
       level: input.level,
       section: input.section,
       academicYear: currentAcademicYear(),
-      classMaster: input.classMaster?.trim() || null,
+      classMaster: input.classMasterName?.trim() || null,
+      classMasterId: input.classMasterId || null,
       studentsCount: 0,
       subjectsCount: 0,
       createdAt: new Date().toISOString(),
@@ -111,7 +136,14 @@ const mockClassesService: ClassesService = {
     classCommit(
       classDb().map((r) =>
         r.id === id
-          ? (updated = { ...r, ...input, classMaster: input.classMaster?.trim() || null })
+          ? (updated = {
+              ...r,
+              name: input.name.trim(),
+              level: input.level,
+              section: input.section,
+              classMaster: input.classMasterName?.trim() || null,
+              classMasterId: input.classMasterId || null,
+            })
           : r,
       ),
     );
@@ -142,9 +174,19 @@ export function subjectNameFor(id: string): string {
   return subjectDb().find((s) => s.id === id)?.name ?? "—";
 }
 
+function subjectStats(rows: Subject[]): SubjectStats {
+  return {
+    totalSubjects: rows.length,
+    // Mirror the backend: "both"-series subjects count toward BOTH art and science.
+    artCount: rows.filter((s) => s.series === "art" || s.series === "both").length,
+    scienceCount: rows.filter((s) => s.series === "science" || s.series === "both").length,
+  };
+}
+
 const mockSubjectsService: SubjectsService = {
   async list(query) {
-    let rows = [...subjectDb()];
+    const all = subjectDb();
+    let rows = [...all];
     if (query.search) {
       const q = query.search.toLowerCase();
       rows = rows.filter(
@@ -152,8 +194,13 @@ const mockSubjectsService: SubjectsService = {
       );
     }
     if (query.series) rows = rows.filter((r) => r.series === query.series);
+    if (query.level) rows = rows.filter((r) => r.level === query.level);
     rows = sortRows(rows, query.sortBy, query.sortDir);
-    return withLatency(paginate(rows, query.page, query.perPage), 400);
+    // Stats are computed over the unfiltered catalog; the paginated total is filtered.
+    return withLatency(
+      { ...paginate(rows, query.page, query.perPage), stats: subjectStats(all) },
+      400,
+    );
   },
   async options() {
     return withLatency(
@@ -161,24 +208,45 @@ const mockSubjectsService: SubjectsService = {
       200,
     );
   },
+  async getAssignments(id) {
+    const subject = subjectDb().find((s) => s.id === id);
+    return withLatency(
+      (subject?.assignments ?? []).filter((a) => a.assigned),
+      200,
+    );
+  },
   async create(input) {
+    const assignments = input.classes.filter((c) => c.assigned);
+    const assignedIds = assignments.map((a) => a.classId);
     const subject: Subject = {
       id: `sub_${Date.now().toString(36)}`,
       name: input.name.trim(),
       code: input.code.trim().toUpperCase(),
       series: input.series,
-      classesCount: 0,
+      level: deriveSubjectLevel(assignedIds, classDb()),
+      classesCount: assignments.length,
       createdAt: new Date().toISOString(),
+      assignments,
     };
     subjectCommit([subject, ...subjectDb()]);
     return withLatency(subject, 450);
   },
   async update(id, input) {
+    const assignments = input.classes.filter((c) => c.assigned);
+    const assignedIds = assignments.map((a) => a.classId);
     let updated: Subject | undefined;
     subjectCommit(
       subjectDb().map((r) =>
         r.id === id
-          ? (updated = { ...r, ...input, code: input.code.trim().toUpperCase() })
+          ? (updated = {
+              ...r,
+              name: input.name.trim(),
+              code: input.code.trim().toUpperCase(),
+              series: input.series,
+              level: deriveSubjectLevel(assignedIds, classDb()),
+              classesCount: assignments.length,
+              assignments,
+            })
           : r,
       ),
     );

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useMemo } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Field } from "@/components/ui/field";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -25,11 +26,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCreateSubject, useUpdateSubject } from "../hooks";
+import {
+  useClassOptions,
+  useCreateSubject,
+  useSubjectAssignments,
+  useTeacherOptions,
+  useUpdateSubject,
+} from "../hooks";
 import { subjectSchema, type SubjectValues } from "../schemas";
-import type { Subject } from "../types";
+import type { ClassOption } from "../api/academics.service";
+import type { Subject, SubjectClassAssignment, SubjectInput } from "../types";
 
-const EMPTY: SubjectValues = { name: "", code: "", series: "both" };
+/** Sentinel Select value for "no teacher" (Radix forbids an empty-string item value). */
+const NONE = "none";
+const DEFAULT_COEFFICIENT = 1;
+const DEFAULT_WEEKLY_HOURS = 2;
+
+const EMPTY: SubjectValues = { name: "", code: "", series: "both", classes: [] };
+
+/** Build one form row per class, pre-checking + prefilling any existing assignment. */
+function buildRows(
+  classes: ClassOption[],
+  assignments: SubjectClassAssignment[],
+): SubjectClassAssignment[] {
+  const byId = new Map(assignments.map((a) => [a.classId, a]));
+  return classes.map((c) => {
+    const existing = byId.get(c.id);
+    return {
+      classId: c.id,
+      assigned: !!existing,
+      coefficient: existing?.coefficient ?? DEFAULT_COEFFICIENT,
+      minWeeklyHours: existing?.minWeeklyHours ?? DEFAULT_WEEKLY_HOURS,
+      teacherId: existing?.teacherId ?? null,
+    };
+  });
+}
 
 export function SubjectFormSheet({
   open,
@@ -45,6 +76,9 @@ export function SubjectFormSheet({
   const tt = useTranslations("academics.toasts");
   const create = useCreateSubject();
   const update = useUpdateSubject();
+  const classOptions = useClassOptions();
+  const teachers = useTeacherOptions();
+  const assignments = useSubjectAssignments(open && subject ? subject.id : undefined);
   const isEdit = !!subject;
 
   const {
@@ -52,28 +86,56 @@ export function SubjectFormSheet({
     control,
     handleSubmit,
     reset,
+    watch,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<SubjectValues>({
     resolver: zodResolver(subjectSchema(tv)),
     defaultValues: EMPTY,
   });
 
+  const { fields } = useFieldArray({ control, name: "classes" });
+
+  const classNames = useMemo(
+    () => new Map((classOptions.data ?? []).map((c) => [c.id, c.name])),
+    [classOptions.data],
+  );
+
+  // Wait for the class list (and, when editing, the existing assignments) before seeding the form.
+  const classData = classOptions.data;
+  const assignmentData = assignments.data;
+  const assignmentsReady = !isEdit || !assignments.isLoading;
+
   useEffect(() => {
-    if (!open) return;
-    reset(
-      subject
-        ? { name: subject.name, code: subject.code, series: subject.series }
-        : EMPTY,
-    );
-  }, [open, subject, reset]);
+    if (!open || !classData || !assignmentsReady) return;
+    reset({
+      name: subject?.name ?? "",
+      code: subject?.code ?? "",
+      series: subject?.series ?? "both",
+      classes: buildRows(classData, assignmentData ?? []),
+    });
+  }, [open, subject, classData, assignmentData, assignmentsReady, reset]);
+
+  const watchedClasses = watch("classes");
 
   async function onSubmit(values: SubjectValues) {
+    if (!values.classes.some((c) => c.assigned)) {
+      setError("classes", { type: "manual", message: t("classesRequired") });
+      return;
+    }
+    const input: SubjectInput = {
+      name: values.name,
+      code: values.code,
+      series: values.series,
+      classes: values.classes,
+    };
     try {
       if (isEdit && subject) {
-        await update.mutateAsync({ id: subject.id, input: values });
+        await update.mutateAsync({ id: subject.id, input });
         toast.success(tt("subjectUpdated"));
       } else {
-        await create.mutateAsync(values);
+        await create.mutateAsync(input);
         toast.success(tt("subjectCreated"));
       }
       onOpenChange(false);
@@ -83,10 +145,11 @@ export function SubjectFormSheet({
   }
 
   const busy = create.isPending || update.isPending;
+  const noClasses = !classOptions.isLoading && (classOptions.data?.length ?? 0) === 0;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-md">
+      <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-lg">
         <SheetHeader className="border-b">
           <SheetTitle>{isEdit ? t("editTitle") : t("createTitle")}</SheetTitle>
           <SheetDescription>
@@ -131,6 +194,135 @@ export function SubjectFormSheet({
                   )}
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-baseline justify-between">
+                <Label>{t("classesLabel")}</Label>
+                <span className="text-muted-foreground text-xs">{t("classesHint")}</span>
+              </div>
+              {errors.classes?.message && (
+                <p role="alert" className="text-destructive text-sm">
+                  {errors.classes.message}
+                </p>
+              )}
+
+              {noClasses ? (
+                <p className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
+                  {t("noClasses")}
+                </p>
+              ) : classOptions.isLoading || (isEdit && assignments.isLoading) ? (
+                <div className="flex items-center justify-center rounded-lg border p-6 text-muted-foreground">
+                  <Loader2 className="size-4 animate-spin" />
+                </div>
+              ) : (
+                <div className="divide-y rounded-lg border">
+                  {fields.map((f, i) => {
+                    const assigned = watchedClasses?.[i]?.assigned;
+                    return (
+                      <div key={f.id} className="space-y-3 p-3">
+                        <label className="flex items-center gap-2.5">
+                          <Controller
+                            control={control}
+                            name={`classes.${i}.assigned`}
+                            render={({ field }) => (
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={(v) => {
+                                  field.onChange(!!v);
+                                  clearErrors("classes");
+                                }}
+                              />
+                            )}
+                          />
+                          <span className="text-sm font-medium">
+                            {classNames.get(f.classId) ?? f.classId}
+                          </span>
+                        </label>
+                        {assigned && (
+                          <div className="grid gap-3 pl-7 sm:grid-cols-3">
+                            <div className="space-y-1.5">
+                              <Label
+                                htmlFor={`coefficient-${i}`}
+                                className="text-xs text-muted-foreground"
+                              >
+                                {t("coefficient")}
+                              </Label>
+                              <Input
+                                id={`coefficient-${i}`}
+                                type="number"
+                                min={0.5}
+                                max={10}
+                                step={0.5}
+                                aria-invalid={
+                                  errors.classes?.[i]?.coefficient ? true : undefined
+                                }
+                                {...register(`classes.${i}.coefficient`, {
+                                  valueAsNumber: true,
+                                })}
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label
+                                htmlFor={`hours-${i}`}
+                                className="text-xs text-muted-foreground"
+                              >
+                                {t("weeklyHours")}
+                              </Label>
+                              <Input
+                                id={`hours-${i}`}
+                                type="number"
+                                min={1}
+                                max={20}
+                                step={1}
+                                aria-invalid={
+                                  errors.classes?.[i]?.minWeeklyHours ? true : undefined
+                                }
+                                {...register(`classes.${i}.minWeeklyHours`, {
+                                  valueAsNumber: true,
+                                })}
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label
+                                htmlFor={`teacher-${i}`}
+                                className="text-xs text-muted-foreground"
+                              >
+                                {t("teacher")}
+                              </Label>
+                              <Controller
+                                control={control}
+                                name={`classes.${i}.teacherId`}
+                                render={({ field }) => (
+                                  <Select
+                                    value={field.value ? field.value : NONE}
+                                    onValueChange={(v) =>
+                                      field.onChange(v === NONE ? null : v)
+                                    }
+                                    disabled={teachers.isLoading}
+                                  >
+                                    <SelectTrigger id={`teacher-${i}`} size="sm" className="w-full">
+                                      <SelectValue placeholder={t("teacherNone")} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value={NONE}>{t("teacherNone")}</SelectItem>
+                                      {teachers.data?.map((teacher) => (
+                                        <SelectItem key={teacher.id} value={teacher.id}>
+                                          {teacher.name}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                )}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
           <SheetFooter className="flex-row justify-end gap-2 border-t">

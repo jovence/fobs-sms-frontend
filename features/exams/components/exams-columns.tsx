@@ -1,7 +1,8 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +25,7 @@ type Labels = {
   published: string;
   markEntry: string;
   actions: string;
+  view: string;
   edit: string;
   delete: string;
   publishedYes: string;
@@ -138,6 +140,11 @@ export function getExamColumns({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem asChild>
+                  <Link href={`/exams/${exam.id}`}>
+                    <Eye className="mr-2 size-4" /> {labels.view}
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onEdit(exam)}>
                   <Pencil className="mr-2 size-4" /> {labels.edit}
                 </DropdownMenuItem>

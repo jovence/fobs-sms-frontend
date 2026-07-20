@@ -83,6 +83,7 @@ export function ExamsTable() {
           published: t("columns.published"),
           markEntry: t("columns.markEntry"),
           actions: t("columns.actions"),
+          view: t("actions.view"),
           edit: t("actions.edit"),
           delete: t("actions.delete"),
           publishedYes: t("published.yes"),

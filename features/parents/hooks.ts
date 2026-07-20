@@ -9,6 +9,9 @@ export const parentKeys = {
   all: (school: string) => ["school", school, "parents"] as const,
   list: (school: string, q: ParentQuery) =>
     ["school", school, "parents", "list", q] as const,
+  detail: (school: string, id: string) =>
+    ["school", school, "parents", "detail", id] as const,
+  stats: (school: string) => ["school", school, "parents", "stats"] as const,
 };
 
 export function useParents(query: ParentQuery) {
@@ -18,6 +21,29 @@ export function useParents(query: ParentQuery) {
     queryFn: () => parentsService.list(query),
     placeholderData: (prev, prevQuery) =>
       prevQuery && prevQuery.queryKey[1] === school ? prev : undefined,
+  });
+}
+
+export function useParent(id: string) {
+  const school = useSchoolScope();
+  return useQuery({
+    queryKey: parentKeys.detail(school, id),
+    queryFn: () => parentsService.get(id),
+    enabled: !!id,
+  });
+}
+
+export function useParentStats() {
+  const school = useSchoolScope();
+  return useQuery({
+    queryKey: parentKeys.stats(school),
+    queryFn: () => parentsService.stats(),
+  });
+}
+
+export function useExportUnattachedStudents() {
+  return useMutation({
+    mutationFn: () => parentsService.exportUnattached(),
   });
 }
 

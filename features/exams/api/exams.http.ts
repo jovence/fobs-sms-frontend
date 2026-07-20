@@ -1,6 +1,14 @@
 import { api } from "@/lib/api-client";
 import type { Paginated } from "@/types";
-import type { Exam, ExamInput, Term } from "../types";
+import type {
+  Exam,
+  ExamClassPerformance,
+  ExamDashboard,
+  ExamInput,
+  ExamSubjectClassBreakdown,
+  ExamSubjectStat,
+  Term,
+} from "../types";
 import type { ExamsService } from "./exams.service";
 
 /**
@@ -74,6 +82,139 @@ function toUpdatePayload(input: ExamInput): Record<string, unknown> {
   };
 }
 
+/** Minimal shape of a raw `SchoolClass`/`Subject` Eloquent model nested in the dashboard payload. */
+interface ClassPayload {
+  id: number | string;
+  name: string | null;
+}
+interface SubjectPayload {
+  id: number | string;
+  name: string | null;
+  code?: string | null;
+}
+
+/** Shape of a `classesList` entry (snake_case; nested `class` is a raw model). */
+interface ClassStatPayload {
+  class: ClassPayload;
+  students_count: number;
+  total_marks: number;
+  average_mark: number;
+  passed: number;
+  failed: number;
+  pass_rate: number;
+}
+
+/** Shape of a subject's `class_breakdown` entry. */
+interface ClassBreakdownPayload {
+  class: ClassPayload;
+  total_students: number;
+  marks_entered: number;
+  marks_pending: number;
+  completion_rate: number;
+  has_marks: boolean;
+}
+
+/** Shape of a `subjectStats` entry. */
+interface SubjectStatPayload {
+  subject: SubjectPayload;
+  marks_entered: number;
+  students_assessed: number;
+  total_expected: number;
+  average_mark: number;
+  highest_mark: number | null;
+  lowest_mark: number | null;
+  pass_rate: number;
+  submitted: boolean;
+  exam_date: string | null;
+  class_breakdown: ClassBreakdownPayload[];
+}
+
+/** Shape of the whole `show` payload: the exam plus the compacted dashboard analytics. */
+interface DashboardPayload {
+  exam: ExamPayload;
+  totalSubjects: number;
+  submittedSubjects: number;
+  pendingSubjects: number;
+  totalMarksEntered: number;
+  totalExpectedMarks: number;
+  completionRate: number;
+  averageMark: number | null;
+  highestMark: number | null;
+  lowestMark: number | null;
+  passRate: number;
+  gradeDistribution: { A: number; B: number; C: number; D: number; E: number };
+  classesList: ClassStatPayload[] | Record<string, ClassStatPayload>;
+  subjectStats: SubjectStatPayload[] | Record<string, SubjectStatPayload>;
+}
+
+/** Collections keyed by non-sequential ids serialise as objects — normalise back to an array. */
+function toArray<T>(value: T[] | Record<string, T> | null | undefined): T[] {
+  if (!value) return [];
+  return Array.isArray(value) ? value : Object.values(value);
+}
+
+function mapClassStat(p: ClassStatPayload): ExamClassPerformance {
+  return {
+    classId: String(p.class?.id ?? ""),
+    className: p.class?.name ?? "—",
+    studentsCount: p.students_count ?? 0,
+    totalMarks: p.total_marks ?? 0,
+    averageMark: p.average_mark ?? 0,
+    passed: p.passed ?? 0,
+    failed: p.failed ?? 0,
+    passRate: p.pass_rate ?? 0,
+  };
+}
+
+function mapClassBreakdown(p: ClassBreakdownPayload): ExamSubjectClassBreakdown {
+  return {
+    classId: String(p.class?.id ?? ""),
+    className: p.class?.name ?? "—",
+    totalStudents: p.total_students ?? 0,
+    marksEntered: p.marks_entered ?? 0,
+    marksPending: p.marks_pending ?? 0,
+    completionRate: p.completion_rate ?? 0,
+    hasMarks: p.has_marks ?? false,
+  };
+}
+
+function mapSubjectStat(p: SubjectStatPayload): ExamSubjectStat {
+  return {
+    subjectId: String(p.subject?.id ?? ""),
+    subjectName: p.subject?.name ?? "—",
+    subjectCode: p.subject?.code ?? null,
+    marksEntered: p.marks_entered ?? 0,
+    studentsAssessed: p.students_assessed ?? 0,
+    totalExpected: p.total_expected ?? 0,
+    averageMark: p.average_mark ?? 0,
+    highestMark: p.highest_mark ?? null,
+    lowestMark: p.lowest_mark ?? null,
+    passRate: p.pass_rate ?? 0,
+    submitted: p.submitted ?? false,
+    examDate: p.exam_date ?? null,
+    classBreakdown: toArray(p.class_breakdown).map(mapClassBreakdown),
+  };
+}
+
+function mapDashboard(p: DashboardPayload): ExamDashboard {
+  return {
+    exam: mapExam(p.exam),
+    totalSubjects: p.totalSubjects ?? 0,
+    submittedSubjects: p.submittedSubjects ?? 0,
+    pendingSubjects: p.pendingSubjects ?? 0,
+    totalMarksEntered: p.totalMarksEntered ?? 0,
+    totalExpectedMarks: p.totalExpectedMarks ?? 0,
+    completionRate: p.completionRate ?? 0,
+    averageMark: p.averageMark ?? 0,
+    highestMark: p.highestMark ?? 0,
+    lowestMark: p.lowestMark ?? 0,
+    passRate: p.passRate ?? 0,
+    gradeDistribution: p.gradeDistribution ?? { A: 0, B: 0, C: 0, D: 0, E: 0 },
+    classes: toArray(p.classesList).map(mapClassStat),
+    subjects: toArray(p.subjectStats).map(mapSubjectStat),
+  };
+}
+
 export const httpExamsService: ExamsService = {
   async list(query) {
     const { data, meta } = await api.list<ExamPayload>(
@@ -127,5 +268,20 @@ export const httpExamsService: ExamsService = {
   async bulkRemove(ids) {
     // No bulk endpoint — fan out to the single-delete route.
     await Promise.all(ids.map((id) => api.delete<null>(`/dashboard/exams/${id}`)));
+  },
+
+  async getDashboard(id) {
+    const data = await api.get<DashboardPayload>(`/dashboard/exams/${id}`);
+    return mapDashboard(data);
+  },
+
+  async togglePublish(id) {
+    const exam = await api.patch<ExamPayload>(`/dashboard/exams/${id}/toggle-publish`);
+    return mapExam(exam);
+  },
+
+  async toggleMarkFill(id) {
+    const exam = await api.patch<ExamPayload>(`/dashboard/exams/${id}/toggle-mark-fill`);
+    return mapExam(exam);
   },
 };

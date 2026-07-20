@@ -79,6 +79,7 @@ export function TeachersTable() {
           status: t("columns.status"),
           actions: t("columns.actions"),
           approve: t("actions.approve"),
+          view: t("actions.view"),
           edit: t("actions.edit"),
           remove: t("actions.remove"),
           years: t("years"),

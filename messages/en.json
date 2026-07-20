@@ -262,7 +262,8 @@
     "actions": {
       "approve": "Approve",
       "edit": "Edit",
-      "remove": "Remove"
+      "remove": "Remove",
+      "view": "View profile"
     },
     "form": {
       "editTitle": "Edit teacher",
@@ -294,6 +295,92 @@
       "description": "Teachers appear here once they request to join your school.",
       "filteredTitle": "No matching teachers",
       "filteredDescription": "Try adjusting your search or filters."
+    },
+    "profile": {
+      "loading": "Loading teacher…",
+      "errorTitle": "Couldn't load this teacher",
+      "errorDescription": "The teacher may not exist in this school, or the request failed.",
+      "back": "Back",
+      "assignSubjects": "Assign Subjects",
+      "assignClasses": "Assign Classes",
+      "generalTeacher": "General Teacher",
+      "stats": {
+        "subjects": "Subjects Teaching",
+        "subjectsHint": "Assigned subjects",
+        "load": "Teaching Load",
+        "loadHint": "Total assignments"
+      },
+      "personal": {
+        "title": "Personal Information",
+        "name": "Full name",
+        "experience": "Experience",
+        "yearsValue": "{count, plural, =0 {No experience} one {# year} other {# years}}"
+      },
+      "contact": {
+        "title": "Contact Information",
+        "email": "Email address",
+        "phone": "Phone number",
+        "address": "Address"
+      },
+      "professional": {
+        "title": "Professional Details",
+        "specialization": "Specialization",
+        "qualifications": "Qualifications",
+        "joined": "Joined date",
+        "approved": "Approved on"
+      },
+      "subjects": {
+        "title": "Assigned Subjects ({count})",
+        "code": "Code: {code}",
+        "remove": "Remove",
+        "emptyTitle": "No subjects assigned yet",
+        "removeTitle": "Remove subject?",
+        "removeDescription": "{name} will be removed from this teacher's subjects.",
+        "removed": "Subject removed."
+      },
+      "classes": {
+        "title": "Assigned Classes ({count})",
+        "students": "{count, plural, one {# student} other {# students}}",
+        "emptyTitle": "No classes assigned yet"
+      },
+      "assignments": {
+        "title": "Detailed Teaching Assignments",
+        "class": "Class",
+        "subjects": "Subjects Teaching",
+        "students": "Students",
+        "studentsCount": "{count, plural, one {# student} other {# students}}"
+      },
+      "biography": {
+        "title": "Biography"
+      }
+    },
+    "assign": {
+      "loading": "Loading…",
+      "errorTitle": "Couldn't load this form",
+      "errorDescription": "The request failed. Please try again.",
+      "forTeacher": "Select for {name}",
+      "backToProfile": "Back to Profile",
+      "subjectsTitle": "Assign Subjects",
+      "currentSubjects": "Currently Assigned Subjects",
+      "noSubjects": "No subjects currently assigned",
+      "availableSubjects": "Available Subjects",
+      "noAvailableSubjects": "No available subjects to assign",
+      "subjectsSaved": "Subject assignments updated.",
+      "save": "Save Assignments",
+      "classesTitle": "Assign Classes",
+      "currentClasses": "Currently Assigned Classes",
+      "noClasses": "No classes currently assigned",
+      "availableClasses": "Available Classes",
+      "classesSaved": "Teaching assignments updated.",
+      "noSubjectClasses": "No classes available for this subject",
+      "removeClass": "Remove",
+      "removeClassTitle": "Remove class?",
+      "removeClassDescription": "{name} will be removed from this teacher's assignments.",
+      "classRemoved": "Class removed.",
+      "noClassesTitle": "No available classes found. Ensure:",
+      "noClassesReason1": "The teacher is assigned to subjects",
+      "noClassesReason2": "Those subjects are assigned to classes",
+      "noClassesReason3": "Classes belong to the current school"
     }
   },
   "academics": {
@@ -334,6 +421,12 @@
         "description": "Create your first class to start enrolling students.",
         "filteredTitle": "No matching classes",
         "filteredDescription": "Try adjusting your search or filters."
+      },
+      "stats": {
+        "total": "Total Classes",
+        "upper": "Upper Cycle",
+        "lower": "Lower Cycle",
+        "students": "Total Students"
       }
     },
     "subjects": {
@@ -345,7 +438,8 @@
         "name": "Subject",
         "series": "Series",
         "classes": "Classes",
-        "actions": "Actions"
+        "actions": "Actions",
+        "level": "Level"
       },
       "actions": {
         "edit": "Edit",
@@ -366,6 +460,18 @@
         "description": "Create your first subject to build the curriculum.",
         "filteredTitle": "No matching subjects",
         "filteredDescription": "Try adjusting your search or filters."
+      },
+      "stats": {
+        "total": "Total Subjects",
+        "art": "Art Series",
+        "science": "Science Series",
+        "filtered": "Filtered Results"
+      },
+      "level": {
+        "all": "All Levels",
+        "lower": "Lower Cycle",
+        "upper": "Upper Cycle",
+        "both": "Both Cycles"
       }
     },
     "classForm": {
@@ -385,7 +491,9 @@
       "optional": "(optional)",
       "cancel": "Cancel",
       "create": "Create class",
-      "save": "Save changes"
+      "save": "Save changes",
+      "masterPlaceholder": "Select a teacher",
+      "masterNone": "No class master"
     },
     "subjectForm": {
       "createTitle": "Add subject",
@@ -400,7 +508,15 @@
       "seriesBoth": "Both",
       "cancel": "Cancel",
       "create": "Create subject",
-      "save": "Save changes"
+      "save": "Save changes",
+      "classesLabel": "Class assignments",
+      "classesHint": "Pick the classes that offer this subject",
+      "classesRequired": "Assign the subject to at least one class.",
+      "noClasses": "Create a class first, then assign this subject to it.",
+      "coefficient": "Coefficient",
+      "weeklyHours": "Weekly hours",
+      "teacher": "Teacher",
+      "teacherNone": "Unassigned"
     },
     "toasts": {
       "classCreated": "Class created.",
@@ -503,7 +619,8 @@
     },
     "actions": {
       "edit": "Edit",
-      "remove": "Remove"
+      "remove": "Remove",
+      "view": "View"
     },
     "empty": {
       "title": "No parents yet",
@@ -523,7 +640,8 @@
       "removed": "Parent removed.",
       "bulkRemoved": "{count} parents removed.",
       "exported": "Parents exported to CSV.",
-      "error": "Something went wrong. Please try again."
+      "error": "Something went wrong. Please try again.",
+      "unattachedExported": "Unattached students exported."
     },
     "form": {
       "createTitle": "Add parent",
@@ -538,6 +656,33 @@
       "cancel": "Cancel",
       "save": "Save changes",
       "create": "Add parent"
+    },
+    "exportUnattached": "Export unattached",
+    "detail": {
+      "loading": "Loading parent…",
+      "errorTitle": "Couldn't load parent",
+      "errorDescription": "Something went wrong while loading this parent. Please try again.",
+      "retry": "Try again",
+      "back": "Back to parents",
+      "disconnectAll": "Disconnect all",
+      "connectedStudents": "Connected students",
+      "viewStudent": "View",
+      "noStudentsTitle": "No connected students",
+      "noStudentsDescription": "This parent isn't linked to any students in this school yet.",
+      "stats": {
+        "connectedStudents": "Connected students",
+        "accountStatus": "Account status",
+        "memberSince": "Member since"
+      },
+      "status": {
+        "approved": "Approved",
+        "pending": "Pending"
+      },
+      "disconnect": {
+        "title": "Disconnect all students",
+        "description": "Unlink {name} from all students in this school? This cannot be undone.",
+        "success": "Parent disconnected from all students."
+      }
     }
   },
   "settings": {
@@ -669,7 +814,8 @@
     },
     "actions": {
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "view": "View"
     },
     "form": {
       "createTitle": "Add exam",
@@ -710,6 +856,64 @@
       "description": "Create your first exam sequence to get started.",
       "filteredTitle": "No matching exams",
       "filteredDescription": "Try adjusting your search or filters."
+    },
+    "detail": {
+      "back": "Back to exams",
+      "edit": "Edit exam",
+      "publish": "Publish results",
+      "unpublish": "Unpublish",
+      "openMarkEntry": "Open mark entry",
+      "closeMarkEntry": "Close mark entry",
+      "statusPublished": "Published",
+      "statusUnpublished": "Not published",
+      "statusMarkOpen": "Mark entry open",
+      "statusMarkClosed": "Mark entry closed",
+      "loading": "Loading exam dashboard…",
+      "errorTitle": "Couldn't load exam",
+      "errorDescription": "Something went wrong while loading the exam dashboard. Please try again.",
+      "retry": "Try again",
+      "stats": {
+        "totalSubjects": "Total subjects",
+        "completionRate": "Completion rate",
+        "averageMark": "Average mark",
+        "passRate": "Pass rate"
+      },
+      "grades": {
+        "title": "Grade distribution",
+        "empty": "No marks have been entered yet.",
+        "count": "{count, plural, one {# mark} other {# marks}}",
+        "bands": {
+          "A": "A — Excellent (16–20)",
+          "B": "B — Very good (14–16)",
+          "C": "C — Good (12–14)",
+          "D": "D — Pass (10–12)",
+          "E": "E — Below average (0–10)"
+        }
+      },
+      "classPerf": {
+        "title": "Class performance",
+        "empty": "No marks have been recorded for any class yet.",
+        "class": "Class",
+        "students": "Students",
+        "marksEntered": "Marks entered",
+        "average": "Average",
+        "passRate": "Pass rate"
+      },
+      "subjects": {
+        "title": "Subject submission status by class",
+        "empty": "No subjects have been set for this exam yet.",
+        "submitted": "Submitted",
+        "incomplete": "Incomplete",
+        "marksEntered": "Marks entered",
+        "average": "Average",
+        "passRate": "Pass rate"
+      },
+      "toasts": {
+        "published": "Results published.",
+        "unpublished": "Results unpublished.",
+        "markOpened": "Mark entry opened.",
+        "markClosed": "Mark entry closed."
+      }
     }
   },
   "attendance": {

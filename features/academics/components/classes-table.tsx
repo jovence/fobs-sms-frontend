@@ -4,9 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import type { RowSelectionState, SortingState } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Plus, Search, Trash2, X } from "lucide-react";
+import { GraduationCap, Layers, Plus, School, Search, Trash2, Users, X } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
+import { StatCard } from "@/features/dashboard/components/stat-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,6 +20,7 @@ import {
 import {
   useBulkDeleteClasses,
   useClasses,
+  useClassStats,
   useDeleteClass,
 } from "../hooks";
 import type { ClassLevel, ClassQuery, SchoolClass } from "../types";
@@ -44,6 +46,7 @@ export function ClassesTable() {
 
   const remove = useDeleteClass();
   const bulkRemove = useBulkDeleteClasses();
+  const { data: stats } = useClassStats();
 
   useEffect(() => {
     const id = setTimeout(() => { setSearch(searchInput); setPage(1); }, 300);
@@ -87,6 +90,15 @@ export function ClassesTable() {
   const hasFilters = search || level !== "all";
   function clearFilters() { setSearchInput(""); setSearch(""); setLevel("all"); setPage(1); }
 
+  const statCards = (
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <StatCard label={t("stats.total")} value={stats?.totalClasses ?? 0} icon={School} accent="primary" />
+      <StatCard label={t("stats.upper")} value={stats?.upperCount ?? 0} icon={GraduationCap} accent="info" />
+      <StatCard label={t("stats.lower")} value={stats?.lowerCount ?? 0} icon={Layers} accent="warning" />
+      <StatCard label={t("stats.students")} value={stats?.totalStudents ?? 0} icon={Users} accent="success" />
+    </div>
+  );
+
   const toolbar = (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-1 flex-wrap items-center gap-2">
@@ -113,7 +125,8 @@ export function ClassesTable() {
   );
 
   return (
-    <>
+    <div className="space-y-4">
+      {statCards}
       <DataTable
         columns={columns}
         data={data?.items ?? []}
@@ -183,6 +196,6 @@ export function ClassesTable() {
           setBulkOpen(false);
         }}
       />
-    </>
+    </div>
   );
 }
