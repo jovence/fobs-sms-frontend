@@ -43,7 +43,10 @@
     "billing": "Billing",
     "referrals": "Referrals",
     "settings": "Settings",
-    "administration": "Administration"
+    "administration": "Administration",
+    "resultSummary": "Result Summary",
+    "markSheets": "Mark Sheets",
+    "mockGce": "Mock GCE"
   },
   "auth": {
     "signInTitle": "Welcome back",
@@ -191,7 +194,8 @@
       "setStatus": "Set status",
       "approve": "Approve",
       "reject": "Reject",
-      "markPending": "Mark pending"
+      "markPending": "Mark pending",
+      "view": "View profile"
     },
     "form": {
       "createTitle": "Add student",
@@ -238,6 +242,79 @@
       "description": "Add your first student to get started.",
       "filteredTitle": "No matching students",
       "filteredDescription": "Try adjusting your search or filters."
+    },
+    "stats": {
+      "total": "Total students",
+      "active": "Active students",
+      "pending": "Pending approval",
+      "gender": "Gender split",
+      "male": "Male",
+      "female": "Female"
+    },
+    "import": {
+      "button": "AI Import",
+      "title": "AI student import",
+      "description": "Upload a class list (image, PDF or spreadsheet) and AI will extract the students for review.",
+      "class": "Target class",
+      "selectClass": "Select a class",
+      "file": "Class list file",
+      "fileHint": "JPG, PNG, PDF or Excel · up to 5 MB",
+      "selectFile": "Choose a file",
+      "parse": "Extract students",
+      "parsing": "Extracting…",
+      "previewDescription": "{count} students extracted. Review before saving.",
+      "empty": "No students could be extracted from this file.",
+      "back": "Back",
+      "cancel": "Cancel",
+      "confirm": "Save students",
+      "confirming": "Saving…",
+      "male": "Male",
+      "female": "Female",
+      "columns": {
+        "name": "Full name",
+        "matricule": "Matricule",
+        "gender": "Gender",
+        "dob": "Date of birth",
+        "place": "Place of birth"
+      },
+      "toasts": {
+        "needFile": "Choose a file and a class first.",
+        "parsed": "{count} students extracted.",
+        "parseError": "Couldn't read that file. Try a clearer one.",
+        "saved": "{count} students imported.",
+        "saveError": "Couldn't save the students. Please try again."
+      }
+    },
+    "detail": {
+      "back": "Back to students",
+      "edit": "Edit",
+      "loading": "Loading student…",
+      "errorTitle": "Couldn't load student",
+      "errorDescription": "This student may have been removed, or the request failed.",
+      "retry": "Try again",
+      "repeater": "Repeating this class",
+      "notRepeater": "Not repeating",
+      "male": "Male",
+      "female": "Female",
+      "sections": {
+        "personal": "Personal information",
+        "academic": "Academic",
+        "guardian": "Guardian"
+      },
+      "fields": {
+        "fullName": "Full name",
+        "matricule": "Matricule",
+        "gender": "Gender",
+        "dob": "Date of birth",
+        "placeOfBirth": "Place of birth",
+        "class": "Class",
+        "code": "Student code",
+        "status": "Registration status",
+        "repeater": "Repeater",
+        "guardian": "Guardian / parent",
+        "contact": "Contact",
+        "email": "Email"
+      }
     }
   },
   "teachers": {
@@ -1165,6 +1242,73 @@
         "range": "Enter a mark between 0 and {max}",
         "fix": "Fix the highlighted marks before saving."
       }
+    },
+    "cards": {
+      "modes": {
+        "term": "Term",
+        "sequence": "Sequence",
+        "annual": "Annual"
+      },
+      "descriptions": {
+        "term": "Term report cards — aggregates the term's two sequences.",
+        "sequence": "Sequence report cards — a single evaluation.",
+        "annual": "Annual report cards — the full academic year."
+      },
+      "term": {
+        "label": "Term",
+        "placeholder": "Select a term",
+        "first": "First term",
+        "second": "Second term",
+        "third": "Third term"
+      },
+      "sequence": {
+        "label": "Sequence",
+        "placeholder": "Select a sequence",
+        "option": "Sequence {n}"
+      },
+      "classLabel": "Class",
+      "preview": "Preview",
+      "annualNote": "Annual report cards cover the whole academic year — no term or sequence to pick.",
+      "academicYear": "Academic year {year}",
+      "downloadAll": "Download all",
+      "generate": "Generate report cards",
+      "download": "Download",
+      "empty": {
+        "title": "No preview yet",
+        "description": "Choose your options and select Preview to list the students."
+      },
+      "emptyStudents": {
+        "title": "No students",
+        "description": "No student matches this selection."
+      },
+      "error": {
+        "title": "Couldn't load the preview",
+        "description": "Something went wrong. Please try again."
+      },
+      "summary": {
+        "students": "Students",
+        "complete": "Complete",
+        "missing": "Missing marks"
+      },
+      "missingWarning": "{count} of {total} students are missing marks — their report cards may be incomplete.",
+      "table": {
+        "index": "#",
+        "student": "Student",
+        "class": "Class",
+        "marked": "Subjects marked",
+        "status": "Status"
+      },
+      "status": {
+        "complete": "Complete",
+        "missing": "{count} missing",
+        "noMarks": "No marks"
+      },
+      "toasts": {
+        "generated": "Report cards generated",
+        "generateError": "Could not generate report cards. Please try again.",
+        "downloadStarted": "Download started",
+        "downloadError": "Download failed. Please try again."
+      }
     }
   },
   "admin": {
@@ -1394,5 +1538,134 @@
     "sortBy": "Sort by {title}",
     "sortedAsc": "Sorted by {title} ascending. Activate to sort descending.",
     "sortedDesc": "Sorted by {title} descending. Activate to clear sorting."
+  },
+  "resultSummary": {
+    "title": "Result Summary",
+    "subtitle": "Generate a landscape PDF roster of every student's mark per subject for a class and exam.",
+    "form": {
+      "title": "Generate Result Summary",
+      "class": "Class",
+      "exam": "Exam / Sequence",
+      "selectClass": "Select a class",
+      "selectExam": "Select an exam",
+      "generate": "Generate PDF",
+      "generating": "Generating…"
+    },
+    "validation": {
+      "selectBoth": "Please select both a class and an exam."
+    },
+    "stats": {
+      "classes": "Total Classes",
+      "exams": "Total Exams",
+      "format": "Format",
+      "formatValue": "PDF Landscape"
+    },
+    "info": {
+      "title": "About this report",
+      "description": "The generated PDF contains a full class roster with each student's mark for every subject.",
+      "item1": "Every student in the selected class, listed alphabetically",
+      "item2": "One column per subject with the mark obtained",
+      "item3": "Per-student total points, total coefficient and average",
+      "item4": "School header and generation date, laid out A4 landscape"
+    },
+    "toasts": {
+      "success": "Result summary generated.",
+      "error": "Could not generate the result summary. Please try again."
+    },
+    "states": {
+      "loadErrorTitle": "Couldn't load options",
+      "loadErrorDescription": "We couldn't load classes and exams. Please try again.",
+      "retry": "Try again",
+      "emptyTitle": "Nothing to generate yet",
+      "emptyDescription": "Add classes and exams before generating a result summary."
+    }
+  },
+  "markSheets": {
+    "title": "Mark sheets",
+    "subtitle": "Preview a subject's marks for an exam and generate a printable mark sheet.",
+    "selectorsTitle": "Choose a subject, exam and class",
+    "subject": "Subject",
+    "exam": "Exam",
+    "class": "Class",
+    "selectSubject": "Select a subject",
+    "selectExam": "Select an exam",
+    "selectClass": "Select a class",
+    "allClasses": "All classes",
+    "preview": "Preview",
+    "generate": "Generate PDF",
+    "previewTitle": "Mark sheet preview",
+    "previewFor": "Showing marks for",
+    "outOf": "Out of {max}",
+    "columns": {
+      "number": "#",
+      "matricule": "Matricule",
+      "student": "Student",
+      "class": "Class",
+      "mark": "Mark"
+    },
+    "prompt": {
+      "title": "Build a mark sheet",
+      "description": "Pick a subject and exam, then Preview to see the marks before generating the PDF."
+    },
+    "empty": {
+      "title": "No marks found",
+      "description": "No marks found for the selected criteria."
+    },
+    "toasts": {
+      "generated": "Mark sheet generated",
+      "generateError": "Could not generate the mark sheet. Please try again."
+    }
+  },
+  "mockGce": {
+    "title": "Mock GCE Examination",
+    "subtitle": "Generate Cameroon GCE-style mock result slips and summaries for Form 5 (Ordinary Level) and Upper Sixth (Advanced Level) candidates, based on the 6th-sequence marks.",
+    "loading": "Loading Mock GCE…",
+    "disclaimer": "Mock GCE slips are internal evaluation documents and are NOT official Cameroon GCE Board results.",
+    "level": {
+      "oLevel": "O-Level",
+      "aLevel": "A-Level"
+    },
+    "card": {
+      "subtitle": "{level} · Mock Examination"
+    },
+    "stats": {
+      "candidates": "Candidates",
+      "marked": "Marked",
+      "marks": "Marks"
+    },
+    "coverage": {
+      "label": "Marks coverage"
+    },
+    "passRule": {
+      "o": "<b>Pass rule:</b> A, B or C in <b>≥ 4 papers</b>. Points: A=3, B=2, C=1.",
+      "a": "<b>Pass rule:</b> A through E in <b>≥ 2 papers</b>. Points: A=5, B=4, C=3, D=2, E=1."
+    },
+    "actions": {
+      "downloadSlips": "Download Slips",
+      "classSummary": "Class Summary"
+    },
+    "info": {
+      "title": "How this works",
+      "points": [
+        "Teachers enter sequence-6 marks /20 in the usual mark-sheets flow.",
+        "This page converts those marks to Cameroon GCE letter grades and tallies passes and points.",
+        "The standard term, sequence and result-summary reports are unaffected."
+      ],
+      "noExam": "No 6th-sequence exam exists for {year}.",
+      "examsLink": "Create it under Exams"
+    },
+    "empty": {
+      "title": "No GCE classes found",
+      "description": "The Mock GCE page works with classes named Form 5, Form Five, Upper Sixth or U6. Create or rename a class under Classes to enable this feature."
+    },
+    "error": {
+      "title": "Couldn't load Mock GCE",
+      "description": "Something went wrong while loading the eligible classes.",
+      "retry": "Try again"
+    },
+    "toasts": {
+      "slipsFailed": "Couldn't download the result slips. Please try again.",
+      "summaryFailed": "Couldn't download the class summary. Please try again."
+    }
   }
 }

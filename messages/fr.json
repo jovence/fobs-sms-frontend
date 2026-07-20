@@ -43,7 +43,10 @@
     "billing": "Facturation",
     "referrals": "Parrainage",
     "settings": "Paramètres",
-    "administration": "Administration"
+    "administration": "Administration",
+    "resultSummary": "Récapitulatif des résultats",
+    "markSheets": "Feuilles de notes",
+    "mockGce": "Mock GCE"
   },
   "auth": {
     "signInTitle": "Bon retour",
@@ -191,7 +194,8 @@
       "setStatus": "Changer le statut",
       "approve": "Approuver",
       "reject": "Rejeter",
-      "markPending": "Mettre en attente"
+      "markPending": "Mettre en attente",
+      "view": "Voir le profil"
     },
     "form": {
       "createTitle": "Ajouter un élève",
@@ -238,6 +242,79 @@
       "description": "Ajoutez votre premier élève pour commencer.",
       "filteredTitle": "Aucun élève correspondant",
       "filteredDescription": "Ajustez votre recherche ou vos filtres."
+    },
+    "stats": {
+      "total": "Total des élèves",
+      "active": "Élèves actifs",
+      "pending": "En attente d'approbation",
+      "gender": "Répartition par sexe",
+      "male": "Garçons",
+      "female": "Filles"
+    },
+    "import": {
+      "button": "Import IA",
+      "title": "Import IA des élèves",
+      "description": "Importez une liste de classe (image, PDF ou tableur) et l'IA en extraira les élèves pour vérification.",
+      "class": "Classe cible",
+      "selectClass": "Sélectionner une classe",
+      "file": "Fichier de la liste de classe",
+      "fileHint": "JPG, PNG, PDF ou Excel · jusqu'à 5 Mo",
+      "selectFile": "Choisir un fichier",
+      "parse": "Extraire les élèves",
+      "parsing": "Extraction…",
+      "previewDescription": "{count} élèves extraits. Vérifiez avant d'enregistrer.",
+      "empty": "Aucun élève n'a pu être extrait de ce fichier.",
+      "back": "Retour",
+      "cancel": "Annuler",
+      "confirm": "Enregistrer les élèves",
+      "confirming": "Enregistrement…",
+      "male": "Garçon",
+      "female": "Fille",
+      "columns": {
+        "name": "Nom complet",
+        "matricule": "Matricule",
+        "gender": "Sexe",
+        "dob": "Date de naissance",
+        "place": "Lieu de naissance"
+      },
+      "toasts": {
+        "needFile": "Choisissez d'abord un fichier et une classe.",
+        "parsed": "{count} élèves extraits.",
+        "parseError": "Impossible de lire ce fichier. Essayez-en un plus net.",
+        "saved": "{count} élèves importés.",
+        "saveError": "Impossible d'enregistrer les élèves. Veuillez réessayer."
+      }
+    },
+    "detail": {
+      "back": "Retour aux élèves",
+      "edit": "Modifier",
+      "loading": "Chargement de l'élève…",
+      "errorTitle": "Impossible de charger l'élève",
+      "errorDescription": "Cet élève a peut-être été supprimé, ou la requête a échoué.",
+      "retry": "Réessayer",
+      "repeater": "Redouble cette classe",
+      "notRepeater": "Ne redouble pas",
+      "male": "Garçon",
+      "female": "Fille",
+      "sections": {
+        "personal": "Informations personnelles",
+        "academic": "Scolarité",
+        "guardian": "Tuteur"
+      },
+      "fields": {
+        "fullName": "Nom complet",
+        "matricule": "Matricule",
+        "gender": "Sexe",
+        "dob": "Date de naissance",
+        "placeOfBirth": "Lieu de naissance",
+        "class": "Classe",
+        "code": "Code élève",
+        "status": "Statut d'inscription",
+        "repeater": "Redoublant",
+        "guardian": "Tuteur / parent",
+        "contact": "Contact",
+        "email": "E-mail"
+      }
     }
   },
   "teachers": {
@@ -1165,6 +1242,73 @@
         "range": "Saisissez une note entre 0 et {max}",
         "fix": "Corrigez les notes en surbrillance avant d'enregistrer."
       }
+    },
+    "cards": {
+      "modes": {
+        "term": "Trimestre",
+        "sequence": "Séquence",
+        "annual": "Annuel"
+      },
+      "descriptions": {
+        "term": "Bulletins de trimestre — agrège les deux séquences du trimestre.",
+        "sequence": "Bulletins de séquence — une seule évaluation.",
+        "annual": "Bulletins annuels — toute l'année scolaire."
+      },
+      "term": {
+        "label": "Trimestre",
+        "placeholder": "Choisir un trimestre",
+        "first": "Premier trimestre",
+        "second": "Deuxième trimestre",
+        "third": "Troisième trimestre"
+      },
+      "sequence": {
+        "label": "Séquence",
+        "placeholder": "Choisir une séquence",
+        "option": "Séquence {n}"
+      },
+      "classLabel": "Classe",
+      "preview": "Aperçu",
+      "annualNote": "Les bulletins annuels couvrent toute l'année scolaire — aucun trimestre ni séquence à choisir.",
+      "academicYear": "Année scolaire {year}",
+      "downloadAll": "Tout télécharger",
+      "generate": "Générer les bulletins",
+      "download": "Télécharger",
+      "empty": {
+        "title": "Aucun aperçu",
+        "description": "Choisissez vos options puis cliquez sur Aperçu pour lister les élèves."
+      },
+      "emptyStudents": {
+        "title": "Aucun élève",
+        "description": "Aucun élève ne correspond à cette sélection."
+      },
+      "error": {
+        "title": "Impossible de charger l'aperçu",
+        "description": "Une erreur s'est produite. Veuillez réessayer."
+      },
+      "summary": {
+        "students": "Élèves",
+        "complete": "Complets",
+        "missing": "Notes manquantes"
+      },
+      "missingWarning": "{count} élève(s) sur {total} ont des notes manquantes — leurs bulletins pourraient être incomplets.",
+      "table": {
+        "index": "N°",
+        "student": "Élève",
+        "class": "Classe",
+        "marked": "Matières notées",
+        "status": "Statut"
+      },
+      "status": {
+        "complete": "Complet",
+        "missing": "{count} manquante(s)",
+        "noMarks": "Aucune note"
+      },
+      "toasts": {
+        "generated": "Bulletins générés",
+        "generateError": "Impossible de générer les bulletins. Veuillez réessayer.",
+        "downloadStarted": "Téléchargement démarré",
+        "downloadError": "Échec du téléchargement. Veuillez réessayer."
+      }
     }
   },
   "admin": {
@@ -1394,5 +1538,134 @@
     "sortBy": "Trier par {title}",
     "sortedAsc": "Trié par {title} croissant. Activer pour trier décroissant.",
     "sortedDesc": "Trié par {title} décroissant. Activer pour annuler le tri."
+  },
+  "resultSummary": {
+    "title": "Récapitulatif des résultats",
+    "subtitle": "Générez un PDF paysage listant la note de chaque élève par matière pour une classe et un examen.",
+    "form": {
+      "title": "Générer le récapitulatif",
+      "class": "Classe",
+      "exam": "Examen / Séquence",
+      "selectClass": "Sélectionnez une classe",
+      "selectExam": "Sélectionnez un examen",
+      "generate": "Générer le PDF",
+      "generating": "Génération…"
+    },
+    "validation": {
+      "selectBoth": "Veuillez sélectionner une classe et un examen."
+    },
+    "stats": {
+      "classes": "Total des classes",
+      "exams": "Total des examens",
+      "format": "Format",
+      "formatValue": "PDF Paysage"
+    },
+    "info": {
+      "title": "À propos de ce rapport",
+      "description": "Le PDF généré contient la liste complète de la classe avec la note de chaque élève pour chaque matière.",
+      "item1": "Tous les élèves de la classe sélectionnée, par ordre alphabétique",
+      "item2": "Une colonne par matière avec la note obtenue",
+      "item3": "Total des points, total des coefficients et moyenne par élève",
+      "item4": "En-tête de l'établissement et date de génération, en A4 paysage"
+    },
+    "toasts": {
+      "success": "Récapitulatif des résultats généré.",
+      "error": "Impossible de générer le récapitulatif. Veuillez réessayer."
+    },
+    "states": {
+      "loadErrorTitle": "Échec du chargement des options",
+      "loadErrorDescription": "Impossible de charger les classes et examens. Veuillez réessayer.",
+      "retry": "Réessayer",
+      "emptyTitle": "Rien à générer pour l'instant",
+      "emptyDescription": "Ajoutez des classes et des examens avant de générer un récapitulatif."
+    }
+  },
+  "markSheets": {
+    "title": "Feuilles de notes",
+    "subtitle": "Prévisualisez les notes d'une matière pour un examen et générez une feuille de notes imprimable.",
+    "selectorsTitle": "Choisissez une matière, un examen et une classe",
+    "subject": "Matière",
+    "exam": "Examen",
+    "class": "Classe",
+    "selectSubject": "Sélectionnez une matière",
+    "selectExam": "Sélectionnez un examen",
+    "selectClass": "Sélectionnez une classe",
+    "allClasses": "Toutes les classes",
+    "preview": "Aperçu",
+    "generate": "Générer le PDF",
+    "previewTitle": "Aperçu de la feuille de notes",
+    "previewFor": "Notes affichées pour",
+    "outOf": "Sur {max}",
+    "columns": {
+      "number": "N°",
+      "matricule": "Matricule",
+      "student": "Élève",
+      "class": "Classe",
+      "mark": "Note"
+    },
+    "prompt": {
+      "title": "Créer une feuille de notes",
+      "description": "Choisissez une matière et un examen, puis cliquez sur Aperçu pour voir les notes avant de générer le PDF."
+    },
+    "empty": {
+      "title": "Aucune note trouvée",
+      "description": "Aucune note trouvée pour les critères sélectionnés."
+    },
+    "toasts": {
+      "generated": "Feuille de notes générée",
+      "generateError": "Impossible de générer la feuille de notes. Veuillez réessayer."
+    }
+  },
+  "mockGce": {
+    "title": "Examen Mock GCE",
+    "subtitle": "Générez des relevés et récapitulatifs blancs de type GCE camerounais pour les candidats de Form 5 (Ordinary Level) et Upper Sixth (Advanced Level), à partir des notes de la 6e séquence.",
+    "loading": "Chargement du Mock GCE…",
+    "disclaimer": "Les relevés Mock GCE sont des documents d'évaluation internes et ne constituent PAS des résultats officiels du GCE Board camerounais.",
+    "level": {
+      "oLevel": "O-Level",
+      "aLevel": "A-Level"
+    },
+    "card": {
+      "subtitle": "{level} · Examen blanc"
+    },
+    "stats": {
+      "candidates": "Candidats",
+      "marked": "Notés",
+      "marks": "Notes"
+    },
+    "coverage": {
+      "label": "Couverture des notes"
+    },
+    "passRule": {
+      "o": "<b>Règle de réussite :</b> A, B ou C dans <b>≥ 4 épreuves</b>. Points : A=3, B=2, C=1.",
+      "a": "<b>Règle de réussite :</b> A à E dans <b>≥ 2 épreuves</b>. Points : A=5, B=4, C=3, D=2, E=1."
+    },
+    "actions": {
+      "downloadSlips": "Télécharger les relevés",
+      "classSummary": "Récapitulatif de classe"
+    },
+    "info": {
+      "title": "Comment ça marche",
+      "points": [
+        "Les enseignants saisissent les notes /20 de la 6e séquence via le flux habituel des feuilles de notes.",
+        "Cette page convertit ces notes en lettres GCE camerounaises et calcule les mentions et les points.",
+        "Les bulletins de trimestre, de séquence et de récapitulatif restent inchangés."
+      ],
+      "noExam": "Aucun examen de 6e séquence n'existe pour {year}.",
+      "examsLink": "Créez-le dans Examens"
+    },
+    "empty": {
+      "title": "Aucune classe GCE trouvée",
+      "description": "La page Mock GCE fonctionne avec les classes nommées Form 5, Form Five, Upper Sixth ou U6. Créez ou renommez une classe dans Classes pour activer cette fonctionnalité."
+    },
+    "error": {
+      "title": "Impossible de charger le Mock GCE",
+      "description": "Une erreur est survenue lors du chargement des classes éligibles.",
+      "retry": "Réessayer"
+    },
+    "toasts": {
+      "slipsFailed": "Impossible de télécharger les relevés. Veuillez réessayer.",
+      "summaryFailed": "Impossible de télécharger le récapitulatif de classe. Veuillez réessayer."
+    }
   }
 }

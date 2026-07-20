@@ -4,11 +4,13 @@ import type { ColumnDef } from "@tanstack/react-table";
 import {
   CheckCircle2,
   Clock,
+  Eye,
   MoreHorizontal,
   Pencil,
   Trash2,
   XCircle,
 } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -16,7 +18,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
@@ -35,6 +36,7 @@ type Labels = {
   dob: string;
   status: string;
   actions: string;
+  view: string;
   edit: string;
   delete: string;
   setStatus: string;
@@ -154,6 +156,11 @@ export function getStudentColumns({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href={`/students/${s.id}`}>
+                    <Eye className="mr-2 size-4" /> {labels.view}
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onEdit(s)}>
                   <Pencil className="mr-2 size-4" /> {labels.edit}
                 </DropdownMenuItem>

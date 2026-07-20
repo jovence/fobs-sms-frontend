@@ -68,3 +68,65 @@ export interface EntryStudent {
 export interface SaveMarksInput extends EntrySelection {
   marks: { studentId: string; mark: number }[];
 }
+
+// ---------------------------------------------------------------------------
+// Report cards (Term / Sequence / Annual)
+// ---------------------------------------------------------------------------
+
+/**
+ * The three report-card modes:
+ * - `term`: aggregates a term's two sequences (Term = First/Second/Third → 1..3),
+ * - `sequence`: a single exam sequence (1..6),
+ * - `annual`: the full academic year (no term/sequence selector).
+ */
+export type ReportMode = "term" | "sequence" | "annual";
+
+/** Filter metadata for the report cards screen (`GET /dashboard/reports`). */
+export interface ReportIndex {
+  academicYears: string[];
+  currentAcademicYear: string;
+  classes: ClassOption[];
+}
+
+/** Selection driving a preview / generate / download call. */
+export interface ReportParams {
+  term?: number; // 1..3 — term mode only
+  sequence?: number; // 1..6 — sequence mode only
+  classId?: string; // optional class filter (omitted → whole school)
+}
+
+/** Download variants also need the academic year (it's part of the URL). */
+export interface ReportDownloadParams extends ReportParams {
+  academicYear: string;
+  studentId?: string; // present → single-student download
+}
+
+/** One student row in a report-card preview. */
+export interface ReportPreviewStudent {
+  id: string;
+  fullName: string;
+  matricule: string | null;
+  className: string;
+  /** Distinct subjects (term/sequence) or marks (annual) the student has so far. */
+  subjectsCount: number;
+  /** Expected subjects to be complete; `null` for annual (backend gives no total). */
+  totalSubjects: number | null;
+  /** True when the student is short of `totalSubjects` (or has no marks for annual). */
+  missing: boolean;
+}
+
+/** Normalised preview payload shared by all three modes. */
+export interface ReportPreview {
+  students: ReportPreviewStudent[];
+  totalSubjects: number | null;
+  academicYear: string;
+  term?: number;
+  sequence?: number;
+  /** Human-readable "missing marks" notices (populated by the sequence endpoint). */
+  errors: string[];
+}
+
+/** Result of a generate call — the backend returns a JSON message to surface. */
+export interface ReportGenerateResult {
+  message: string;
+}

@@ -197,8 +197,7 @@ export function ParentDetail({ id }: { id: string }) {
                     </div>
                   </div>
                   <Button variant="outline" size="sm" asChild>
-                    {/* No student-detail route yet; link to the students list. */}
-                    <Link href="/students">{t("detail.viewStudent")}</Link>
+                    <Link href={`/students/${student.id}`}>{t("detail.viewStudent")}</Link>
                   </Button>
                 </li>
               ))}

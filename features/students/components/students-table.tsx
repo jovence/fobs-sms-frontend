@@ -5,7 +5,7 @@ import type { RowSelectionState, SortingState } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { toast } from "sonner";
-import { Download, Plus, Search, Trash2, X } from "lucide-react";
+import { Download, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,8 @@ import { useClassOptions } from "@/features/academics/hooks";
 import type { RegistrationStatus, Student, StudentQuery } from "../types";
 import { getStudentColumns } from "./students-columns";
 import { StudentFormSheet } from "./student-form-sheet";
+import { StudentStatCards } from "./student-stat-cards";
+import { AiImportDialog } from "./ai-import-dialog";
 
 const STATUSES: RegistrationStatus[] = ["Approved", "Pending", "Rejected"];
 
@@ -54,6 +56,7 @@ export function StudentsTable() {
   const [editing, setEditing] = useState<Student | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Student | null>(null);
   const [bulkOpen, setBulkOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
 
   const deleteStudent = useDeleteStudent();
   const bulkDelete = useBulkDeleteStudents();
@@ -94,6 +97,7 @@ export function StudentsTable() {
           dob: t("columns.dob"),
           status: t("columns.status"),
           actions: t("columns.actions"),
+          view: t("actions.view"),
           edit: t("actions.edit"),
           delete: t("actions.delete"),
           setStatus: t("actions.setStatus"),
@@ -190,6 +194,9 @@ export function StudentsTable() {
         <Button variant="outline" size="sm" onClick={exportCsv} disabled={!data?.total}>
           <Download /> {t("export")}
         </Button>
+        <Button variant="outline" size="sm" onClick={() => setAiOpen(true)}>
+          <Sparkles /> {t("import.button")}
+        </Button>
         <Button
           size="sm"
           onClick={() => {
@@ -204,7 +211,9 @@ export function StudentsTable() {
   );
 
   return (
-    <>
+    <div className="space-y-6">
+      <StudentStatCards />
+
       <DataTable
         columns={columns}
         data={data?.items ?? []}
@@ -256,6 +265,8 @@ export function StudentsTable() {
         classes={classOptions}
       />
 
+      <AiImportDialog open={aiOpen} onOpenChange={setAiOpen} classes={classOptions} />
+
       <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(o) => !o && setDeleteTarget(null)}
@@ -292,6 +303,6 @@ export function StudentsTable() {
           setBulkOpen(false);
         }}
       />
-    </>
+    </div>
   );
 }
