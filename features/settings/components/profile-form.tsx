@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Info } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -19,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/features/auth/hooks";
-import { withLatency } from "@/lib/mock";
 import { initials } from "@/lib/format";
 import { profileSchema, type ProfileValues } from "../schemas";
 
@@ -30,10 +28,9 @@ export function ProfileForm() {
 
   const {
     register,
-    handleSubmit,
     reset,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema(tv)),
     defaultValues: { name: "", email: "" },
@@ -48,18 +45,11 @@ export function ProfileForm() {
 
   const nameValue = watch("name");
 
-  async function onSubmit(values: ProfileValues) {
-    try {
-      await withLatency(values, 700);
-      toast.success(t("saved"));
-    } catch {
-      toast.error(t("error"));
-    }
-  }
-
   return (
     <Card className="card-interactive shadow-[var(--shadow-sm)]">
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      {/* No profile-update endpoint exists yet, so the form displays the real signed-in
+          user but cannot persist edits — Save is disabled rather than faking success. */}
+      <form onSubmit={(e) => e.preventDefault()} noValidate>
         <CardHeader>
           <CardTitle>{t("title")}</CardTitle>
           <CardDescription>{t("description")}</CardDescription>
@@ -116,9 +106,12 @@ export function ProfileForm() {
           </div>
         </CardContent>
 
-        <CardFooter className="justify-end border-t">
-          <Button type="submit" disabled={isSubmitting || !ready}>
-            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+        <CardFooter className="flex-col items-stretch gap-3 border-t sm:flex-row sm:items-center sm:justify-between">
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Info className="size-4 shrink-0 text-primary" aria-hidden />
+            {t("unavailable")}
+          </p>
+          <Button type="button" disabled>
             {t("save")}
           </Button>
         </CardFooter>

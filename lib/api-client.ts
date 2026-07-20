@@ -3,23 +3,11 @@ import type { ApiEnvelope, ApiMeta } from "@/types";
 import { useAuthStore } from "@/features/auth/store";
 
 /**
- * The mock ↔ live switch. Every feature service picks its implementation with `pickService`;
- * the UI never knows which is active. Flip via NEXT_PUBLIC_API_MODE=live.
+ * Base URL of the Laravel API. Every feature service talks to it directly — the app has no
+ * mock/offline mode: all data comes from the backend (seed it with `php artisan db:seed`).
  */
-export const API_MODE: "mock" | "live" =
-  process.env.NEXT_PUBLIC_API_MODE === "live" ? "live" : "mock";
-
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
-
-/**
- * Pick the mock or live implementation of a service based on {@link API_MODE}. Replaces the
- * old `API_MODE === "live" ? mock : mock` idiom — swapping a module to the real API is now a
- * one-line change: `pickService(mockX, httpX)`.
- */
-export function pickService<T>(mock: T, live: T): T {
-  return API_MODE === "live" ? live : mock;
-}
 
 type ApiErrorCode = ApiError["code"];
 

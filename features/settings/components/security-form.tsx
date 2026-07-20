@@ -3,8 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Info } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,7 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { withLatency } from "@/lib/mock";
 import { passwordSchema, type PasswordValues } from "../schemas";
 
 const EMPTY: PasswordValues = {
@@ -31,27 +29,17 @@ export function SecurityForm() {
 
   const {
     register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<PasswordValues>({
     resolver: zodResolver(passwordSchema(tv)),
     defaultValues: EMPTY,
   });
 
-  async function onSubmit(values: PasswordValues) {
-    try {
-      await withLatency(values, 700);
-      toast.success(t("saved"));
-      reset(EMPTY);
-    } catch {
-      toast.error(t("error"));
-    }
-  }
-
   return (
     <Card className="card-interactive shadow-[var(--shadow-sm)]">
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      {/* No password-change endpoint exists yet, so Save is disabled rather than
+          faking a successful update. */}
+      <form onSubmit={(e) => e.preventDefault()} noValidate>
         <CardHeader>
           <CardTitle>{t("title")}</CardTitle>
           <CardDescription>{t("description")}</CardDescription>
@@ -111,9 +99,12 @@ export function SecurityForm() {
           </div>
         </CardContent>
 
-        <CardFooter className="justify-end border-t">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+        <CardFooter className="flex-col items-stretch gap-3 border-t sm:flex-row sm:items-center sm:justify-between">
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Info className="size-4 shrink-0 text-primary" aria-hidden />
+            {t("unavailable")}
+          </p>
+          <Button type="button" disabled>
             {t("save")}
           </Button>
         </CardFooter>

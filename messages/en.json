@@ -778,7 +778,8 @@
       "email": "Email address",
       "save": "Save changes",
       "saved": "Profile updated",
-      "error": "Something went wrong. Please try again."
+      "error": "Something went wrong. Please try again.",
+      "unavailable": "Saving your profile isn't available yet."
     },
     "security": {
       "title": "Password",
@@ -789,7 +790,8 @@
       "hint": "Use at least 8 characters.",
       "save": "Update password",
       "saved": "Password updated",
-      "error": "Something went wrong. Please try again."
+      "error": "Something went wrong. Please try again.",
+      "unavailable": "Changing your password isn't available yet."
     },
     "preferences": {
       "title": "Appearance",
@@ -1331,6 +1333,8 @@
     "dashboard": {
       "title": "Platform overview",
       "subtitle": "Health and growth across every school on FOBS SMS.",
+      "errorTitle": "Couldn't load platform analytics",
+      "errorDescription": "Something went wrong fetching the dashboard. Please try again.",
       "vsLastMonth": "vs last month",
       "schools": "Schools",
       "students": "Students",

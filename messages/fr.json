@@ -778,7 +778,8 @@
       "email": "Adresse e-mail",
       "save": "Enregistrer les modifications",
       "saved": "Profil mis à jour",
-      "error": "Une erreur est survenue. Veuillez réessayer."
+      "error": "Une erreur est survenue. Veuillez réessayer.",
+      "unavailable": "L'enregistrement de votre profil n'est pas encore disponible."
     },
     "security": {
       "title": "Mot de passe",
@@ -789,7 +790,8 @@
       "hint": "Utilisez au moins 8 caractères.",
       "save": "Mettre à jour le mot de passe",
       "saved": "Mot de passe mis à jour",
-      "error": "Une erreur est survenue. Veuillez réessayer."
+      "error": "Une erreur est survenue. Veuillez réessayer.",
+      "unavailable": "La modification de votre mot de passe n'est pas encore disponible."
     },
     "preferences": {
       "title": "Apparence",
@@ -1331,6 +1333,8 @@
     "dashboard": {
       "title": "Vue d'ensemble de la plateforme",
       "subtitle": "Santé et croissance de tous les établissements FOBS SMS.",
+      "errorTitle": "Impossible de charger les analyses de la plateforme",
+      "errorDescription": "Une erreur s'est produite lors du chargement du tableau de bord. Veuillez réessayer.",
       "vsLastMonth": "vs mois dernier",
       "schools": "Établissements",
       "students": "Élèves",
