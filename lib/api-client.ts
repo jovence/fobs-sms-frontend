@@ -1,12 +1,16 @@
 import { ApiError } from "@/types";
 import type { ApiEnvelope, ApiMeta } from "@/types";
 import { useAuthStore } from "@/features/auth/store";
+import { requiredEnv } from "@/lib/env";
 
 /**
  * Base URL of the Laravel API. Every feature service talks to it directly — the app has no
  * mock/offline mode: all data comes from the backend (seed it with `php artisan db:seed`).
  */
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+export const API_BASE_URL = requiredEnv(
+  "NEXT_PUBLIC_API_URL",
+  process.env.NEXT_PUBLIC_API_URL,
+);
 
 type ApiErrorCode = ApiError["code"];
 

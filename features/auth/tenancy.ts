@@ -1,3 +1,4 @@
+import { requiredBooleanEnv } from "@/lib/env";
 import { useAuthStore } from "./store";
 
 /**
@@ -7,11 +8,13 @@ import { useAuthStore } from "./store";
 export const DEMO_SCHOOL_IDS = ["sch_1", "sch_2"];
 
 /**
- * Whether to seed demo data at all. Set `NEXT_PUBLIC_SEED_DEMO=false` to start the WHOLE app
- * empty (no sample schools/students/anything — a "fresh, no-seed" workspace for every account).
- * Default (unset) keeps the demo account (owner@fobs.cm) populated for showcasing.
+ * Whether to seed demo data at all. Must be configured explicitly so missing environment
+ * values fail loudly instead of silently changing app behavior.
  */
-export const SEED_DEMO = process.env.NEXT_PUBLIC_SEED_DEMO !== "false";
+export const SEED_DEMO = requiredBooleanEnv(
+  "NEXT_PUBLIC_SEED_DEMO",
+  process.env.NEXT_PUBLIC_SEED_DEMO,
+);
 
 export function activeSchoolId(): string {
   return useAuthStore.getState().session?.activeSchoolId ?? "none";
