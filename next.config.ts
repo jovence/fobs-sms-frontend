@@ -17,6 +17,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   images: {
     // Backend media (school logos, student photos) will be served from S3.
     remotePatterns: [{ protocol: "https", hostname: "**.amazonaws.com" }],

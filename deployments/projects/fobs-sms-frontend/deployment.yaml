@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fobs-sms-frontend
+  labels:
+    app.kubernetes.io/name: fobs-sms-frontend
+    app.kubernetes.io/component: web
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fobs-sms-frontend
+      app.kubernetes.io/component: web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: fobs-sms-frontend
+        app.kubernetes.io/component: web
+    spec:
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+        - name: fobs-sms-frontend-registry-secret
+      containers:
+        - name: next
+          image: ghcr.io/example/fobs-sms-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          envFrom:
+            - configMapRef:
+                name: fobs-sms-frontend-config
+          resources:
+            limits:
+              cpu: "750m"
+              memory: 512Mi
+            requests:
+              cpu: "100m"
+              memory: 192Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fobs-sms-frontend
+  labels:
+    app.kubernetes.io/name: fobs-sms-frontend
+    app.kubernetes.io/component: web
+spec:
+  selector:
+    app.kubernetes.io/name: fobs-sms-frontend
+    app.kubernetes.io/component: web
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fobs-sms-frontend
+  labels:
+    app.kubernetes.io/name: fobs-sms-frontend
+    app.kubernetes.io/component: web
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 16m
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - alpha.fobssms.com
+      secretName: fobs-sms-frontend-tls
+  rules:
+    - host: alpha.fobssms.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fobs-sms-frontend
+                port:
+                  number: 80
