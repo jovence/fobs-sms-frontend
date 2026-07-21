@@ -16,6 +16,24 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useRegister } from "../hooks";
 import { registerSchema, type RegisterValues } from "../schemas";
 
+const backendFieldMap: Record<string, keyof RegisterValues> = {
+  name: "name",
+  email: "email",
+  phone: "phone",
+  password: "password",
+  password_confirmation: "confirmPassword",
+};
+
+function registerErrorMessage(err: unknown, fallback: string): string {
+  if (!(err instanceof ApiError)) return fallback;
+  if (err.code === "network") return "Network error: the frontend could not reach the backend.";
+  if (err.code === "validation" || err.status === 422) {
+    return "Backend validation failed. Check the highlighted fields below.";
+  }
+  if (err.status >= 500) return `Backend error (${err.status}): ${err.message}`;
+  return err.message || fallback;
+}
+
 export function RegisterForm() {
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
@@ -44,8 +62,13 @@ export function RegisterForm() {
         setError("email", { message: t("emailTaken") });
         return;
       }
-      // Any other failure is not "email already taken" — show an accurate message.
-      setFormError(t(authErrorMessageKey(err)));
+      if (err instanceof ApiError && err.fields) {
+        for (const [backendField, message] of Object.entries(err.fields)) {
+          const formField = backendFieldMap[backendField];
+          if (formField) setError(formField, { message });
+        }
+      }
+      setFormError(registerErrorMessage(err, t(authErrorMessageKey(err))));
     }
   }
 

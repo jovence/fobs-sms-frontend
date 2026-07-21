@@ -6,8 +6,7 @@ import { useAuthStore } from "@/features/auth/store";
  * Base URL of the Laravel API. Every feature service talks to it directly — the app has no
  * mock/offline mode: all data comes from the backend (seed it with `php artisan db:seed`).
  */
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 type ApiErrorCode = ApiError["code"];
 
