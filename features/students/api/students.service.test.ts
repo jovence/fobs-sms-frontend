@@ -16,9 +16,11 @@ function mockFetchOnce(envelope: unknown, init: { status?: number } = {}) {
     headers: { get: () => null },
     json: async () => envelope,
   } as unknown as Response;
-  const spy = vi.fn((_input: RequestInfo | URL, _init?: RequestInit): Promise<Response> =>
-    Promise.resolve(res),
-  );
+  const spy = vi.fn((input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    void input;
+    void init;
+    return Promise.resolve(res);
+  });
   vi.stubGlobal("fetch", spy);
   return spy;
 }
@@ -148,6 +150,46 @@ describe("studentsService (http mapper)", () => {
       class_id: "1",
       place_of_birth: "Buea",
     });
+  });
+
+  it("sends multipart data when a student photo is selected", async () => {
+    const fetchSpy = mockFetchOnce({
+      success: true,
+      data: {
+        id: 13,
+        matricule: "MAT-13",
+        full_name: "Photo Student",
+        date_of_birth: "2011-02-02",
+        place_of_birth: "Yaounde",
+        gender: "female",
+        registration_status: "approved",
+        image: "student-photos/photo.jpg",
+        class_id: 2,
+        class: { id: 2, name: "Form 3" },
+        created_at: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    const image = new File(["avatar"], "avatar.png", { type: "image/png" });
+
+    await studentsService.create({
+      fullName: "Photo Student",
+      matricule: "MAT-13",
+      gender: "Female",
+      dateOfBirth: "2011-02-02",
+      placeOfBirth: "Yaounde",
+      classId: "2",
+      image,
+    });
+
+    const [, reqInit] = fetchSpy.mock.calls[0];
+    expect((reqInit as RequestInit).method).toBe("POST");
+    expect((reqInit as RequestInit).body).toBeInstanceOf(FormData);
+
+    const body = (reqInit as RequestInit).body as FormData;
+    expect(body.get("full_name")).toBe("Photo Student");
+    expect(body.get("gender")).toBe("female");
+    expect(body.get("class_id")).toBe("2");
+    expect(body.get("image")).toBe(image);
   });
 
   it("maps updateStatus via PATCH", async () => {

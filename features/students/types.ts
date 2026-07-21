@@ -24,6 +24,7 @@ export interface StudentInput {
   dateOfBirth: string;
   placeOfBirth: string;
   classId: string;
+  image?: File | null;
   guardianName?: string;
   isRepeater?: boolean;
   status?: RegistrationStatus;

@@ -167,6 +167,23 @@ function toPayload(input: StudentInput): Record<string, unknown> {
   };
 }
 
+function toMultipartPayload(input: StudentInput): FormData {
+  const payload = toPayload(input);
+  const form = new FormData();
+
+  for (const [key, value] of Object.entries(payload)) {
+    form.append(key, value == null ? "" : String(value));
+  }
+
+  if (input.image) form.append("image", input.image);
+
+  return form;
+}
+
+function studentBody(input: StudentInput): Record<string, unknown> | FormData {
+  return input.image ? toMultipartPayload(input) : toPayload(input);
+}
+
 export const httpStudentsService: StudentsService = {
   async list(query): Promise<Paginated<Student>> {
     const params = new URLSearchParams();
@@ -236,12 +253,12 @@ export const httpStudentsService: StudentsService = {
   },
 
   async create(input): Promise<Student> {
-    const student = await api.post<StudentPayload>("/dashboard/students", toPayload(input));
+    const student = await api.post<StudentPayload>("/dashboard/students", studentBody(input));
     return mapStudent(student);
   },
 
   async update(id, input): Promise<Student> {
-    const student = await api.put<StudentPayload>(`/dashboard/students/${id}`, toPayload(input));
+    const student = await api.put<StudentPayload>(`/dashboard/students/${id}`, studentBody(input));
     return mapStudent(student);
   },
 
