@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CalendarDays, Loader2, Save } from "lucide-react";
@@ -10,7 +10,9 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -19,6 +21,7 @@ import { Shimmer } from "@/components/common/skeletons";
 import { EmptyState, ErrorState } from "@/components/common/states";
 import { cn } from "@/lib/utils";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
+import { CLASS_SECTIONS, classLabel, classesBySection } from "@/features/academics/class-options";
 import { useClassOptions, useSubjectOptions } from "@/features/academics/hooks";
 import { useRoster, useSaveSession } from "../hooks";
 import { attendanceRate, type AttendanceRecord, type AttendanceStatus } from "../types";
@@ -32,6 +35,7 @@ function today(): string {
 
 export function AttendanceRecord() {
   const t = useTranslations("attendance.record");
+  const tc = useTranslations("academics.classForm");
 
   const { data: classes = [] } = useClassOptions();
   const { data: subjects = [] } = useSubjectOptions();
@@ -41,27 +45,24 @@ export function AttendanceRecord() {
   const [entries, setEntries] = useState<Record<string, RosterEntry>>({});
   const [isDirty, setIsDirty] = useState(false);
 
-  // Default to the first real class/subject once they load (empty for a fresh school).
-  useEffect(() => {
-    if (!classId && classes.length) setClassId(classes[0].id);
-  }, [classes, classId]);
-  useEffect(() => {
-    if (!subjectId && subjects.length) setSubjectId(subjects[0].id);
-  }, [subjects, subjectId]);
+  // Default selections are derived during render so loading options does not trigger
+  // cascading state updates. A manual pick sets classId/subjectId and takes over.
+  const effectiveClassId = classId || classes[0]?.id || "";
+  const effectiveSubjectId = subjectId || subjects[0]?.id || "";
 
-  const { data: roster, isLoading, isError, refetch } = useRoster(classId);
+  const { data: roster, isLoading, isError, refetch } = useRoster(effectiveClassId);
   const save = useSaveSession();
   useUnsavedChangesWarning(isDirty);
-
-  // Reset the roster marks whenever the loaded class changes.
-  useEffect(() => {
-    if (!roster) return;
-    const next: Record<string, RosterEntry> = {};
-    for (const s of roster) {
-      next[s.id] = { status: "Present", hours: DEFAULT_HOURS };
-    }
-    setEntries(next);
-  }, [roster]);
+  const groupedClasses = useMemo(() => classesBySection(classes), [classes]);
+  const classLabels = useMemo(
+    () => ({
+      lower: tc("levelLower"),
+      upper: tc("levelUpper"),
+      english: tc("sectionEnglish"),
+      french: tc("sectionFrench"),
+    }),
+    [tc],
+  );
 
   const summary = useMemo(() => {
     const list = roster ?? [];
@@ -110,13 +111,18 @@ export function AttendanceRecord() {
   }
 
   async function onSave() {
-    if (!roster || roster.length === 0) return;
+    if (!effectiveClassId || !effectiveSubjectId || !roster || roster.length === 0) return;
     const records: AttendanceRecord[] = roster.map((s) => {
       const entry = entries[s.id] ?? { status: "Present", hours: DEFAULT_HOURS };
       return { studentId: s.id, status: entry.status, hours: entry.hours };
     });
     try {
-      await save.mutateAsync({ date, classId, subjectId, records });
+      await save.mutateAsync({
+        date,
+        classId: effectiveClassId,
+        subjectId: effectiveSubjectId,
+        records,
+      });
       toast.success(t("saved"));
       setIsDirty(false);
     } catch {
@@ -132,21 +138,41 @@ export function AttendanceRecord() {
           <div className="space-y-2">
             <Label htmlFor="att-class">{t("class")}</Label>
             <Select
-              value={classId}
+              value={effectiveClassId || undefined}
               onValueChange={(v) => {
                 setIsDirty(false);
                 setClassId(v);
+                setEntries({});
               }}
             >
               <SelectTrigger id="att-class" className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {classes.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
+                {CLASS_SECTIONS.map((section) => {
+                  const rows = groupedClasses[section];
+                  if (rows.length === 0) return null;
+                  return (
+                    <SelectGroup key={section}>
+                      <SelectLabel>{classLabels[section]}</SelectLabel>
+                      {rows.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {classLabel(c, classLabels)}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  );
+                })}
+                {groupedClasses.other.length > 0 && (
+                  <SelectGroup>
+                    <SelectLabel>{tc("sectionUnknown")}</SelectLabel>
+                    {groupedClasses.other.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {classLabel(c, classLabels)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -169,7 +195,7 @@ export function AttendanceRecord() {
           <div className="space-y-2">
             <Label htmlFor="att-subject">{t("subject")}</Label>
             <Select
-              value={subjectId}
+              value={effectiveSubjectId || undefined}
               onValueChange={(v) => {
                 setIsDirty(false);
                 setSubjectId(v);
@@ -273,7 +299,13 @@ export function AttendanceRecord() {
           <Button
             size="lg"
             onClick={onSave}
-            disabled={save.isPending || !roster || roster.length === 0}
+            disabled={
+              save.isPending ||
+              !effectiveClassId ||
+              !effectiveSubjectId ||
+              !roster ||
+              roster.length === 0
+            }
           >
             {save.isPending ? (
               <Loader2 className="size-4 animate-spin" />

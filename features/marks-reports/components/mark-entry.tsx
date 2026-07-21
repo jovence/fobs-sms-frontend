@@ -12,7 +12,9 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -22,6 +24,7 @@ import { Shimmer } from "@/components/common/skeletons";
 import { cn } from "@/lib/utils";
 import { initials } from "@/lib/format";
 import { useEntryRoster, useSaveMarks } from "../hooks";
+import { CLASS_SECTIONS, classLabel, classesBySection } from "@/features/academics/class-options";
 import { useClassOptions, useSubjectOptions } from "@/features/academics/hooks";
 import { useExamOptions } from "@/features/exams/hooks";
 import { MARK_MAX, PASS_MARK, type EntrySelection } from "../types";
@@ -32,6 +35,7 @@ export function MarkEntry() {
   const t = useTranslations("reports");
   const te = useTranslations("reports.entry");
   const teErrors = useTranslations("reports.entry.errors");
+  const tc = useTranslations("academics.classForm");
 
   const { data: classes = [] } = useClassOptions();
   const { data: subjects = [] } = useSubjectOptions();
@@ -51,10 +55,23 @@ export function MarkEntry() {
   // evaluation — the teacher chooses the exam consciously (one click).
   const effectiveClassId = classId || classes[0]?.id || "";
   const effectiveSubjectId = subjectId || subjects[0]?.id || "";
+  const groupedClasses = useMemo(() => classesBySection(classes), [classes]);
+  const classLabels = useMemo(
+    () => ({
+      lower: tc("levelLower"),
+      upper: tc("levelUpper"),
+      english: tc("sectionEnglish"),
+      french: tc("sectionFrench"),
+    }),
+    [tc],
+  );
 
   // Names of the current selection — shown above the roster so a teacher whose
   // class/subject were auto-selected can see exactly which class they're grading.
-  const selectedClass = classes.find((c) => c.id === effectiveClassId)?.name;
+  const selectedClassOption = classes.find((c) => c.id === effectiveClassId);
+  const selectedClass = selectedClassOption
+    ? classLabel(selectedClassOption, classLabels)
+    : null;
   const selectedSubject = subjects.find((s) => s.id === effectiveSubjectId)?.name;
   const selectedExam = exams.find((e) => e.id === examId)?.name;
 
@@ -155,11 +172,30 @@ export function MarkEntry() {
                   <SelectValue placeholder={te("selectClass")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {classes.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
+                  {CLASS_SECTIONS.map((section) => {
+                    const rows = groupedClasses[section];
+                    if (rows.length === 0) return null;
+                    return (
+                      <SelectGroup key={section}>
+                        <SelectLabel>{classLabels[section]}</SelectLabel>
+                        {rows.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {classLabel(c, classLabels)}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    );
+                  })}
+                  {groupedClasses.other.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>{tc("sectionUnknown")}</SelectLabel>
+                      {groupedClasses.other.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {classLabel(c, classLabels)}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
                 </SelectContent>
               </Select>
             </div>

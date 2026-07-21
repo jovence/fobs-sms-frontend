@@ -1,6 +1,8 @@
 import type { Paginated } from "@/types";
 import type {
+  ClassLevel,
   ClassQuery,
+  ClassSection,
   ClassStats,
   SchoolClass,
   SchoolClassInput,
@@ -15,6 +17,8 @@ import { httpClassesService, httpSubjectsService } from "./academics.http";
 export interface ClassOption {
   id: string;
   name: string;
+  level?: ClassLevel;
+  section?: ClassSection;
 }
 
 /** Paginated subjects plus the index summary counts (surfaced for the stat cards). */

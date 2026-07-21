@@ -10,10 +10,13 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CLASS_SECTIONS, classLabel, classesBySection } from "@/features/academics/class-options";
 import { useClassOptions } from "@/features/academics/hooks";
 import { useSessions } from "../hooks";
 import type { AttendanceQuery, AttendanceSession } from "../types";
@@ -30,8 +33,19 @@ const SORT_MAP: Record<string, AttendanceQuery["sortBy"]> = {
 
 export function AttendanceHistory() {
   const t = useTranslations("attendance.history");
+  const tc = useTranslations("academics.classForm");
   const locale = useLocale();
   const { data: classes = [] } = useClassOptions();
+  const groupedClasses = useMemo(() => classesBySection(classes), [classes]);
+  const classLabels = useMemo(
+    () => ({
+      lower: tc("levelLower"),
+      upper: tc("levelUpper"),
+      english: tc("sectionEnglish"),
+      french: tc("sectionFrench"),
+    }),
+    [tc],
+  );
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
@@ -122,11 +136,30 @@ export function AttendanceHistory() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("allClasses")}</SelectItem>
-            {classes.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.name}
-              </SelectItem>
-            ))}
+            {CLASS_SECTIONS.map((section) => {
+              const rows = groupedClasses[section];
+              if (rows.length === 0) return null;
+              return (
+                <SelectGroup key={section}>
+                  <SelectLabel>{classLabels[section]}</SelectLabel>
+                  {rows.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {classLabel(c, classLabels)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              );
+            })}
+            {groupedClasses.other.length > 0 && (
+              <SelectGroup>
+                <SelectLabel>{tc("sectionUnknown")}</SelectLabel>
+                {groupedClasses.other.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {classLabel(c, classLabels)}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            )}
           </SelectContent>
         </Select>
         {hasFilters && (

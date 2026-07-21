@@ -35,10 +35,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CLASS_SECTIONS, classLabel, classesBySection } from "@/features/academics/class-options";
 import { useCreateStudent, useUpdateStudent } from "../hooks";
 import { studentSchema, type StudentValues } from "../schemas";
 import type { ClassOption, Student } from "../types";
@@ -221,6 +224,13 @@ export function StudentFormSheet({
 
   const busy = create.isPending || update.isPending;
   const photoPreview = photoObjectUrl ?? (photoCleared ? null : student?.photoUrl ?? null);
+  const groupedClasses = classesBySection(classes);
+  const classLabels = {
+    lower: t("levelLower"),
+    upper: t("levelUpper"),
+    english: t("sectionEnglish"),
+    french: t("sectionFrench"),
+  };
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -405,11 +415,30 @@ export function StudentFormSheet({
                             <SelectValue placeholder={t("selectClass")} />
                           </SelectTrigger>
                           <SelectContent>
-                            {classes.map((c) => (
-                              <SelectItem key={c.id} value={c.id}>
-                                {c.name}
-                              </SelectItem>
-                            ))}
+                            {CLASS_SECTIONS.map((section) => {
+                              const rows = groupedClasses[section];
+                              if (rows.length === 0) return null;
+                              return (
+                                <SelectGroup key={section}>
+                                  <SelectLabel>{classLabels[section]}</SelectLabel>
+                                  {rows.map((c) => (
+                                    <SelectItem key={c.id} value={c.id}>
+                                      {classLabel(c, classLabels)}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              );
+                            })}
+                            {groupedClasses.other.length > 0 && (
+                              <SelectGroup>
+                                <SelectLabel>{t("sectionUnknown")}</SelectLabel>
+                                {groupedClasses.other.map((c) => (
+                                  <SelectItem key={c.id} value={c.id}>
+                                    {classLabel(c, classLabels)}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            )}
                           </SelectContent>
                         </Select>
                       )}

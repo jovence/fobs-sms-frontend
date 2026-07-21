@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -26,6 +28,7 @@ import {
   useUpdateStudentStatus,
 } from "../hooks";
 import { studentsService } from "../api/students.service";
+import { CLASS_SECTIONS, classLabel, classesBySection } from "@/features/academics/class-options";
 import { useClassOptions } from "@/features/academics/hooks";
 import type { RegistrationStatus, Student, StudentQuery } from "../types";
 import { getStudentColumns } from "./students-columns";
@@ -85,6 +88,16 @@ export function StudentsTable() {
   );
 
   const { data, isLoading, isError, refetch, isFetching } = useStudents(query);
+  const groupedClasses = useMemo(() => classesBySection(classOptions), [classOptions]);
+  const classLabels = useMemo(
+    () => ({
+      lower: tf("levelLower"),
+      upper: tf("levelUpper"),
+      english: tf("sectionEnglish"),
+      french: tf("sectionFrench"),
+    }),
+    [tf],
+  );
 
   const columns = useMemo(
     () =>
@@ -164,11 +177,30 @@ export function StudentsTable() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("allClasses")}</SelectItem>
-            {classOptions.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.name}
-              </SelectItem>
-            ))}
+            {CLASS_SECTIONS.map((section) => {
+              const rows = groupedClasses[section];
+              if (rows.length === 0) return null;
+              return (
+                <SelectGroup key={section}>
+                  <SelectLabel>{classLabels[section]}</SelectLabel>
+                  {rows.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {classLabel(c, classLabels)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              );
+            })}
+            {groupedClasses.other.length > 0 && (
+              <SelectGroup>
+                <SelectLabel>{tf("sectionUnknown")}</SelectLabel>
+                {groupedClasses.other.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {classLabel(c, classLabels)}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            )}
           </SelectContent>
         </Select>
         <Select value={status} onValueChange={(v) => { setStatus(v); setPage(1); }}>

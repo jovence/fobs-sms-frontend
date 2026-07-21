@@ -106,7 +106,12 @@ export const httpClassesService: ClassesService = {
   async options(): Promise<ClassOption[]> {
     // Reuse the list endpoint. NOTE: capped at the backend's fixed 15/page for the active school.
     const { data } = await api.list<SchoolClassPayload>("/dashboard/classes?per_page=200");
-    return data.map((c) => ({ id: String(c.id), name: c.name }));
+    return data.map((c) => ({
+      id: String(c.id),
+      name: c.name,
+      level: c.level as ClassLevel,
+      section: c.section as ClassSection,
+    }));
   },
   async stats(): Promise<ClassStats> {
     // The backend exposes no classes-stats endpoint, so aggregate across every page. Classes are

@@ -43,6 +43,8 @@ export interface StudentQuery {
 export interface ClassOption {
   id: string;
   name: string;
+  level?: "lower" | "upper";
+  section?: "english" | "french";
 }
 
 /** Headline student counts for the stat cards (GET /dashboard/students/stats). */

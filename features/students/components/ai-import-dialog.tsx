@@ -17,7 +17,9 @@ import { Field } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -31,6 +33,7 @@ import {
 } from "@/components/ui/table";
 import { EmptyState } from "@/components/common/states";
 import { formatDate } from "@/lib/format";
+import { CLASS_SECTIONS, classLabel, classesBySection } from "@/features/academics/class-options";
 import { useImportStudents } from "../hooks";
 import type { ClassOption, ParsedImportStudent } from "../types";
 
@@ -51,9 +54,17 @@ export function AiImportDialog({
   classes: ClassOption[];
 }) {
   const t = useTranslations("students.import");
+  const tf = useTranslations("students.form");
   const locale = useLocale();
   const { parse, confirm } = useImportStudents();
   const fileInput = useRef<HTMLInputElement>(null);
+  const groupedClasses = classesBySection(classes);
+  const classLabels = {
+    lower: tf("levelLower"),
+    upper: tf("levelUpper"),
+    english: tf("sectionEnglish"),
+    french: tf("sectionFrench"),
+  };
 
   const [step, setStep] = useState<Step>("input");
   const [file, setFile] = useState<File | null>(null);
@@ -119,11 +130,30 @@ export function AiImportDialog({
                     <SelectValue placeholder={t("selectClass")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {classes.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
+                    {CLASS_SECTIONS.map((section) => {
+                      const rows = groupedClasses[section];
+                      if (rows.length === 0) return null;
+                      return (
+                        <SelectGroup key={section}>
+                          <SelectLabel>{classLabels[section]}</SelectLabel>
+                          {rows.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {classLabel(c, classLabels)}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      );
+                    })}
+                    {groupedClasses.other.length > 0 && (
+                      <SelectGroup>
+                        <SelectLabel>{tf("sectionUnknown")}</SelectLabel>
+                        {groupedClasses.other.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {classLabel(c, classLabels)}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    )}
                   </SelectContent>
                 </Select>
               )}

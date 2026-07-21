@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -33,6 +33,7 @@ import {
   useTeacherOptions,
   useUpdateSubject,
 } from "../hooks";
+import { classLabel } from "../class-options";
 import { subjectSchema, type SubjectValues } from "../schemas";
 import type { ClassOption } from "../api/academics.service";
 import type { Subject, SubjectClassAssignment, SubjectInput } from "../types";
@@ -72,6 +73,7 @@ export function SubjectFormSheet({
   subject: Subject | null;
 }) {
   const t = useTranslations("academics.subjectForm");
+  const tc = useTranslations("academics.classForm");
   const tv = useTranslations("validation");
   const tt = useTranslations("academics.toasts");
   const create = useCreateSubject();
@@ -86,7 +88,6 @@ export function SubjectFormSheet({
     control,
     handleSubmit,
     reset,
-    watch,
     setError,
     clearErrors,
     formState: { errors },
@@ -98,8 +99,16 @@ export function SubjectFormSheet({
   const { fields } = useFieldArray({ control, name: "classes" });
 
   const classNames = useMemo(
-    () => new Map((classOptions.data ?? []).map((c) => [c.id, c.name])),
-    [classOptions.data],
+    () => {
+      const labels = {
+        lower: tc("levelLower"),
+        upper: tc("levelUpper"),
+        english: tc("sectionEnglish"),
+        french: tc("sectionFrench"),
+      };
+      return new Map((classOptions.data ?? []).map((c) => [c.id, classLabel(c, labels)]));
+    },
+    [classOptions.data, tc],
   );
 
   // Wait for the class list (and, when editing, the existing assignments) before seeding the form.
@@ -117,7 +126,7 @@ export function SubjectFormSheet({
     });
   }, [open, subject, classData, assignmentData, assignmentsReady, reset]);
 
-  const watchedClasses = watch("classes");
+  const watchedClasses = useWatch({ control, name: "classes" });
 
   async function onSubmit(values: SubjectValues) {
     if (!values.classes.some((c) => c.assigned)) {
