@@ -4,12 +4,20 @@ import { useEffect, useMemo, useState } from "react";
 import type { RowSelectionState, SortingState } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Download, Plus, Search, Trash2, X } from "lucide-react";
+import { Download, FileText, Plus, Search, Trash2, X } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
 import { DataTable } from "@/components/data-table/data-table";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useBulkDeleteParents, useDeleteParent, useParents } from "../hooks";
+import {
+  useBulkDeleteParents,
+  useDeleteParent,
+  useExportUnattachedStudents,
+  useParents,
+  useParentStats,
+} from "../hooks";
 import { parentsService } from "../api/parents.service";
 import type { Parent, ParentQuery } from "../types";
 import { getParentColumns } from "./parents-columns";
@@ -17,6 +25,7 @@ import { ParentFormSheet } from "./parent-form-sheet";
 
 export function ParentsTable() {
   const t = useTranslations("parents");
+  const router = useRouter();
 
   // Query state
   const [page, setPage] = useState(1);
@@ -34,6 +43,8 @@ export function ParentsTable() {
 
   const remove = useDeleteParent();
   const bulkRemove = useBulkDeleteParents();
+  const exportUnattached = useExportUnattachedStudents();
+  const stats = useParentStats();
 
   // Debounce search
   useEffect(() => {
@@ -66,16 +77,18 @@ export function ParentsTable() {
           children: t("columns.children"),
           occupation: t("columns.occupation"),
           actions: t("columns.actions"),
+          view: t("actions.view"),
           edit: t("actions.edit"),
           remove: t("actions.remove"),
         },
+        onView: (p) => router.push(`/parents/${p.id}`),
         onEdit: (p) => {
           setEditing(p);
           setFormOpen(true);
         },
         onRemove: (p) => setRemoveTarget(p),
       }),
-    [t],
+    [t, router],
   );
 
   const hasFilters = !!search;
@@ -113,6 +126,17 @@ export function ParentsTable() {
     toast.success(t("toasts.exported"));
   }
 
+  async function exportUnattachedStudents() {
+    try {
+      await exportUnattached.mutateAsync();
+      toast.success(t("toasts.unattachedExported"));
+    } catch {
+      toast.error(t("toasts.error"));
+    }
+  }
+
+  const unattachedCount = stats.data?.totalStudentsWithoutParent ?? 0;
+
   const toolbar = (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-1 flex-wrap items-center gap-2">
@@ -133,6 +157,19 @@ export function ParentsTable() {
         )}
       </div>
       <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={exportUnattachedStudents}
+          disabled={exportUnattached.isPending}
+        >
+          <FileText /> {t("exportUnattached")}
+          {unattachedCount > 0 && (
+            <Badge variant="secondary" className="ml-1">
+              {unattachedCount}
+            </Badge>
+          )}
+        </Button>
         <Button variant="outline" size="sm" onClick={exportCsv} disabled={!data?.total}>
           <Download /> {t("export")}
         </Button>

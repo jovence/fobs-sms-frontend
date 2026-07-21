@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 import { useUpdateTeacher } from "../hooks";
 import { teacherSchema, type TeacherValues } from "../schemas";
 import type { Teacher } from "../types";
@@ -76,35 +76,52 @@ export function TeacherFormSheet({
           <SheetDescription>{t("editSubtitle")}</SheetDescription>
         </SheetHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex min-h-0 flex-1 flex-col"
+          noValidate
+        >
           <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
             <Field id="name" label={t("name")} error={errors.name?.message}>
-              <Input id="name" aria-invalid={!!errors.name} {...register("name")} />
+              {(aria) => <Input {...aria} {...register("name")} />}
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field id="email" label={t("email")} error={errors.email?.message}>
-                <Input id="email" type="email" aria-invalid={!!errors.email} {...register("email")} />
+                {(aria) => <Input type="email" {...aria} {...register("email")} />}
               </Field>
               <Field id="phone" label={t("phone")} error={errors.phone?.message}>
-                <Input id="phone" type="tel" aria-invalid={!!errors.phone} {...register("phone")} />
+                {(aria) => <Input type="tel" {...aria} {...register("phone")} />}
               </Field>
             </div>
-            <Field id="specialization" label={t("specialization")} error={errors.specialization?.message}>
-              <Input id="specialization" aria-invalid={!!errors.specialization} {...register("specialization")} />
+            <Field
+              id="specialization"
+              label={t("specialization")}
+              error={errors.specialization?.message}
+            >
+              {(aria) => <Input {...aria} {...register("specialization")} />}
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field id="qualifications" label={t("qualifications")} error={errors.qualifications?.message}>
-                <Input id="qualifications" aria-invalid={!!errors.qualifications} {...register("qualifications")} />
+              <Field
+                id="qualifications"
+                label={t("qualifications")}
+                error={errors.qualifications?.message}
+              >
+                {(aria) => <Input {...aria} {...register("qualifications")} />}
               </Field>
-              <Field id="experienceYears" label={t("experience")} error={errors.experienceYears?.message}>
-                <Input
-                  id="experienceYears"
-                  type="number"
-                  min={0}
-                  max={60}
-                  aria-invalid={!!errors.experienceYears}
-                  {...register("experienceYears", { valueAsNumber: true })}
-                />
+              <Field
+                id="experienceYears"
+                label={t("experience")}
+                error={errors.experienceYears?.message}
+              >
+                {(aria) => (
+                  <Input
+                    type="number"
+                    min={0}
+                    max={60}
+                    {...aria}
+                    {...register("experienceYears", { valueAsNumber: true })}
+                  />
+                )}
               </Field>
             </div>
           </div>
@@ -121,25 +138,5 @@ export function TeacherFormSheet({
         </form>
       </SheetContent>
     </Sheet>
-  );
-}
-
-function Field({
-  id,
-  label,
-  error,
-  children,
-}: {
-  id: string;
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      {children}
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-    </div>
   );
 }

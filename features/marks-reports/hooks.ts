@@ -1,31 +1,31 @@
 "use client";
 
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSchoolScope } from "@/lib/query-keys";
 import { marksService } from "./api/marks.service";
-import type { EntrySelection, ReportQuery, SaveMarksInput } from "./types";
+import type {
+  EntrySelection,
+  ReportDownloadParams,
+  ReportMode,
+  ReportParams,
+  SaveMarksInput,
+} from "./types";
 
 export const marksKeys = {
-  all: ["marks"] as const,
-  reports: (q: ReportQuery) => ["marks", "reports", q] as const,
-  roster: (s: EntrySelection) => ["marks", "roster", s] as const,
+  all: (school: string) => ["school", school, "marks"] as const,
+  roster: (school: string, s: EntrySelection) =>
+    ["school", school, "marks", "roster", s] as const,
+  reportIndex: (school: string) =>
+    ["school", school, "marks", "report-index"] as const,
+  reportPreview: (school: string, mode: ReportMode, params: ReportParams) =>
+    ["school", school, "marks", "report-preview", mode, params] as const,
 };
 
-export function useReportRows(query: ReportQuery) {
-  return useQuery({
-    queryKey: marksKeys.reports(query),
-    queryFn: () => marksService.listReportRows(query),
-    placeholderData: keepPreviousData,
-  });
-}
-
 export function useEntryRoster(selection: EntrySelection | null) {
+  const school = useSchoolScope();
   return useQuery({
     queryKey: marksKeys.roster(
+      school,
       selection ?? { classId: "", subjectId: "", examId: "" },
     ),
     queryFn: () => marksService.listEntryRoster(selection as EntrySelection),
@@ -35,20 +35,60 @@ export function useEntryRoster(selection: EntrySelection | null) {
 
 export function useSaveMarks() {
   const qc = useQueryClient();
+  const school = useSchoolScope();
   return useMutation({
     mutationFn: (input: SaveMarksInput) => marksService.saveMarks(input),
-    onSuccess: () => qc.invalidateQueries({ queryKey: marksKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: marksKeys.all(school) }),
+    // Shows its own contextual save-error toast; opt out of the global one.
+    meta: { suppressErrorToast: true },
   });
 }
 
-export function useGenerateReportCard() {
-  return useMutation({
-    mutationFn: (id: string) => marksService.generateReportCard(id),
+// ---- Report cards (Term / Sequence / Annual) ----
+
+export function useReportIndex() {
+  const school = useSchoolScope();
+  return useQuery({
+    queryKey: marksKeys.reportIndex(school),
+    queryFn: () => marksService.reportIndex(),
   });
 }
 
-export function useGenerateAll() {
+/**
+ * Preview the students in scope. Gated on `params` (null until the user hits
+ * "Preview"), and school-scoped so a tenant switch can never surface another
+ * school's preview.
+ */
+export function useReportPreview(mode: ReportMode, params: ReportParams | null) {
+  const school = useSchoolScope();
+  return useQuery({
+    queryKey: marksKeys.reportPreview(school, mode, params ?? {}),
+    queryFn: () => marksService.previewReport(mode, params as ReportParams),
+    enabled: !!params,
+    placeholderData: (prev, prevQuery) =>
+      prevQuery && prevQuery.queryKey[1] === school ? prev : undefined,
+  });
+}
+
+export function useGenerateReport(mode: ReportMode) {
   return useMutation({
-    mutationFn: (query: ReportQuery) => marksService.generateAll(query),
+    mutationFn: (params: ReportParams) => marksService.generateReport(mode, params),
+    meta: { suppressErrorToast: true },
+  });
+}
+
+export function useDownloadAllReports(mode: ReportMode) {
+  return useMutation({
+    mutationFn: (params: ReportDownloadParams) =>
+      marksService.downloadAllReports(mode, params),
+    meta: { suppressErrorToast: true },
+  });
+}
+
+export function useDownloadStudentReport(mode: ReportMode) {
+  return useMutation({
+    mutationFn: (params: ReportDownloadParams) =>
+      marksService.downloadStudentReport(mode, params),
+    meta: { suppressErrorToast: true },
   });
 }

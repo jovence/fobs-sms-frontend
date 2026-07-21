@@ -1,25 +1,16 @@
 import { ApiError } from "@/types";
 import type { ApiEnvelope, ApiMeta } from "@/types";
 import { useAuthStore } from "@/features/auth/store";
+import { requiredEnv } from "@/lib/env";
 
 /**
- * The mock ↔ live switch. Every feature service picks its implementation with `pickService`;
- * the UI never knows which is active. Flip via NEXT_PUBLIC_API_MODE=live.
+ * Base URL of the Laravel API. Every feature service talks to it directly — the app has no
+ * mock/offline mode: all data comes from the backend (seed it with `php artisan db:seed`).
  */
-export const API_MODE: "mock" | "live" =
-  process.env.NEXT_PUBLIC_API_MODE === "live" ? "live" : "mock";
-
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
-
-/**
- * Pick the mock or live implementation of a service based on {@link API_MODE}. Replaces the
- * old `API_MODE === "live" ? mock : mock` idiom — swapping a module to the real API is now a
- * one-line change: `pickService(mockX, httpX)`.
- */
-export function pickService<T>(mock: T, live: T): T {
-  return API_MODE === "live" ? live : mock;
-}
+export const API_BASE_URL = requiredEnv(
+  "NEXT_PUBLIC_API_URL",
+  process.env.NEXT_PUBLIC_API_URL,
+);
 
 type ApiErrorCode = ApiError["code"];
 
@@ -139,6 +130,70 @@ export async function apiList<T>(
 ): Promise<{ data: T[]; meta: ApiMeta | null }> {
   const envelope = await requestEnvelope<T[]>(path, init);
   return { data: envelope.data ?? [], meta: envelope.meta };
+}
+
+/** Extract a filename from a `Content-Disposition` header, falling back to a caller default. */
+function filenameFromDisposition(disposition: string | null, fallback: string): string {
+  if (!disposition) return fallback;
+  // Prefer RFC 5987 `filename*=UTF-8''…`, then a plain quoted/bare `filename=`.
+  const star = /filename\*=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition);
+  if (star?.[1]) return decodeURIComponent(star[1].trim());
+  const plain = /filename="?([^";]+)"?/i.exec(disposition);
+  return plain?.[1]?.trim() || fallback;
+}
+
+/**
+ * Fetch a binary attachment (PDF/ZIP) from the backend with the auth + `X-School-Id` headers
+ * and trigger a browser download. Backend PDF/ZIP endpoints stream a file (not the JSON
+ * envelope), so this bypasses {@link requestEnvelope}. Errors are normalised to {@link ApiError}
+ * — including a best-effort read of a JSON error envelope when the server rejects the request.
+ */
+export async function downloadFile(
+  path: string,
+  opts: { method?: "GET" | "POST"; body?: Record<string, unknown> | null; fallbackName: string } = {
+    fallbackName: "download",
+  },
+): Promise<void> {
+  const { method = "GET", body = null, fallbackName } = opts;
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      headers: {
+        Accept: "application/pdf, application/zip, application/octet-stream, application/json",
+        ...(body ? { "Content-Type": "application/json" } : {}),
+        ...contextHeaders(),
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new ApiError("Network request failed. Check your connection.", "network", 0);
+  }
+
+  if (res.status === 401) useAuthStore.getState().clearSession();
+
+  if (!res.ok) {
+    // The failure path often returns the JSON error envelope; surface its message if present.
+    const envelope = (await res.json().catch(() => null)) as ApiEnvelope<unknown> | null;
+    throw new ApiError(
+      envelope?.message ?? "Download failed.",
+      codeForStatus(res.status),
+      res.status,
+      flattenFieldErrors(envelope?.errors),
+    );
+  }
+
+  const blob = await res.blob();
+  const filename = filenameFromDisposition(res.headers.get("Content-Disposition"), fallbackName);
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
 }
 
 /** Ergonomic verb helpers for the live services. Bodies are JSON unless a FormData is passed. */

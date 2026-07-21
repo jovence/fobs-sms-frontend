@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -24,11 +25,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCreateClass, useUpdateClass } from "../hooks";
+import { useCreateClass, useTeacherOptions, useUpdateClass } from "../hooks";
 import { classSchema, type ClassValues } from "../schemas";
-import type { SchoolClass } from "../types";
+import type { SchoolClass, SchoolClassInput } from "../types";
 
-const EMPTY: ClassValues = { name: "", level: "lower", section: "english", classMaster: "" };
+/** Sentinel Select value for "no class master" (Radix forbids an empty-string item value). */
+const NONE = "none";
+
+const EMPTY: ClassValues = {
+  name: "",
+  level: "lower",
+  section: "english",
+  classMasterId: "",
+};
 
 export function ClassFormSheet({
   open,
@@ -44,6 +53,7 @@ export function ClassFormSheet({
   const tt = useTranslations("academics.toasts");
   const create = useCreateClass();
   const update = useUpdateClass();
+  const teachers = useTeacherOptions();
   const isEdit = !!schoolClass;
 
   const {
@@ -52,7 +62,10 @@ export function ClassFormSheet({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ClassValues>({ resolver: zodResolver(classSchema(tv)), defaultValues: EMPTY });
+  } = useForm<ClassValues>({
+    resolver: zodResolver(classSchema(tv)),
+    defaultValues: EMPTY,
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -62,19 +75,27 @@ export function ClassFormSheet({
             name: schoolClass.name,
             level: schoolClass.level,
             section: schoolClass.section,
-            classMaster: schoolClass.classMaster ?? "",
+            classMasterId: schoolClass.classMasterId ?? "",
           }
         : EMPTY,
     );
   }, [open, schoolClass, reset]);
 
   async function onSubmit(values: ClassValues) {
+    const master = teachers.data?.find((o) => o.id === values.classMasterId);
+    const input: SchoolClassInput = {
+      name: values.name,
+      level: values.level,
+      section: values.section,
+      classMasterId: values.classMasterId || null,
+      classMasterName: master?.name ?? null,
+    };
     try {
       if (isEdit && schoolClass) {
-        await update.mutateAsync({ id: schoolClass.id, input: values });
+        await update.mutateAsync({ id: schoolClass.id, input });
         toast.success(tt("classUpdated"));
       } else {
-        await create.mutateAsync(values);
+        await create.mutateAsync(input);
         toast.success(tt("classCreated"));
       }
       onOpenChange(false);
@@ -90,15 +111,25 @@ export function ClassFormSheet({
       <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-md">
         <SheetHeader className="border-b">
           <SheetTitle>{isEdit ? t("editTitle") : t("createTitle")}</SheetTitle>
-          <SheetDescription>{isEdit ? t("editSubtitle") : t("createSubtitle")}</SheetDescription>
+          <SheetDescription>
+            {isEdit ? t("editSubtitle") : t("createSubtitle")}
+          </SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex min-h-0 flex-1 flex-col"
+          noValidate
+        >
           <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">{t("name")}</Label>
-              <Input id="name" placeholder={t("namePlaceholder")} aria-invalid={!!errors.name} {...register("name")} />
-              {errors.name && <p role="alert" className="text-sm text-destructive">{errors.name.message}</p>}
-            </div>
+            <Field id="name" label={t("name")} error={errors.name?.message}>
+              {(aria) => (
+                <Input
+                  placeholder={t("namePlaceholder")}
+                  {...aria}
+                  {...register("name")}
+                />
+              )}
+            </Field>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="level">{t("level")}</Label>
@@ -107,7 +138,9 @@ export function ClassFormSheet({
                   name="level"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="level" className="w-full"><SelectValue /></SelectTrigger>
+                      <SelectTrigger id="level" className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="lower">{t("levelLower")}</SelectItem>
                         <SelectItem value="upper">{t("levelUpper")}</SelectItem>
@@ -123,7 +156,9 @@ export function ClassFormSheet({
                   name="section"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="section" className="w-full"><SelectValue /></SelectTrigger>
+                      <SelectTrigger id="section" className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="english">{t("sectionEnglish")}</SelectItem>
                         <SelectItem value="french">{t("sectionFrench")}</SelectItem>
@@ -136,13 +171,39 @@ export function ClassFormSheet({
             <div className="space-y-2">
               <Label htmlFor="classMaster">
                 {t("master")}
-                <span className="ml-1 text-xs font-normal text-muted-foreground">{t("optional")}</span>
+                <span className="text-muted-foreground ml-1 text-xs font-normal">
+                  {t("optional")}
+                </span>
               </Label>
-              <Input id="classMaster" {...register("classMaster")} />
+              <Controller
+                control={control}
+                name="classMasterId"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? field.value : NONE}
+                    onValueChange={(v) => field.onChange(v === NONE ? "" : v)}
+                    disabled={teachers.isLoading}
+                  >
+                    <SelectTrigger id="classMaster" className="w-full">
+                      <SelectValue placeholder={t("masterPlaceholder")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NONE}>{t("masterNone")}</SelectItem>
+                      {teachers.data?.map((teacher) => (
+                        <SelectItem key={teacher.id} value={teacher.id}>
+                          {teacher.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
           <SheetFooter className="flex-row justify-end gap-2 border-t">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("cancel")}</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              {t("cancel")}
+            </Button>
             <Button type="submit" disabled={busy}>
               {busy && <Loader2 className="size-4 animate-spin" />}
               {isEdit ? t("save") : t("create")}

@@ -4,9 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import type { RowSelectionState, SortingState } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Plus, Search, Trash2, X } from "lucide-react";
+import { BookOpen, FlaskConical, Palette, Plus, Search, SlidersHorizontal, Trash2, X } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
+import { StatCard } from "@/features/dashboard/components/stat-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,7 +22,7 @@ import {
   useDeleteSubject,
   useSubjects,
 } from "../hooks";
-import type { Subject, SubjectQuery, SubjectSeries } from "../types";
+import type { ClassLevel, Subject, SubjectQuery, SubjectSeries } from "../types";
 import { getSubjectColumns } from "./subjects-columns";
 import { SubjectFormSheet } from "./subject-form-sheet";
 
@@ -34,6 +35,7 @@ export function SubjectsTable() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [series, setSeries] = useState("all");
+  const [level, setLevel] = useState("all");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
@@ -56,10 +58,11 @@ export function SubjectsTable() {
       perPage: pageSize,
       search: search || undefined,
       series: series === "all" ? undefined : (series as SubjectSeries),
+      level: level === "all" ? undefined : (level as ClassLevel),
       sortBy: (sorting[0]?.id as keyof Subject) ?? undefined,
       sortDir: sorting[0] ? (sorting[0].desc ? "desc" : "asc") : undefined,
     }),
-    [page, pageSize, search, series, sorting],
+    [page, pageSize, search, series, level, sorting],
   );
 
   const { data, isLoading, isFetching, isError, refetch } = useSubjects(query);
@@ -70,6 +73,7 @@ export function SubjectsTable() {
         labels: {
           name: t("columns.name"),
           series: t("columns.series"),
+          level: t("columns.level"),
           classes: t("columns.classes"),
           actions: t("columns.actions"),
           edit: t("actions.edit"),
@@ -79,6 +83,11 @@ export function SubjectsTable() {
             art: ts("seriesArt"),
             both: ts("seriesBoth"),
           },
+          levelLabels: {
+            lower: t("level.lower"),
+            upper: t("level.upper"),
+            both: t("level.both"),
+          },
         },
         onEdit: (s) => { setEditing(s); setFormOpen(true); },
         onDelete: (s) => setDeleteTarget(s),
@@ -86,8 +95,18 @@ export function SubjectsTable() {
     [t, ts],
   );
 
-  const hasFilters = search || series !== "all";
-  function clearFilters() { setSearchInput(""); setSearch(""); setSeries("all"); setPage(1); }
+  const hasFilters = search || series !== "all" || level !== "all";
+  function clearFilters() { setSearchInput(""); setSearch(""); setSeries("all"); setLevel("all"); setPage(1); }
+
+  const stats = data?.stats;
+  const statCards = (
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <StatCard label={t("stats.total")} value={stats?.totalSubjects ?? 0} icon={BookOpen} accent="primary" />
+      <StatCard label={t("stats.art")} value={stats?.artCount ?? 0} icon={Palette} accent="warning" />
+      <StatCard label={t("stats.science")} value={stats?.scienceCount ?? 0} icon={FlaskConical} accent="info" />
+      <StatCard label={t("stats.filtered")} value={data?.total ?? 0} icon={SlidersHorizontal} accent="success" />
+    </div>
+  );
 
   const toolbar = (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -105,6 +124,14 @@ export function SubjectsTable() {
             <SelectItem value="both">{ts("seriesBoth")}</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={level} onValueChange={(v) => { setLevel(v); setPage(1); }}>
+          <SelectTrigger size="sm" className="w-[9rem]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("level.all")}</SelectItem>
+            <SelectItem value="lower">{t("level.lower")}</SelectItem>
+            <SelectItem value="upper">{t("level.upper")}</SelectItem>
+          </SelectContent>
+        </Select>
         {hasFilters && (
           <Button variant="ghost" size="sm" onClick={clearFilters}><X /> {t("clearFilters")}</Button>
         )}
@@ -116,7 +143,8 @@ export function SubjectsTable() {
   );
 
   return (
-    <>
+    <div className="space-y-4">
+      {statCards}
       <DataTable
         columns={columns}
         data={data?.items ?? []}
@@ -186,6 +214,6 @@ export function SubjectsTable() {
           setBulkOpen(false);
         }}
       />
-    </>
+    </div>
   );
 }

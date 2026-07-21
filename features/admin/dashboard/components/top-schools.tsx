@@ -1,6 +1,6 @@
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { topSchools } from "../mock-data";
+import type { TopSchool } from "../types";
 
 const TIER_STYLE: Record<string, string> = {
   free: "bg-muted text-muted-foreground",
@@ -8,12 +8,20 @@ const TIER_STYLE: Record<string, string> = {
   pro: "bg-primary/10 text-primary",
 };
 
-export function TopSchools({ locale, tierLabel }: { locale: string; tierLabel: (t: string) => string }) {
+export function TopSchools({
+  locale,
+  tierLabel,
+  schools,
+}: {
+  locale: string;
+  tierLabel: (t: string) => string;
+  schools: TopSchool[];
+}) {
   return (
     <ul className="space-y-1">
-      {topSchools.map((s, i) => (
+      {schools.map((s, i) => (
         <li
-          key={s.acronym}
+          key={`${s.acronym}-${i}`}
           className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-muted/60"
         >
           <span className="w-4 text-center text-sm font-semibold text-muted-foreground tabular-nums">

@@ -9,13 +9,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { platformGrowth } from "../mock-data";
+import type { GrowthPoint } from "../types";
 
-export function PlatformGrowthChart() {
+export function PlatformGrowthChart({ data }: { data: GrowthPoint[] }) {
   return (
     <div className="h-64 w-full" aria-hidden>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={platformGrowth} accessibilityLayer={false} margin={{ top: 8, right: 8, left: -6, bottom: 0 }}>
+        <AreaChart data={data} accessibilityLayer={false} margin={{ top: 8, right: 8, left: -6, bottom: 0 }}>
           <defs>
             <linearGradient id="pgrowth" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.32} />

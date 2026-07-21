@@ -7,13 +7,32 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { ApiError } from "@/types";
+import { authErrorMessageKey } from "../error-message";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useRegister } from "../hooks";
 import { registerSchema, type RegisterValues } from "../schemas";
+
+const backendFieldMap: Record<string, keyof RegisterValues> = {
+  name: "name",
+  email: "email",
+  phone: "phone",
+  password: "password",
+  password_confirmation: "confirmPassword",
+};
+
+function registerErrorMessage(err: unknown, fallback: string): string {
+  if (!(err instanceof ApiError)) return fallback;
+  if (err.code === "network") return "Network error: the frontend could not reach the backend.";
+  if (err.code === "validation" || err.status === 422) {
+    return "Backend validation failed. Check the highlighted fields below.";
+  }
+  if (err.status >= 500) return `Backend error (${err.status}): ${err.message}`;
+  return err.message || fallback;
+}
 
 export function RegisterForm() {
   const t = useTranslations("auth");
@@ -43,7 +62,13 @@ export function RegisterForm() {
         setError("email", { message: t("emailTaken") });
         return;
       }
-      setFormError(t("emailTaken"));
+      if (err instanceof ApiError && err.fields) {
+        for (const [backendField, message] of Object.entries(err.fields)) {
+          const formField = backendFieldMap[backendField];
+          if (formField) setError(formField, { message });
+        }
+      }
+      setFormError(registerErrorMessage(err, t(authErrorMessageKey(err))));
     }
   }
 
@@ -59,42 +84,62 @@ export function RegisterForm() {
       )}
 
       <Field id="name" label={t("name")} error={errors.name?.message}>
-        <Input id="name" autoComplete="name" aria-invalid={!!errors.name} {...register("name")} />
+        {(aria) => <Input autoComplete="name" {...aria} {...register("name")} />}
       </Field>
 
       <Field id="email" label={t("email")} error={errors.email?.message}>
-        <Input
-          id="email"
-          type="email"
-          autoComplete="email"
-          placeholder={t("emailPlaceholder")}
-          aria-invalid={!!errors.email}
-          {...register("email")}
-        />
+        {(aria) => (
+          <Input
+            type="email"
+            autoComplete="email"
+            placeholder={t("emailPlaceholder")}
+            {...aria}
+            {...register("email")}
+          />
+        )}
       </Field>
 
-      <Field id="phone" label={t("phone")} error={errors.phone?.message} optional>
-        <Input id="phone" type="tel" autoComplete="tel" placeholder="+237 6XX XXX XXX" {...register("phone")} />
+      <Field
+        id="phone"
+        label={t("phone")}
+        error={errors.phone?.message}
+        optionalLabel={t("optional")}
+      >
+        {(aria) => (
+          <Input
+            type="tel"
+            autoComplete="tel"
+            placeholder="+237 6XX XXX XXX"
+            {...aria}
+            {...register("phone")}
+          />
+        )}
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field id="password" label={t("password")} error={errors.password?.message}>
-          <Input
-            id="password"
-            type="password"
-            autoComplete="new-password"
-            aria-invalid={!!errors.password}
-            {...register("password")}
-          />
+          {(aria) => (
+            <Input
+              type="password"
+              autoComplete="new-password"
+              {...aria}
+              {...register("password")}
+            />
+          )}
         </Field>
-        <Field id="confirmPassword" label={t("confirmPassword")} error={errors.confirmPassword?.message}>
-          <Input
-            id="confirmPassword"
-            type="password"
-            autoComplete="new-password"
-            aria-invalid={!!errors.confirmPassword}
-            {...register("confirmPassword")}
-          />
+        <Field
+          id="confirmPassword"
+          label={t("confirmPassword")}
+          error={errors.confirmPassword?.message}
+        >
+          {(aria) => (
+            <Input
+              type="password"
+              autoComplete="new-password"
+              {...aria}
+              {...register("confirmPassword")}
+            />
+          )}
         </Field>
       </div>
 
@@ -103,37 +148,12 @@ export function RegisterForm() {
         {busy ? t("creatingAccount") : t("signUp")}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         {t("haveAccount")}{" "}
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link href="/login" className="text-primary font-medium hover:underline">
           {t("signIn")}
         </Link>
       </p>
     </form>
-  );
-}
-
-function Field({
-  id,
-  label,
-  error,
-  optional,
-  children,
-}: {
-  id: string;
-  label: string;
-  error?: string;
-  optional?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>
-        {label}
-        {optional && <span className="ml-1 text-xs text-muted-foreground">(optional)</span>}
-      </Label>
-      {children}
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-    </div>
   );
 }

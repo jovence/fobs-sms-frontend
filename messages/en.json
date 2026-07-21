@@ -13,6 +13,15 @@
     "back": "Back",
     "next": "Next",
     "retry": "Try again",
+    "actionFailed": "That didn't work. Please try again.",
+    "errors": {
+      "network": "Can't reach the server. Check your connection and try again.",
+      "notFound": "That item no longer exists. Refresh and try again.",
+      "forbidden": "You don't have permission to do that.",
+      "conflict": "That conflicts with the current state. Refresh and try again.",
+      "validation": "Some details are invalid. Please check and try again.",
+      "generic": "That didn't work. Please try again."
+    },
     "signOut": "Sign out",
     "theme": "Theme",
     "language": "Language",
@@ -34,7 +43,10 @@
     "billing": "Billing",
     "referrals": "Referrals",
     "settings": "Settings",
-    "administration": "Administration"
+    "administration": "Administration",
+    "resultSummary": "Result Summary",
+    "markSheets": "Mark Sheets",
+    "mockGce": "Mock GCE"
   },
   "auth": {
     "signInTitle": "Welcome back",
@@ -63,7 +75,10 @@
     "invalidCredentials": "The email or password is incorrect.",
     "emailTaken": "An account with this email already exists.",
     "signedOut": "You have been signed out.",
-    "welcome": "Welcome, {name}"
+    "welcome": "Welcome, {name}",
+    "networkError": "Can't reach the server. Check your connection and try again.",
+    "genericError": "Something went wrong. Please try again.",
+    "optional": "(optional)"
   },
   "validation": {
     "required": "This field is required",
@@ -106,7 +121,50 @@
     "setupBody": "You don't have any schools yet. Create one to start managing students, teachers and classes.",
     "createSchool": "Create a school",
     "noDataTitle": "Your dashboard is ready",
-    "noDataBody": "Add students, teachers and classes to {school} to see live analytics here."
+    "noDataBody": "Add students, teachers and classes to {school} to see live analytics here.",
+    "loadErrorTitle": "We couldn't load your dashboard",
+    "loadErrorBody": "Something went wrong while loading your schools. Please check your connection and try again.",
+    "comingSoon": "Analytics coming soon",
+    "comingSoonBody": "Live analytics will appear here once the reporting service is connected.",
+    "parents": "Parents",
+    "subjects": "Subjects",
+    "yoy": "YoY",
+    "present": "Present",
+    "connected": "Connected",
+    "kpiAttendanceToday": "Today's attendance",
+    "kpiPresentOf": "{present}/{total} present",
+    "kpiNewStudents": "New students this month",
+    "kpiUpcomingExams": "Upcoming exams",
+    "kpiClassAverage": "Class average",
+    "kpiPassRateOf": "{rate}% pass rate",
+    "studentsByClass": "Students by class",
+    "genderDistribution": "Gender distribution",
+    "parentEngagement": "Parent engagement",
+    "teacherWorkload": "Teacher workload",
+    "monthlyAttendance": "Monthly attendance",
+    "topPerformingClasses": "Top performing classes",
+    "attendanceByClass": "Attendance by class",
+    "classesNeedingEngagement": "Classes needing parent engagement",
+    "recentlyConnectedParents": "Recently connected parents",
+    "colClass": "Class",
+    "colTeacher": "Teacher",
+    "colAverage": "Average",
+    "colStudents": "Students",
+    "colRate": "Rate",
+    "colConnected": "Connected",
+    "colParent": "Parent",
+    "colJoined": "Joined",
+    "noClassData": "No class marks yet.",
+    "noAttendanceData": "No attendance recorded yet.",
+    "allEngaged": "All classes have good parent engagement.",
+    "noRecentParents": "No recent parent connections.",
+    "alertLowAttendanceTitle": "Low attendance alert",
+    "alertLowAttendanceBody": "Overall attendance is below 80%.",
+    "alertEngagementTitle": "Parent engagement",
+    "alertEngagementBody": "{rate}% of students have no connected parent.",
+    "alertHealthyTitle": "All metrics healthy",
+    "alertHealthyBody": "Attendance and parent engagement are on track.",
+    "analyticsErrorBody": "We couldn't load your analytics. Please try again."
   },
   "students": {
     "title": "Students",
@@ -136,7 +194,8 @@
       "setStatus": "Set status",
       "approve": "Approve",
       "reject": "Reject",
-      "markPending": "Mark pending"
+      "markPending": "Mark pending",
+      "view": "View profile"
     },
     "form": {
       "createTitle": "Add student",
@@ -152,6 +211,11 @@
       "placeOfBirth": "Place of birth",
       "class": "Class",
       "selectClass": "Select a class",
+      "levelLower": "Lower cycle",
+      "levelUpper": "Upper cycle",
+      "sectionEnglish": "Anglophone section",
+      "sectionFrench": "Francophone section",
+      "sectionUnknown": "Other classes",
       "guardian": "Guardian / parent",
       "repeater": "Repeating this class",
       "status": "Registration status",
@@ -161,7 +225,23 @@
       "optional": "(optional)",
       "cancel": "Cancel",
       "create": "Create student",
-      "save": "Save changes"
+      "save": "Save changes",
+      "photoTitle": "Student photo",
+      "photoDescription": "Optional profile picture for rosters and reports.",
+      "photoUpload": "Upload photo",
+      "photoClear": "Clear photo",
+      "photoHint": "JPEG or PNG, max 2 MB",
+      "photoSelected": "{name} selected",
+      "photoPreviewAlt": "Selected student profile preview",
+      "photoTypeError": "Use a JPEG or PNG image.",
+      "photoSizeError": "The photo must be 2 MB or smaller.",
+      "identityTitle": "Identity",
+      "identityDescription": "Required student information.",
+      "assignmentTitle": "Class assignment",
+      "assignmentDescription": "Choose where the student will be enrolled.",
+      "networkError": "Network error: the frontend could not reach the backend.",
+      "validationError": "Some student details are invalid. Check the highlighted fields.",
+      "backendError": "Backend error ({status}). Please check the server logs."
     },
     "delete": {
       "title": "Delete student?",
@@ -183,6 +263,79 @@
       "description": "Add your first student to get started.",
       "filteredTitle": "No matching students",
       "filteredDescription": "Try adjusting your search or filters."
+    },
+    "stats": {
+      "total": "Total students",
+      "active": "Active students",
+      "pending": "Pending approval",
+      "gender": "Gender split",
+      "male": "Male",
+      "female": "Female"
+    },
+    "import": {
+      "button": "AI Import",
+      "title": "AI student import",
+      "description": "Upload a class list (image, PDF or spreadsheet) and AI will extract the students for review.",
+      "class": "Target class",
+      "selectClass": "Select a class",
+      "file": "Class list file",
+      "fileHint": "JPG, PNG, PDF or Excel · up to 5 MB",
+      "selectFile": "Choose a file",
+      "parse": "Extract students",
+      "parsing": "Extracting…",
+      "previewDescription": "{count} students extracted. Review before saving.",
+      "empty": "No students could be extracted from this file.",
+      "back": "Back",
+      "cancel": "Cancel",
+      "confirm": "Save students",
+      "confirming": "Saving…",
+      "male": "Male",
+      "female": "Female",
+      "columns": {
+        "name": "Full name",
+        "matricule": "Matricule",
+        "gender": "Gender",
+        "dob": "Date of birth",
+        "place": "Place of birth"
+      },
+      "toasts": {
+        "needFile": "Choose a file and a class first.",
+        "parsed": "{count} students extracted.",
+        "parseError": "Couldn't read that file. Try a clearer one.",
+        "saved": "{count} students imported.",
+        "saveError": "Couldn't save the students. Please try again."
+      }
+    },
+    "detail": {
+      "back": "Back to students",
+      "edit": "Edit",
+      "loading": "Loading student…",
+      "errorTitle": "Couldn't load student",
+      "errorDescription": "This student may have been removed, or the request failed.",
+      "retry": "Try again",
+      "repeater": "Repeating this class",
+      "notRepeater": "Not repeating",
+      "male": "Male",
+      "female": "Female",
+      "sections": {
+        "personal": "Personal information",
+        "academic": "Academic",
+        "guardian": "Guardian"
+      },
+      "fields": {
+        "fullName": "Full name",
+        "matricule": "Matricule",
+        "gender": "Gender",
+        "dob": "Date of birth",
+        "placeOfBirth": "Place of birth",
+        "class": "Class",
+        "code": "Student code",
+        "status": "Registration status",
+        "repeater": "Repeater",
+        "guardian": "Guardian / parent",
+        "contact": "Contact",
+        "email": "Email"
+      }
     }
   },
   "teachers": {
@@ -207,7 +360,8 @@
     "actions": {
       "approve": "Approve",
       "edit": "Edit",
-      "remove": "Remove"
+      "remove": "Remove",
+      "view": "View profile"
     },
     "form": {
       "editTitle": "Edit teacher",
@@ -239,6 +393,92 @@
       "description": "Teachers appear here once they request to join your school.",
       "filteredTitle": "No matching teachers",
       "filteredDescription": "Try adjusting your search or filters."
+    },
+    "profile": {
+      "loading": "Loading teacher…",
+      "errorTitle": "Couldn't load this teacher",
+      "errorDescription": "The teacher may not exist in this school, or the request failed.",
+      "back": "Back",
+      "assignSubjects": "Assign Subjects",
+      "assignClasses": "Assign Classes",
+      "generalTeacher": "General Teacher",
+      "stats": {
+        "subjects": "Subjects Teaching",
+        "subjectsHint": "Assigned subjects",
+        "load": "Teaching Load",
+        "loadHint": "Total assignments"
+      },
+      "personal": {
+        "title": "Personal Information",
+        "name": "Full name",
+        "experience": "Experience",
+        "yearsValue": "{count, plural, =0 {No experience} one {# year} other {# years}}"
+      },
+      "contact": {
+        "title": "Contact Information",
+        "email": "Email address",
+        "phone": "Phone number",
+        "address": "Address"
+      },
+      "professional": {
+        "title": "Professional Details",
+        "specialization": "Specialization",
+        "qualifications": "Qualifications",
+        "joined": "Joined date",
+        "approved": "Approved on"
+      },
+      "subjects": {
+        "title": "Assigned Subjects ({count})",
+        "code": "Code: {code}",
+        "remove": "Remove",
+        "emptyTitle": "No subjects assigned yet",
+        "removeTitle": "Remove subject?",
+        "removeDescription": "{name} will be removed from this teacher's subjects.",
+        "removed": "Subject removed."
+      },
+      "classes": {
+        "title": "Assigned Classes ({count})",
+        "students": "{count, plural, one {# student} other {# students}}",
+        "emptyTitle": "No classes assigned yet"
+      },
+      "assignments": {
+        "title": "Detailed Teaching Assignments",
+        "class": "Class",
+        "subjects": "Subjects Teaching",
+        "students": "Students",
+        "studentsCount": "{count, plural, one {# student} other {# students}}"
+      },
+      "biography": {
+        "title": "Biography"
+      }
+    },
+    "assign": {
+      "loading": "Loading…",
+      "errorTitle": "Couldn't load this form",
+      "errorDescription": "The request failed. Please try again.",
+      "forTeacher": "Select for {name}",
+      "backToProfile": "Back to Profile",
+      "subjectsTitle": "Assign Subjects",
+      "currentSubjects": "Currently Assigned Subjects",
+      "noSubjects": "No subjects currently assigned",
+      "availableSubjects": "Available Subjects",
+      "noAvailableSubjects": "No available subjects to assign",
+      "subjectsSaved": "Subject assignments updated.",
+      "save": "Save Assignments",
+      "classesTitle": "Assign Classes",
+      "currentClasses": "Currently Assigned Classes",
+      "noClasses": "No classes currently assigned",
+      "availableClasses": "Available Classes",
+      "classesSaved": "Teaching assignments updated.",
+      "noSubjectClasses": "No classes available for this subject",
+      "removeClass": "Remove",
+      "removeClassTitle": "Remove class?",
+      "removeClassDescription": "{name} will be removed from this teacher's assignments.",
+      "classRemoved": "Class removed.",
+      "noClassesTitle": "No available classes found. Ensure:",
+      "noClassesReason1": "The teacher is assigned to subjects",
+      "noClassesReason2": "Those subjects are assigned to classes",
+      "noClassesReason3": "Classes belong to the current school"
     }
   },
   "academics": {
@@ -279,6 +519,12 @@
         "description": "Create your first class to start enrolling students.",
         "filteredTitle": "No matching classes",
         "filteredDescription": "Try adjusting your search or filters."
+      },
+      "stats": {
+        "total": "Total Classes",
+        "upper": "Upper Cycle",
+        "lower": "Lower Cycle",
+        "students": "Total Students"
       }
     },
     "subjects": {
@@ -290,7 +536,8 @@
         "name": "Subject",
         "series": "Series",
         "classes": "Classes",
-        "actions": "Actions"
+        "actions": "Actions",
+        "level": "Level"
       },
       "actions": {
         "edit": "Edit",
@@ -311,6 +558,18 @@
         "description": "Create your first subject to build the curriculum.",
         "filteredTitle": "No matching subjects",
         "filteredDescription": "Try adjusting your search or filters."
+      },
+      "stats": {
+        "total": "Total Subjects",
+        "art": "Art Series",
+        "science": "Science Series",
+        "filtered": "Filtered Results"
+      },
+      "level": {
+        "all": "All Levels",
+        "lower": "Lower Cycle",
+        "upper": "Upper Cycle",
+        "both": "Both Cycles"
       }
     },
     "classForm": {
@@ -326,11 +585,14 @@
       "section": "Section",
       "sectionEnglish": "English",
       "sectionFrench": "French",
+      "sectionUnknown": "Other classes",
       "master": "Class master",
       "optional": "(optional)",
       "cancel": "Cancel",
       "create": "Create class",
-      "save": "Save changes"
+      "save": "Save changes",
+      "masterPlaceholder": "Select a teacher",
+      "masterNone": "No class master"
     },
     "subjectForm": {
       "createTitle": "Add subject",
@@ -345,7 +607,15 @@
       "seriesBoth": "Both",
       "cancel": "Cancel",
       "create": "Create subject",
-      "save": "Save changes"
+      "save": "Save changes",
+      "classesLabel": "Class assignments",
+      "classesHint": "Pick the classes that offer this subject",
+      "classesRequired": "Assign the subject to at least one class.",
+      "noClasses": "Create a class first, then assign this subject to it.",
+      "coefficient": "Coefficient",
+      "weeklyHours": "Weekly hours",
+      "teacher": "Teacher",
+      "teacherNone": "Unassigned"
     },
     "toasts": {
       "classCreated": "Class created.",
@@ -448,7 +718,8 @@
     },
     "actions": {
       "edit": "Edit",
-      "remove": "Remove"
+      "remove": "Remove",
+      "view": "View"
     },
     "empty": {
       "title": "No parents yet",
@@ -468,7 +739,8 @@
       "removed": "Parent removed.",
       "bulkRemoved": "{count} parents removed.",
       "exported": "Parents exported to CSV.",
-      "error": "Something went wrong. Please try again."
+      "error": "Something went wrong. Please try again.",
+      "unattachedExported": "Unattached students exported."
     },
     "form": {
       "createTitle": "Add parent",
@@ -483,6 +755,33 @@
       "cancel": "Cancel",
       "save": "Save changes",
       "create": "Add parent"
+    },
+    "exportUnattached": "Export unattached",
+    "detail": {
+      "loading": "Loading parent…",
+      "errorTitle": "Couldn't load parent",
+      "errorDescription": "Something went wrong while loading this parent. Please try again.",
+      "retry": "Try again",
+      "back": "Back to parents",
+      "disconnectAll": "Disconnect all",
+      "connectedStudents": "Connected students",
+      "viewStudent": "View",
+      "noStudentsTitle": "No connected students",
+      "noStudentsDescription": "This parent isn't linked to any students in this school yet.",
+      "stats": {
+        "connectedStudents": "Connected students",
+        "accountStatus": "Account status",
+        "memberSince": "Member since"
+      },
+      "status": {
+        "approved": "Approved",
+        "pending": "Pending"
+      },
+      "disconnect": {
+        "title": "Disconnect all students",
+        "description": "Unlink {name} from all students in this school? This cannot be undone.",
+        "success": "Parent disconnected from all students."
+      }
     }
   },
   "settings": {
@@ -501,7 +800,8 @@
       "email": "Email address",
       "save": "Save changes",
       "saved": "Profile updated",
-      "error": "Something went wrong. Please try again."
+      "error": "Something went wrong. Please try again.",
+      "unavailable": "Saving your profile isn't available yet."
     },
     "security": {
       "title": "Password",
@@ -512,7 +812,8 @@
       "hint": "Use at least 8 characters.",
       "save": "Update password",
       "saved": "Password updated",
-      "error": "Something went wrong. Please try again."
+      "error": "Something went wrong. Please try again.",
+      "unavailable": "Changing your password isn't available yet."
     },
     "preferences": {
       "title": "Appearance",
@@ -614,7 +915,8 @@
     },
     "actions": {
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "view": "View"
     },
     "form": {
       "createTitle": "Add exam",
@@ -655,6 +957,64 @@
       "description": "Create your first exam sequence to get started.",
       "filteredTitle": "No matching exams",
       "filteredDescription": "Try adjusting your search or filters."
+    },
+    "detail": {
+      "back": "Back to exams",
+      "edit": "Edit exam",
+      "publish": "Publish results",
+      "unpublish": "Unpublish",
+      "openMarkEntry": "Open mark entry",
+      "closeMarkEntry": "Close mark entry",
+      "statusPublished": "Published",
+      "statusUnpublished": "Not published",
+      "statusMarkOpen": "Mark entry open",
+      "statusMarkClosed": "Mark entry closed",
+      "loading": "Loading exam dashboard…",
+      "errorTitle": "Couldn't load exam",
+      "errorDescription": "Something went wrong while loading the exam dashboard. Please try again.",
+      "retry": "Try again",
+      "stats": {
+        "totalSubjects": "Total subjects",
+        "completionRate": "Completion rate",
+        "averageMark": "Average mark",
+        "passRate": "Pass rate"
+      },
+      "grades": {
+        "title": "Grade distribution",
+        "empty": "No marks have been entered yet.",
+        "count": "{count, plural, one {# mark} other {# marks}}",
+        "bands": {
+          "A": "A — Excellent (16–20)",
+          "B": "B — Very good (14–16)",
+          "C": "C — Good (12–14)",
+          "D": "D — Pass (10–12)",
+          "E": "E — Below average (0–10)"
+        }
+      },
+      "classPerf": {
+        "title": "Class performance",
+        "empty": "No marks have been recorded for any class yet.",
+        "class": "Class",
+        "students": "Students",
+        "marksEntered": "Marks entered",
+        "average": "Average",
+        "passRate": "Pass rate"
+      },
+      "subjects": {
+        "title": "Subject submission status by class",
+        "empty": "No subjects have been set for this exam yet.",
+        "submitted": "Submitted",
+        "incomplete": "Incomplete",
+        "marksEntered": "Marks entered",
+        "average": "Average",
+        "passRate": "Pass rate"
+      },
+      "toasts": {
+        "published": "Results published.",
+        "unpublished": "Results unpublished.",
+        "markOpened": "Mark entry opened.",
+        "markClosed": "Mark entry closed."
+      }
     }
   },
   "attendance": {
@@ -881,12 +1241,13 @@
       "selectExam": "Select an exam",
       "sequenceLabel": "Sequence {n} · Term {term}",
       "outOf": "Marked out of {max}",
+      "gradingFor": "Entering marks for:",
       "markFor": "Mark for {name}",
       "rosterTitle": "Students",
       "save": "Save marks",
       "prompt": {
-        "title": "Select class, subject and exam",
-        "description": "Pick a class, subject and exam above to start entering marks."
+        "title": "Select an exam to load the roster",
+        "description": "The class and subject are ready — choose the exam above to start entering marks."
       },
       "error": {
         "title": "Couldn't load the roster",
@@ -904,6 +1265,73 @@
       "errors": {
         "range": "Enter a mark between 0 and {max}",
         "fix": "Fix the highlighted marks before saving."
+      }
+    },
+    "cards": {
+      "modes": {
+        "term": "Term",
+        "sequence": "Sequence",
+        "annual": "Annual"
+      },
+      "descriptions": {
+        "term": "Term report cards — aggregates the term's two sequences.",
+        "sequence": "Sequence report cards — a single evaluation.",
+        "annual": "Annual report cards — the full academic year."
+      },
+      "term": {
+        "label": "Term",
+        "placeholder": "Select a term",
+        "first": "First term",
+        "second": "Second term",
+        "third": "Third term"
+      },
+      "sequence": {
+        "label": "Sequence",
+        "placeholder": "Select a sequence",
+        "option": "Sequence {n}"
+      },
+      "classLabel": "Class",
+      "preview": "Preview",
+      "annualNote": "Annual report cards cover the whole academic year — no term or sequence to pick.",
+      "academicYear": "Academic year {year}",
+      "downloadAll": "Download all",
+      "generate": "Generate report cards",
+      "download": "Download",
+      "empty": {
+        "title": "No preview yet",
+        "description": "Choose your options and select Preview to list the students."
+      },
+      "emptyStudents": {
+        "title": "No students",
+        "description": "No student matches this selection."
+      },
+      "error": {
+        "title": "Couldn't load the preview",
+        "description": "Something went wrong. Please try again."
+      },
+      "summary": {
+        "students": "Students",
+        "complete": "Complete",
+        "missing": "Missing marks"
+      },
+      "missingWarning": "{count} of {total} students are missing marks — their report cards may be incomplete.",
+      "table": {
+        "index": "#",
+        "student": "Student",
+        "class": "Class",
+        "marked": "Subjects marked",
+        "status": "Status"
+      },
+      "status": {
+        "complete": "Complete",
+        "missing": "{count} missing",
+        "noMarks": "No marks"
+      },
+      "toasts": {
+        "generated": "Report cards generated",
+        "generateError": "Could not generate report cards. Please try again.",
+        "downloadStarted": "Download started",
+        "downloadError": "Download failed. Please try again."
       }
     }
   },
@@ -927,6 +1355,8 @@
     "dashboard": {
       "title": "Platform overview",
       "subtitle": "Health and growth across every school on FOBS SMS.",
+      "errorTitle": "Couldn't load platform analytics",
+      "errorDescription": "Something went wrong fetching the dashboard. Please try again.",
       "vsLastMonth": "vs last month",
       "schools": "Schools",
       "students": "Students",
@@ -1134,5 +1564,134 @@
     "sortBy": "Sort by {title}",
     "sortedAsc": "Sorted by {title} ascending. Activate to sort descending.",
     "sortedDesc": "Sorted by {title} descending. Activate to clear sorting."
+  },
+  "resultSummary": {
+    "title": "Result Summary",
+    "subtitle": "Generate a landscape PDF roster of every student's mark per subject for a class and exam.",
+    "form": {
+      "title": "Generate Result Summary",
+      "class": "Class",
+      "exam": "Exam / Sequence",
+      "selectClass": "Select a class",
+      "selectExam": "Select an exam",
+      "generate": "Generate PDF",
+      "generating": "Generating…"
+    },
+    "validation": {
+      "selectBoth": "Please select both a class and an exam."
+    },
+    "stats": {
+      "classes": "Total Classes",
+      "exams": "Total Exams",
+      "format": "Format",
+      "formatValue": "PDF Landscape"
+    },
+    "info": {
+      "title": "About this report",
+      "description": "The generated PDF contains a full class roster with each student's mark for every subject.",
+      "item1": "Every student in the selected class, listed alphabetically",
+      "item2": "One column per subject with the mark obtained",
+      "item3": "Per-student total points, total coefficient and average",
+      "item4": "School header and generation date, laid out A4 landscape"
+    },
+    "toasts": {
+      "success": "Result summary generated.",
+      "error": "Could not generate the result summary. Please try again."
+    },
+    "states": {
+      "loadErrorTitle": "Couldn't load options",
+      "loadErrorDescription": "We couldn't load classes and exams. Please try again.",
+      "retry": "Try again",
+      "emptyTitle": "Nothing to generate yet",
+      "emptyDescription": "Add classes and exams before generating a result summary."
+    }
+  },
+  "markSheets": {
+    "title": "Mark sheets",
+    "subtitle": "Preview a subject's marks for an exam and generate a printable mark sheet.",
+    "selectorsTitle": "Choose a subject, exam and class",
+    "subject": "Subject",
+    "exam": "Exam",
+    "class": "Class",
+    "selectSubject": "Select a subject",
+    "selectExam": "Select an exam",
+    "selectClass": "Select a class",
+    "allClasses": "All classes",
+    "preview": "Preview",
+    "generate": "Generate PDF",
+    "previewTitle": "Mark sheet preview",
+    "previewFor": "Showing marks for",
+    "outOf": "Out of {max}",
+    "columns": {
+      "number": "#",
+      "matricule": "Matricule",
+      "student": "Student",
+      "class": "Class",
+      "mark": "Mark"
+    },
+    "prompt": {
+      "title": "Build a mark sheet",
+      "description": "Pick a subject and exam, then Preview to see the marks before generating the PDF."
+    },
+    "empty": {
+      "title": "No marks found",
+      "description": "No marks found for the selected criteria."
+    },
+    "toasts": {
+      "generated": "Mark sheet generated",
+      "generateError": "Could not generate the mark sheet. Please try again."
+    }
+  },
+  "mockGce": {
+    "title": "Mock GCE Examination",
+    "subtitle": "Generate Cameroon GCE-style mock result slips and summaries for Form 5 (Ordinary Level) and Upper Sixth (Advanced Level) candidates, based on the 6th-sequence marks.",
+    "loading": "Loading Mock GCE…",
+    "disclaimer": "Mock GCE slips are internal evaluation documents and are NOT official Cameroon GCE Board results.",
+    "level": {
+      "oLevel": "O-Level",
+      "aLevel": "A-Level"
+    },
+    "card": {
+      "subtitle": "{level} · Mock Examination"
+    },
+    "stats": {
+      "candidates": "Candidates",
+      "marked": "Marked",
+      "marks": "Marks"
+    },
+    "coverage": {
+      "label": "Marks coverage"
+    },
+    "passRule": {
+      "o": "<b>Pass rule:</b> A, B or C in <b>≥ 4 papers</b>. Points: A=3, B=2, C=1.",
+      "a": "<b>Pass rule:</b> A through E in <b>≥ 2 papers</b>. Points: A=5, B=4, C=3, D=2, E=1."
+    },
+    "actions": {
+      "downloadSlips": "Download Slips",
+      "classSummary": "Class Summary"
+    },
+    "info": {
+      "title": "How this works",
+      "points": [
+        "Teachers enter sequence-6 marks /20 in the usual mark-sheets flow.",
+        "This page converts those marks to Cameroon GCE letter grades and tallies passes and points.",
+        "The standard term, sequence and result-summary reports are unaffected."
+      ],
+      "noExam": "No 6th-sequence exam exists for {year}.",
+      "examsLink": "Create it under Exams"
+    },
+    "empty": {
+      "title": "No GCE classes found",
+      "description": "The Mock GCE page works with classes named Form 5, Form Five, Upper Sixth or U6. Create or rename a class under Classes to enable this feature."
+    },
+    "error": {
+      "title": "Couldn't load Mock GCE",
+      "description": "Something went wrong while loading the eligible classes.",
+      "retry": "Try again"
+    },
+    "toasts": {
+      "slipsFailed": "Couldn't download the result slips. Please try again.",
+      "summaryFailed": "Couldn't download the class summary. Please try again."
+    }
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { Briefcase, MoreHorizontal, Pencil, Trash2, Users } from "lucide-react";
+import { Briefcase, Eye, MoreHorizontal, Pencil, Trash2, Users } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -22,16 +22,19 @@ type Labels = {
   children: string;
   occupation: string;
   actions: string;
+  view: string;
   edit: string;
   remove: string;
 };
 
 export function getParentColumns({
   labels,
+  onView,
   onEdit,
   onRemove,
 }: {
   labels: Labels;
+  onView: (p: Parent) => void;
   onEdit: (p: Parent) => void;
   onRemove: (p: Parent) => void;
 }): ColumnDef<Parent, unknown>[] {
@@ -123,6 +126,9 @@ export function getParentColumns({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem onClick={() => onView(p)}>
+                  <Eye className="mr-2 size-4" /> {labels.view}
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onEdit(p)}>
                   <Pencil className="mr-2 size-4" /> {labels.edit}
                 </DropdownMenuItem>

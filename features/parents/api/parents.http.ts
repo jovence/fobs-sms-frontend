@@ -1,7 +1,13 @@
-import { api } from "@/lib/api-client";
+import { api, downloadFile } from "@/lib/api-client";
 import { ApiError } from "@/types";
 import type { Paginated } from "@/types";
-import type { Parent, ParentQuery } from "../types";
+import type {
+  ConnectedStudent,
+  Parent,
+  ParentDetail,
+  ParentQuery,
+  ParentStats,
+} from "../types";
 import type { ParentsService } from "./parents.service";
 
 /**
@@ -41,12 +47,49 @@ interface TutorPayload {
   created_at: string | null;
 }
 
+/** Class relation embedded in a `StudentResource` (`school_class`, whenLoaded). */
+interface StudentClassPayload {
+  id: number | string;
+  name: string | null;
+}
+
+/** Shape of the backend `StudentResource` connected to a tutor (snake_case). */
+interface ConnectedStudentPayload {
+  id: number | string;
+  matricule: string | null;
+  full_name: string | null;
+  gender: string | null;
+  image: string | null;
+  school_class?: StudentClassPayload | null;
+}
+
+/** The `show` endpoint returns `data.tutor` — a `TutorResource` with `students` loaded. */
+interface TutorShowPayload extends TutorPayload {
+  students?: ConnectedStudentPayload[] | null;
+}
+
+/** The `show` endpoint envelope's `data` object. */
+interface TutorShowData {
+  tutor: TutorShowPayload;
+}
+
 /** The tutors index nests the paginated rows under `data.tutors` (not a bare array). */
 interface TutorIndexPayload {
   tutors: TutorPayload[];
   totalParents?: number;
   totalStudentsWithParent?: number;
   totalStudentsWithoutParent?: number;
+}
+
+function mapConnectedStudent(s: ConnectedStudentPayload): ConnectedStudent {
+  return {
+    id: String(s.id),
+    matricule: s.matricule ?? null,
+    fullName: s.full_name ?? "",
+    gender: s.gender ?? null,
+    className: s.school_class?.name ?? null,
+    imageUrl: s.image ?? null,
+  };
 }
 
 function mapTutor(p: TutorPayload): Parent {
@@ -90,6 +133,31 @@ export const httpParentsService: ParentsService = {
     };
   },
 
+  async get(id: string): Promise<ParentDetail> {
+    // `show` returns `{ tutor, school }`; the tutor carries its school-scoped `students`.
+    const data = await api.get<TutorShowData>(`/dashboard/tutors/${id}`);
+    const tutor = data.tutor;
+    const base = mapTutor(tutor);
+    const connectedStudents = (tutor.students ?? []).map(mapConnectedStudent);
+    return {
+      ...base,
+      childrenCount: connectedStudents.length,
+      isApproved: Boolean(tutor.is_approved),
+      connectedStudents,
+    };
+  },
+
+  async stats(): Promise<ParentStats> {
+    // The stat totals live on the index payload (`data`), not the paginated rows.
+    const res = await api.list<TutorPayload>("/dashboard/tutors?page=1");
+    const payload = res.data as unknown as TutorIndexPayload;
+    return {
+      totalParents: payload?.totalParents ?? 0,
+      totalStudentsWithParent: payload?.totalStudentsWithParent ?? 0,
+      totalStudentsWithoutParent: payload?.totalStudentsWithoutParent ?? 0,
+    };
+  },
+
   async create(): Promise<Parent> {
     // No create endpoint exists for tutors (parents self-register on the mobile app).
     throw new ApiError("Not available yet.", "unknown", 501);
@@ -108,5 +176,12 @@ export const httpParentsService: ParentsService = {
   async bulkRemove(ids: string[]): Promise<void> {
     // No bulk endpoint — fan out to the single-delete endpoint per id.
     await Promise.all(ids.map((id) => api.delete<null>(`/dashboard/tutors/${id}`)));
+  },
+
+  async exportUnattached(): Promise<void> {
+    // Streams a PDF of students with no linked parent (not the JSON envelope).
+    await downloadFile("/dashboard/tutors/export-unattached", {
+      fallbackName: "unattached-students.pdf",
+    });
   },
 };

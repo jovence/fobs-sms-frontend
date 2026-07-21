@@ -7,9 +7,9 @@ accessible, secure, and usable by non-technical users. Evidence over claims.
 ---
 
 ## Safety & environment (verified before any run)
-- **Not production.** Target is `http://localhost:3210` (`next start`) in **mock mode**
-  (`NEXT_PUBLIC_API_MODE` unset → mock). No real backend, **no real payment or external
-  services** (billing is a mock "contact sales" flow).
+- **Not production.** Target is `http://localhost:3210` (`next start`) with frontend
+  environment variables configured explicitly. No real payment or external services are used
+  in the billing "contact sales" flow.
 - **Disposable data.** All data is a deterministic `faker` seed. **Reset** = each Playwright
   browser context is isolated with its own `localStorage`, so every session starts from a
   clean, reproducible state; no shared/production data can be touched.

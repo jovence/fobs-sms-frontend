@@ -3,14 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import {
-  CheckCircle2,
-  ClipboardList,
-  Gauge,
-  Loader2,
-  Save,
-  Users,
-} from "lucide-react";
+import { CheckCircle2, ClipboardList, Gauge, Loader2, Save, Users } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +12,9 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -29,15 +24,18 @@ import { Shimmer } from "@/components/common/skeletons";
 import { cn } from "@/lib/utils";
 import { initials } from "@/lib/format";
 import { useEntryRoster, useSaveMarks } from "../hooks";
+import { CLASS_SECTIONS, classLabel, classesBySection } from "@/features/academics/class-options";
 import { useClassOptions, useSubjectOptions } from "@/features/academics/hooks";
 import { useExamOptions } from "@/features/exams/hooks";
 import { MARK_MAX, PASS_MARK, type EntrySelection } from "../types";
 import { validateMark } from "../schemas";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 
 export function MarkEntry() {
   const t = useTranslations("reports");
   const te = useTranslations("reports.entry");
   const teErrors = useTranslations("reports.entry.errors");
+  const tc = useTranslations("academics.classForm");
 
   const { data: classes = [] } = useClassOptions();
   const { data: subjects = [] } = useSubjectOptions();
@@ -46,13 +44,48 @@ export function MarkEntry() {
   const [subjectId, setSubjectId] = useState("");
   const [examId, setExamId] = useState("");
   const [marks, setMarks] = useState<Record<string, string>>({});
+  const [isDirty, setIsDirty] = useState(false);
 
-  const selection: EntrySelection | null =
-    classId && subjectId && examId ? { classId, subjectId, examId } : null;
+  // Default the class and subject selectors to the first available option so the
+  // teacher lands on a ready-to-use screen (instead of opening three dropdowns).
+  // Derived during render rather than synced via an effect — no cascading renders;
+  // a manual pick sets classId/subjectId and takes over. The EXAM is deliberately
+  // NOT defaulted: exam options are ordered oldest-first and include closed/old
+  // sequences, so auto-selecting one would invite marks against the wrong
+  // evaluation — the teacher chooses the exam consciously (one click).
+  const effectiveClassId = classId || classes[0]?.id || "";
+  const effectiveSubjectId = subjectId || subjects[0]?.id || "";
+  const groupedClasses = useMemo(() => classesBySection(classes), [classes]);
+  const classLabels = useMemo(
+    () => ({
+      lower: tc("levelLower"),
+      upper: tc("levelUpper"),
+      english: tc("sectionEnglish"),
+      french: tc("sectionFrench"),
+    }),
+    [tc],
+  );
 
-  const { data: roster, isLoading, isError, refetch } =
-    useEntryRoster(selection);
+  // Names of the current selection — shown above the roster so a teacher whose
+  // class/subject were auto-selected can see exactly which class they're grading.
+  const selectedClassOption = classes.find((c) => c.id === effectiveClassId);
+  const selectedClass = selectedClassOption
+    ? classLabel(selectedClassOption, classLabels)
+    : null;
+  const selectedSubject = subjects.find((s) => s.id === effectiveSubjectId)?.name;
+  const selectedExam = exams.find((e) => e.id === examId)?.name;
+
+  const selection: EntrySelection | null = useMemo(
+    () =>
+      effectiveClassId && effectiveSubjectId && examId
+        ? { classId: effectiveClassId, subjectId: effectiveSubjectId, examId }
+        : null,
+    [effectiveClassId, effectiveSubjectId, examId],
+  );
+
+  const { data: roster, isLoading, isError, refetch } = useEntryRoster(selection);
   const saveMarks = useSaveMarks();
+  useUnsavedChangesWarning(isDirty);
 
   // Seed the local mark inputs ONCE per selection. A post-save refetch returns the same
   // selection, so we must NOT reseed then — that would wipe marks the teacher typed after
@@ -108,6 +141,7 @@ export function MarkEntry() {
     try {
       await saveMarks.mutateAsync({ ...selection, marks: payload });
       toast.success(t("toasts.marksSaved", { count: payload.length }));
+      setIsDirty(false);
     } catch {
       toast.error(t("toasts.saveError"));
     }
@@ -120,29 +154,60 @@ export function MarkEntry() {
         <Card className="card-interactive shadow-[var(--shadow-sm)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ClipboardList className="size-4 text-muted-foreground" />
+              <ClipboardList className="text-muted-foreground size-4" />
               {te("selectorsTitle")}
             </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="me-class">{te("class")}</Label>
-              <Select value={classId || undefined} onValueChange={setClassId}>
+              <Select
+                value={effectiveClassId || undefined}
+                onValueChange={(v) => {
+                  setIsDirty(false);
+                  setClassId(v);
+                }}
+              >
                 <SelectTrigger id="me-class" className="w-full">
                   <SelectValue placeholder={te("selectClass")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {classes.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
+                  {CLASS_SECTIONS.map((section) => {
+                    const rows = groupedClasses[section];
+                    if (rows.length === 0) return null;
+                    return (
+                      <SelectGroup key={section}>
+                        <SelectLabel>{classLabels[section]}</SelectLabel>
+                        {rows.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {classLabel(c, classLabels)}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    );
+                  })}
+                  {groupedClasses.other.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>{tc("sectionUnknown")}</SelectLabel>
+                      {groupedClasses.other.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {classLabel(c, classLabels)}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="me-subject">{te("subject")}</Label>
-              <Select value={subjectId || undefined} onValueChange={setSubjectId}>
+              <Select
+                value={effectiveSubjectId || undefined}
+                onValueChange={(v) => {
+                  setIsDirty(false);
+                  setSubjectId(v);
+                }}
+              >
                 <SelectTrigger id="me-subject" className="w-full">
                   <SelectValue placeholder={te("selectSubject")} />
                 </SelectTrigger>
@@ -157,7 +222,13 @@ export function MarkEntry() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="me-exam">{te("exam")}</Label>
-              <Select value={examId || undefined} onValueChange={setExamId}>
+              <Select
+                value={examId || undefined}
+                onValueChange={(v) => {
+                  setIsDirty(false);
+                  setExamId(v);
+                }}
+              >
                 <SelectTrigger id="me-exam" className="w-full">
                   <SelectValue placeholder={te("selectExam")} />
                 </SelectTrigger>
@@ -212,11 +283,7 @@ export function MarkEntry() {
             <SummaryTile
               icon={<CheckCircle2 className="size-4" />}
               label={te("summary.passRate")}
-              value={
-                validation.enteredCount
-                  ? `${validation.passRate.toFixed(0)}%`
-                  : "—"
-              }
+              value={validation.enteredCount ? `${validation.passRate.toFixed(0)}%` : "—"}
               tone={
                 validation.enteredCount && validation.passRate >= 50
                   ? "success"
@@ -234,10 +301,17 @@ export function MarkEntry() {
             <CardHeader className="border-b">
               <CardTitle className="flex items-center justify-between gap-2">
                 <span>{te("rosterTitle")}</span>
-                <span className="text-xs font-normal text-muted-foreground tabular-nums">
+                <span className="text-muted-foreground text-xs font-normal tabular-nums">
                   {te("outOf", { max: MARK_MAX })}
                 </span>
               </CardTitle>
+              <p className="text-sm">
+                <span className="text-muted-foreground">{te("gradingFor")} </span>
+                <span className="text-foreground font-medium">
+                  {selectedClass ?? "—"} · {selectedSubject ?? "—"} ·{" "}
+                  {selectedExam ?? "—"}
+                </span>
+              </p>
             </CardHeader>
             <CardContent className="p-0">
               <Stagger className="divide-y">
@@ -245,12 +319,12 @@ export function MarkEntry() {
                   const error = validation.errors[student.id];
                   return (
                     <StaggerItem key={student.id}>
-                      <div className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/40">
-                        <span className="w-6 shrink-0 text-xs text-muted-foreground tabular-nums">
+                      <div className="hover:bg-muted/40 flex items-center gap-3 px-4 py-2.5 transition-colors">
+                        <span className="text-muted-foreground w-6 shrink-0 text-xs tabular-nums">
                           {index + 1}
                         </span>
                         <Avatar className="size-9 shrink-0 border">
-                          <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
+                          <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
                             {initials(student.fullName)}
                           </AvatarFallback>
                         </Avatar>
@@ -258,15 +332,12 @@ export function MarkEntry() {
                           <p className="truncate text-sm font-medium">
                             {student.fullName}
                           </p>
-                          <p className="truncate text-xs text-muted-foreground tabular-nums">
+                          <p className="text-muted-foreground truncate text-xs tabular-nums">
                             {student.matricule ?? "—"}
                           </p>
                         </div>
                         <div className="w-24 shrink-0 text-right">
-                          <Label
-                            htmlFor={`mark-${student.id}`}
-                            className="sr-only"
-                          >
+                          <Label htmlFor={`mark-${student.id}`} className="sr-only">
                             {te("markFor", { name: student.fullName })}
                           </Label>
                           <Input
@@ -281,12 +352,13 @@ export function MarkEntry() {
                             aria-label={te("markFor", {
                               name: student.fullName,
                             })}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              setIsDirty(true);
                               setMarks((prev) => ({
                                 ...prev,
                                 [student.id]: e.target.value,
-                              }))
-                            }
+                              }));
+                            }}
                             className={cn(
                               "text-right tabular-nums",
                               error && "border-destructive",
@@ -295,7 +367,7 @@ export function MarkEntry() {
                         </div>
                       </div>
                       {error && (
-                        <p className="px-4 pb-2 pl-[4.75rem] text-xs text-destructive">
+                        <p className="text-destructive px-4 pb-2 pl-[4.75rem] text-xs">
                           {error}
                         </p>
                       )}
@@ -308,7 +380,9 @@ export function MarkEntry() {
 
           <div className="flex items-center justify-end gap-3">
             {validation.hasErrors && (
-              <p role="alert" className="text-sm text-destructive">{te("errors.fix")}</p>
+              <p role="alert" className="text-destructive text-sm">
+                {te("errors.fix")}
+              </p>
             )}
             <Button onClick={onSave} disabled={!canSave}>
               {saveMarks.isPending ? (
@@ -337,7 +411,7 @@ function SummaryTile({
   tone?: "default" | "success";
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border bg-card px-4 py-3 shadow-[var(--shadow-sm)]">
+    <div className="bg-card flex items-center gap-3 rounded-xl border px-4 py-3 shadow-[var(--shadow-sm)]">
       <span
         className={cn(
           "grid size-9 shrink-0 place-items-center rounded-lg",
@@ -349,7 +423,7 @@ function SummaryTile({
         {icon}
       </span>
       <div className="min-w-0">
-        <p className="truncate text-xs text-muted-foreground">{label}</p>
+        <p className="text-muted-foreground truncate text-xs">{label}</p>
         <p className="text-lg font-semibold tabular-nums">{value}</p>
       </div>
     </div>
@@ -364,7 +438,7 @@ function RosterSkeleton() {
           <Shimmer key={i} className="h-16 w-full rounded-xl" />
         ))}
       </div>
-      <div className="rounded-xl border bg-card p-4 shadow-[var(--shadow-sm)]">
+      <div className="bg-card rounded-xl border p-4 shadow-[var(--shadow-sm)]">
         <div className="space-y-3">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="flex items-center gap-3">

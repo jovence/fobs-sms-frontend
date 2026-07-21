@@ -12,8 +12,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { Subject, SubjectSeries } from "../types";
+import type { Subject, SubjectLevel, SubjectSeries } from "../types";
 
 const SERIES_STYLE: Record<SubjectSeries, string> = {
   science: "bg-info/10 text-info ring-info/20",
@@ -24,11 +25,13 @@ const SERIES_STYLE: Record<SubjectSeries, string> = {
 type Labels = {
   name: string;
   series: string;
+  level: string;
   classes: string;
   actions: string;
   edit: string;
   delete: string;
   seriesLabels: Record<SubjectSeries, string>;
+  levelLabels: Record<SubjectLevel, string>;
 };
 
 export function getSubjectColumns({
@@ -88,6 +91,19 @@ export function getSubjectColumns({
           {labels.seriesLabels[row.original.series]}
         </span>
       ),
+    },
+    {
+      accessorKey: "level",
+      header: labels.level,
+      enableSorting: false,
+      cell: ({ row }) =>
+        row.original.level ? (
+          <Badge variant="secondary" className="h-5 px-2 text-[11px] font-medium">
+            {labels.levelLabels[row.original.level]}
+          </Badge>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        ),
     },
     {
       accessorKey: "classesCount",

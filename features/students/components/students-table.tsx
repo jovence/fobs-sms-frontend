@@ -5,7 +5,7 @@ import type { RowSelectionState, SortingState } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { toast } from "sonner";
-import { Download, Plus, Search, Trash2, X } from "lucide-react";
+import { Download, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -26,10 +28,13 @@ import {
   useUpdateStudentStatus,
 } from "../hooks";
 import { studentsService } from "../api/students.service";
+import { CLASS_SECTIONS, classLabel, classesBySection } from "@/features/academics/class-options";
 import { useClassOptions } from "@/features/academics/hooks";
 import type { RegistrationStatus, Student, StudentQuery } from "../types";
 import { getStudentColumns } from "./students-columns";
 import { StudentFormSheet } from "./student-form-sheet";
+import { StudentStatCards } from "./student-stat-cards";
+import { AiImportDialog } from "./ai-import-dialog";
 
 const STATUSES: RegistrationStatus[] = ["Approved", "Pending", "Rejected"];
 
@@ -54,6 +59,7 @@ export function StudentsTable() {
   const [editing, setEditing] = useState<Student | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Student | null>(null);
   const [bulkOpen, setBulkOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
 
   const deleteStudent = useDeleteStudent();
   const bulkDelete = useBulkDeleteStudents();
@@ -82,6 +88,16 @@ export function StudentsTable() {
   );
 
   const { data, isLoading, isError, refetch, isFetching } = useStudents(query);
+  const groupedClasses = useMemo(() => classesBySection(classOptions), [classOptions]);
+  const classLabels = useMemo(
+    () => ({
+      lower: tf("levelLower"),
+      upper: tf("levelUpper"),
+      english: tf("sectionEnglish"),
+      french: tf("sectionFrench"),
+    }),
+    [tf],
+  );
 
   const columns = useMemo(
     () =>
@@ -94,6 +110,7 @@ export function StudentsTable() {
           dob: t("columns.dob"),
           status: t("columns.status"),
           actions: t("columns.actions"),
+          view: t("actions.view"),
           edit: t("actions.edit"),
           delete: t("actions.delete"),
           setStatus: t("actions.setStatus"),
@@ -160,11 +177,30 @@ export function StudentsTable() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("allClasses")}</SelectItem>
-            {classOptions.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.name}
-              </SelectItem>
-            ))}
+            {CLASS_SECTIONS.map((section) => {
+              const rows = groupedClasses[section];
+              if (rows.length === 0) return null;
+              return (
+                <SelectGroup key={section}>
+                  <SelectLabel>{classLabels[section]}</SelectLabel>
+                  {rows.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {classLabel(c, classLabels)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              );
+            })}
+            {groupedClasses.other.length > 0 && (
+              <SelectGroup>
+                <SelectLabel>{tf("sectionUnknown")}</SelectLabel>
+                {groupedClasses.other.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {classLabel(c, classLabels)}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            )}
           </SelectContent>
         </Select>
         <Select value={status} onValueChange={(v) => { setStatus(v); setPage(1); }}>
@@ -190,6 +226,9 @@ export function StudentsTable() {
         <Button variant="outline" size="sm" onClick={exportCsv} disabled={!data?.total}>
           <Download /> {t("export")}
         </Button>
+        <Button variant="outline" size="sm" onClick={() => setAiOpen(true)}>
+          <Sparkles /> {t("import.button")}
+        </Button>
         <Button
           size="sm"
           onClick={() => {
@@ -204,7 +243,9 @@ export function StudentsTable() {
   );
 
   return (
-    <>
+    <div className="space-y-6">
+      <StudentStatCards />
+
       <DataTable
         columns={columns}
         data={data?.items ?? []}
@@ -256,6 +297,8 @@ export function StudentsTable() {
         classes={classOptions}
       />
 
+      <AiImportDialog open={aiOpen} onOpenChange={setAiOpen} classes={classOptions} />
+
       <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(o) => !o && setDeleteTarget(null)}
@@ -292,6 +335,6 @@ export function StudentsTable() {
           setBulkOpen(false);
         }}
       />
-    </>
+    </div>
   );
 }

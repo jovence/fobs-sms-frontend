@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { FileText, PenLine } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MarkEntry } from "./mark-entry";
-import { ReportCardsTable } from "./report-cards-table";
+import { ReportCardsPanel } from "./report-cards-panel";
 
 export function ReportsTabs() {
   const t = useTranslations("reports");
@@ -22,7 +22,7 @@ export function ReportsTabs() {
         <MarkEntry />
       </TabsContent>
       <TabsContent value="cards">
-        <ReportCardsTable />
+        <ReportCardsPanel />
       </TabsContent>
     </Tabs>
   );

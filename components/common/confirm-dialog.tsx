@@ -1,6 +1,8 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { AlertCircle, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +14,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 
 /** Reusable confirmation dialog for destructive / sensitive actions. */
 export function ConfirmDialog({
@@ -21,7 +22,7 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel,
-  cancelLabel = "Cancel",
+  cancelLabel,
   destructive = false,
   isPending = false,
   onConfirm,
@@ -34,29 +35,72 @@ export function ConfirmDialog({
   cancelLabel?: string;
   destructive?: boolean;
   isPending?: boolean;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
 }) {
+  const tCommon = useTranslations("common");
+  const [running, setRunning] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const busy = isPending || running;
+
+  // The dialog owns the async lifecycle: it awaits onConfirm, closes on success,
+  // and stays open on failure so the user can retry or cancel. On failure it also
+  // shows a persistent, announced in-dialog error — the modal traps focus, so an
+  // out-of-modal toast alone is easy to miss (especially for low-vision / low-
+  // literacy users); the failed action must explain itself in place.
+  async function handleConfirm() {
+    if (busy) return;
+    setRunning(true);
+    setFailed(false);
+    try {
+      await onConfirm();
+      onOpenChange(false);
+    } catch {
+      setFailed(true);
+    } finally {
+      setRunning(false);
+    }
+  }
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog
+      open={open}
+      onOpenChange={(next) => {
+        if (busy) return;
+        if (!next) setFailed(false);
+        onOpenChange(next);
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
+
+        {failed && (
+          <p
+            role="alert"
+            className="bg-destructive/10 text-destructive flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium"
+          >
+            <AlertCircle className="size-4 shrink-0" />
+            {tCommon("actionFailed")}
+          </p>
+        )}
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>{cancelLabel}</AlertDialogCancel>
+          <AlertDialogCancel disabled={busy}>
+            {cancelLabel ?? tCommon("cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
-              onConfirm();
+              void handleConfirm();
             }}
-            disabled={isPending}
+            disabled={busy}
             className={cn(
               destructive &&
-                "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/30",
+                "bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/30 text-white",
             )}
           >
-            {isPending && <Loader2 className="size-4 animate-spin" />}
+            {busy && <Loader2 className="size-4 animate-spin" />}
             {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>

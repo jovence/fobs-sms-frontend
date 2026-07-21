@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CalendarDays, Loader2, Save } from "lucide-react";
@@ -10,7 +10,9 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -18,13 +20,11 @@ import { Reveal, AnimatedNumber } from "@/components/common/motion";
 import { Shimmer } from "@/components/common/skeletons";
 import { EmptyState, ErrorState } from "@/components/common/states";
 import { cn } from "@/lib/utils";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
+import { CLASS_SECTIONS, classLabel, classesBySection } from "@/features/academics/class-options";
 import { useClassOptions, useSubjectOptions } from "@/features/academics/hooks";
 import { useRoster, useSaveSession } from "../hooks";
-import {
-  attendanceRate,
-  type AttendanceRecord,
-  type AttendanceStatus,
-} from "../types";
+import { attendanceRate, type AttendanceRecord, type AttendanceStatus } from "../types";
 import { RosterRow, type RosterEntry } from "./roster-row";
 
 const DEFAULT_HOURS = 4;
@@ -35,6 +35,7 @@ function today(): string {
 
 export function AttendanceRecord() {
   const t = useTranslations("attendance.record");
+  const tc = useTranslations("academics.classForm");
 
   const { data: classes = [] } = useClassOptions();
   const { data: subjects = [] } = useSubjectOptions();
@@ -42,27 +43,26 @@ export function AttendanceRecord() {
   const [subjectId, setSubjectId] = useState("");
   const [date, setDate] = useState(today);
   const [entries, setEntries] = useState<Record<string, RosterEntry>>({});
+  const [isDirty, setIsDirty] = useState(false);
 
-  // Default to the first real class/subject once they load (empty for a fresh school).
-  useEffect(() => {
-    if (!classId && classes.length) setClassId(classes[0].id);
-  }, [classes, classId]);
-  useEffect(() => {
-    if (!subjectId && subjects.length) setSubjectId(subjects[0].id);
-  }, [subjects, subjectId]);
+  // Default selections are derived during render so loading options does not trigger
+  // cascading state updates. A manual pick sets classId/subjectId and takes over.
+  const effectiveClassId = classId || classes[0]?.id || "";
+  const effectiveSubjectId = subjectId || subjects[0]?.id || "";
 
-  const { data: roster, isLoading, isError, refetch } = useRoster(classId);
+  const { data: roster, isLoading, isError, refetch } = useRoster(effectiveClassId);
   const save = useSaveSession();
-
-  // Reset the roster marks whenever the loaded class changes.
-  useEffect(() => {
-    if (!roster) return;
-    const next: Record<string, RosterEntry> = {};
-    for (const s of roster) {
-      next[s.id] = { status: "Present", hours: DEFAULT_HOURS };
-    }
-    setEntries(next);
-  }, [roster]);
+  useUnsavedChangesWarning(isDirty);
+  const groupedClasses = useMemo(() => classesBySection(classes), [classes]);
+  const classLabels = useMemo(
+    () => ({
+      lower: tc("levelLower"),
+      upper: tc("levelUpper"),
+      english: tc("sectionEnglish"),
+      french: tc("sectionFrench"),
+    }),
+    [tc],
+  );
 
   const summary = useMemo(() => {
     const list = roster ?? [];
@@ -76,10 +76,17 @@ export function AttendanceRecord() {
       else absent += 1;
     }
     const total = list.length;
-    return { present, late, absent, total, rate: attendanceRate({ present, late, absent, total }) };
+    return {
+      present,
+      late,
+      absent,
+      total,
+      rate: attendanceRate({ present, late, absent, total }),
+    };
   }, [roster, entries]);
 
   function setStatus(studentId: string, status: AttendanceStatus) {
+    setIsDirty(true);
     setEntries((prev) => {
       const current = prev[studentId] ?? { status: "Present", hours: DEFAULT_HOURS };
       return {
@@ -93,6 +100,7 @@ export function AttendanceRecord() {
   }
 
   function setHours(studentId: string, hours: number) {
+    setIsDirty(true);
     setEntries((prev) => ({
       ...prev,
       [studentId]: {
@@ -103,14 +111,20 @@ export function AttendanceRecord() {
   }
 
   async function onSave() {
-    if (!roster || roster.length === 0) return;
+    if (!effectiveClassId || !effectiveSubjectId || !roster || roster.length === 0) return;
     const records: AttendanceRecord[] = roster.map((s) => {
       const entry = entries[s.id] ?? { status: "Present", hours: DEFAULT_HOURS };
       return { studentId: s.id, status: entry.status, hours: entry.hours };
     });
     try {
-      await save.mutateAsync({ date, classId, subjectId, records });
+      await save.mutateAsync({
+        date,
+        classId: effectiveClassId,
+        subjectId: effectiveSubjectId,
+        records,
+      });
       toast.success(t("saved"));
+      setIsDirty(false);
     } catch {
       toast.error(t("error"));
     }
@@ -120,19 +134,45 @@ export function AttendanceRecord() {
     <div className="space-y-4">
       {/* Selectors */}
       <Reveal>
-        <div className="grid gap-4 rounded-xl border bg-card p-4 shadow-[var(--shadow-sm)] sm:grid-cols-3">
+        <div className="bg-card grid gap-4 rounded-xl border p-4 shadow-[var(--shadow-sm)] sm:grid-cols-3">
           <div className="space-y-2">
             <Label htmlFor="att-class">{t("class")}</Label>
-            <Select value={classId} onValueChange={setClassId}>
+            <Select
+              value={effectiveClassId || undefined}
+              onValueChange={(v) => {
+                setIsDirty(false);
+                setClassId(v);
+                setEntries({});
+              }}
+            >
               <SelectTrigger id="att-class" className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {classes.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
+                {CLASS_SECTIONS.map((section) => {
+                  const rows = groupedClasses[section];
+                  if (rows.length === 0) return null;
+                  return (
+                    <SelectGroup key={section}>
+                      <SelectLabel>{classLabels[section]}</SelectLabel>
+                      {rows.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {classLabel(c, classLabels)}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  );
+                })}
+                {groupedClasses.other.length > 0 && (
+                  <SelectGroup>
+                    <SelectLabel>{tc("sectionUnknown")}</SelectLabel>
+                    {groupedClasses.other.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {classLabel(c, classLabels)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -140,7 +180,7 @@ export function AttendanceRecord() {
           <div className="space-y-2">
             <Label htmlFor="att-date">{t("date")}</Label>
             <div className="relative">
-              <CalendarDays className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <CalendarDays className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
               <Input
                 id="att-date"
                 type="date"
@@ -154,7 +194,13 @@ export function AttendanceRecord() {
 
           <div className="space-y-2">
             <Label htmlFor="att-subject">{t("subject")}</Label>
-            <Select value={subjectId} onValueChange={setSubjectId}>
+            <Select
+              value={effectiveSubjectId || undefined}
+              onValueChange={(v) => {
+                setIsDirty(false);
+                setSubjectId(v);
+              }}
+            >
               <SelectTrigger id="att-subject" className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -171,11 +217,11 @@ export function AttendanceRecord() {
       </Reveal>
 
       {/* Roster */}
-      <div className="overflow-hidden rounded-xl border bg-card shadow-[var(--shadow-sm)]">
+      <div className="bg-card overflow-hidden rounded-xl border shadow-[var(--shadow-sm)]">
         <div className="flex items-center justify-between border-b px-4 py-3">
           <h2 className="font-heading text-sm font-semibold">{t("rosterTitle")}</h2>
           {roster && !isLoading && (
-            <span className="text-xs text-muted-foreground tabular-nums">
+            <span className="text-muted-foreground text-xs tabular-nums">
               {t("studentCount", { count: roster.length })}
             </span>
           )}
@@ -228,7 +274,7 @@ export function AttendanceRecord() {
 
       {/* Sticky summary bar */}
       <div className="sticky bottom-4 z-20">
-        <div className="flex flex-col gap-3 rounded-xl border bg-card/95 p-3 shadow-[var(--shadow-md)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+        <div className="bg-card/95 flex flex-col gap-3 rounded-xl border p-3 shadow-[var(--shadow-md)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <SummaryStat
               label={t("summary.present")}
@@ -242,7 +288,7 @@ export function AttendanceRecord() {
               tone="destructive"
             />
             <div className="flex items-center gap-2 border-l pl-5">
-              <span className="text-xs text-muted-foreground">{t("summary.rate")}</span>
+              <span className="text-muted-foreground text-xs">{t("summary.rate")}</span>
               <AnimatedNumber
                 value={summary.rate}
                 format={(n) => `${Math.round(n)}%`}
@@ -253,7 +299,13 @@ export function AttendanceRecord() {
           <Button
             size="lg"
             onClick={onSave}
-            disabled={save.isPending || !roster || roster.length === 0}
+            disabled={
+              save.isPending ||
+              !effectiveClassId ||
+              !effectiveSubjectId ||
+              !roster ||
+              roster.length === 0
+            }
           >
             {save.isPending ? (
               <Loader2 className="size-4 animate-spin" />
@@ -287,7 +339,7 @@ function SummaryStat({
           tone === "destructive" && "bg-destructive",
         )}
       />
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground text-xs">{label}</span>
       <AnimatedNumber
         value={value}
         className="font-heading text-lg font-bold tabular-nums"

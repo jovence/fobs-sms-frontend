@@ -1,40 +1,44 @@
 "use client";
 
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSchoolScope } from "@/lib/query-keys";
 import { attendanceService } from "./api/attendance.service";
 import type { AttendanceQuery, SaveSessionInput } from "./types";
 
 export const attendanceKeys = {
-  all: ["attendance"] as const,
-  sessions: (q: AttendanceQuery) => ["attendance", "sessions", q] as const,
-  roster: (classId: string) => ["attendance", "roster", classId] as const,
+  all: (school: string) => ["school", school, "attendance"] as const,
+  sessions: (school: string, q: AttendanceQuery) =>
+    ["school", school, "attendance", "sessions", q] as const,
+  roster: (school: string, classId: string) =>
+    ["school", school, "attendance", "roster", classId] as const,
 };
 
 export function useRoster(classId: string | undefined) {
+  const school = useSchoolScope();
   return useQuery({
-    queryKey: attendanceKeys.roster(classId ?? ""),
+    queryKey: attendanceKeys.roster(school, classId ?? ""),
     queryFn: () => attendanceService.getRoster(classId as string),
     enabled: !!classId,
   });
 }
 
 export function useSessions(query: AttendanceQuery) {
+  const school = useSchoolScope();
   return useQuery({
-    queryKey: attendanceKeys.sessions(query),
+    queryKey: attendanceKeys.sessions(school, query),
     queryFn: () => attendanceService.listSessions(query),
-    placeholderData: keepPreviousData,
+    placeholderData: (prev, prevQuery) =>
+      prevQuery && prevQuery.queryKey[1] === school ? prev : undefined,
   });
 }
 
 export function useSaveSession() {
   const qc = useQueryClient();
+  const school = useSchoolScope();
   return useMutation({
     mutationFn: (input: SaveSessionInput) => attendanceService.saveSession(input),
-    onSuccess: () => qc.invalidateQueries({ queryKey: attendanceKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: attendanceKeys.all(school) }),
+    // Shows its own contextual save-error toast; opt out of the global one.
+    meta: { suppressErrorToast: true },
   });
 }

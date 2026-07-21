@@ -1,113 +1,33 @@
-import { pickService } from "@/lib/api-client";
-import { mockStore, withLatency } from "@/lib/mock";
-import { isDemoSchool, scopedKey } from "@/features/auth/tenancy";
-import type { Paginated } from "@/types";
 import type {
   EntrySelection,
   EntryStudent,
-  ReportQuery,
-  ReportRow,
+  ReportDownloadParams,
+  ReportGenerateResult,
+  ReportIndex,
+  ReportMode,
+  ReportParams,
+  ReportPreview,
   SaveMarksInput,
 } from "../types";
-import { seedReportRows } from "../mock-data";
 import { httpMarksService } from "./marks.http";
 
 export interface MarksService {
-  /** Aggregated per-student results for the Report Cards table. */
-  listReportRows(query: ReportQuery): Promise<Paginated<ReportRow>>;
   /** The roster (with any previously saved marks) for a Class + Subject + Exam. */
   listEntryRoster(selection: EntrySelection): Promise<EntryStudent[]>;
   /** Persist entered marks for a Class + Subject + Exam. */
   saveMarks(input: SaveMarksInput): Promise<void>;
-  /** Generate a single student's report card. */
-  generateReportCard(id: string): Promise<void>;
-  /** Generate report cards for every student matching the current filter. */
-  generateAll(query: ReportQuery): Promise<void>;
+
+  // ---- Report cards (Term / Sequence / Annual) ----
+  /** Filter metadata for the report cards screen (classes + academic years). */
+  reportIndex(): Promise<ReportIndex>;
+  /** Preview the students in scope, flagging those missing marks. */
+  previewReport(mode: ReportMode, params: ReportParams): Promise<ReportPreview>;
+  /** Kick off PDF generation for every student in scope. */
+  generateReport(mode: ReportMode, params: ReportParams): Promise<ReportGenerateResult>;
+  /** Download the consolidated ZIP / PDF of all report cards in scope. */
+  downloadAllReports(mode: ReportMode, params: ReportDownloadParams): Promise<void>;
+  /** Download a single student's report card PDF. */
+  downloadStudentReport(mode: ReportMode, params: ReportDownloadParams): Promise<void>;
 }
 
-// ---- Mock implementation (persists saved marks to localStorage) ----
-
-/** Saved marks, keyed by "classId|subjectId|examId" -> { studentId: mark }. */
-type MarksStore = Record<string, Record<string, number>>;
-
-function selectionKey({ classId, subjectId, examId }: EntrySelection): string {
-  return `${classId}|${subjectId}|${examId}`;
-}
-
-function store(): MarksStore {
-  return mockStore.get<MarksStore>(scopedKey("marks"), {});
-}
-function commit(next: MarksStore) {
-  mockStore.set(scopedKey("marks"), next);
-}
-
-const mockMarksService: MarksService = {
-  async listReportRows(query) {
-    let rows = isDemoSchool() ? [...seedReportRows] : [];
-    const { search, classId, sortBy, sortDir, page, perPage } = query;
-
-    if (search) {
-      const q = search.toLowerCase();
-      rows = rows.filter(
-        (r) =>
-          r.fullName.toLowerCase().includes(q) ||
-          (r.matricule ?? "").toLowerCase().includes(q),
-      );
-    }
-    if (classId) rows = rows.filter((r) => r.classId === classId);
-
-    if (sortBy) {
-      const dir = sortDir === "desc" ? -1 : 1;
-      rows.sort((a, b) => {
-        const av = a[sortBy] ?? "";
-        const bv = b[sortBy] ?? "";
-        return av < bv ? -1 * dir : av > bv ? 1 * dir : 0;
-      });
-    }
-
-    const total = rows.length;
-    const start = (page - 1) * perPage;
-    const items = rows.slice(start, start + perPage);
-
-    return withLatency(
-      { items, page, perPage, total, totalPages: Math.ceil(total / perPage) || 1 },
-      450,
-    );
-  },
-
-  async listEntryRoster(selection) {
-    const saved = store()[selectionKey(selection)] ?? {};
-    const roster: EntryStudent[] = seedReportRows
-      .filter((r) => r.classId === selection.classId)
-      .map((r) => ({
-        id: r.id,
-        fullName: r.fullName,
-        matricule: r.matricule,
-        mark: r.id in saved ? saved[r.id] : null,
-      }));
-    return withLatency(roster, 400);
-  },
-
-  async saveMarks(input) {
-    const key = selectionKey(input);
-    const next: MarksStore = { ...store() };
-    const bucket: Record<string, number> = { ...(next[key] ?? {}) };
-    for (const { studentId, mark } of input.marks) bucket[studentId] = mark;
-    next[key] = bucket;
-    commit(next);
-    return withLatency(undefined, 550);
-  },
-
-  async generateReportCard(_id) {
-    return withLatency(undefined, 500);
-  },
-
-  async generateAll(_query) {
-    return withLatency(undefined, 700);
-  },
-};
-
-export const marksService: MarksService = pickService(
-  mockMarksService,
-  httpMarksService,
-);
+export const marksService: MarksService = httpMarksService;

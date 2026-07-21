@@ -3,17 +3,24 @@
 import { useTranslations } from "next-intl";
 import { motion, useReducedMotion } from "motion/react";
 import { formatNumber } from "@/lib/format";
-import { subscriptionBreakdown } from "../mock-data";
+import type { SubscriptionTier } from "@/features/admin/schools/types";
 
-const TIERS = [
-  { key: "free", color: "bg-muted-foreground/40", value: subscriptionBreakdown.free },
-  { key: "basic", color: "bg-info", value: subscriptionBreakdown.basic },
-  { key: "pro", color: "bg-primary", value: subscriptionBreakdown.pro },
+const TIER_STYLE = [
+  { key: "free", color: "bg-muted-foreground/40" },
+  { key: "basic", color: "bg-info" },
+  { key: "pro", color: "bg-primary" },
 ] as const;
 
-export function SubscriptionBreakdown({ locale }: { locale: string }) {
+export function SubscriptionBreakdown({
+  locale,
+  breakdown,
+}: {
+  locale: string;
+  breakdown: Record<SubscriptionTier, number>;
+}) {
   const t = useTranslations("admin.tiers");
   const reduce = useReducedMotion();
+  const TIERS = TIER_STYLE.map((tier) => ({ ...tier, value: breakdown[tier.key] ?? 0 }));
   const total = TIERS.reduce((sum, x) => sum + x.value, 0) || 1;
 
   return (

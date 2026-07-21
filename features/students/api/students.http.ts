@@ -2,10 +2,13 @@ import { api } from "@/lib/api-client";
 import type { Paginated } from "@/types";
 import type {
   Gender,
+  ParsedImportStudent,
   RegistrationStatus,
   Student,
+  StudentDetail,
+  StudentImportPreview,
   StudentInput,
-  StudentQuery,
+  StudentStats,
 } from "../types";
 import type { StudentsService } from "./students.service";
 
@@ -59,6 +62,31 @@ interface StudentsIndexPayload {
   classes: { id: number | string; name: string }[];
 }
 
+/** Shape of the `GET /students/stats` payload (headline counts, active school scoped). */
+interface StudentStatsPayload {
+  total: number;
+  active: number;
+  pending: number;
+  male: number;
+  female: number;
+}
+
+/** One record extracted by Gemini (`POST /students/import` → `data.studentData[]`). */
+interface ImportRowPayload {
+  matricule: string | null;
+  full_name: string;
+  date_of_birth: string | null;
+  place_of_birth: string | null;
+  gender: string | null;
+  class?: string | null;
+}
+
+/** Response of the parse step: extracted rows plus the (echoed) target class id. */
+interface ImportParsePayload {
+  studentData: ImportRowPayload[];
+  class_id: number | string;
+}
+
 function toGender(value: string | null): Gender {
   return (value ?? "").toLowerCase() === "female" ? "Female" : "Male";
 }
@@ -95,6 +123,33 @@ function mapStudent(p: StudentPayload): Student {
   };
 }
 
+/** Map a Gemini-extracted row (snake_case) onto the UI preview shape (camelCase). */
+function mapImportRow(p: ImportRowPayload): ParsedImportStudent {
+  return {
+    matricule: p.matricule ?? null,
+    fullName: p.full_name,
+    dateOfBirth: p.date_of_birth ?? "",
+    placeOfBirth: p.place_of_birth ?? "",
+    gender: toGender(p.gender),
+    className: p.class ?? null,
+  };
+}
+
+/**
+ * Map a reviewed preview row back to the confirm payload. StudentService::storeImportedStudents
+ * reads matricule / full_name / date_of_birth / place_of_birth / gender (it ucfirst()s the
+ * casing) — `class` and any UI-only fields are ignored, so we don't send them.
+ */
+function toImportRowPayload(s: ParsedImportStudent): Record<string, unknown> {
+  return {
+    matricule: s.matricule,
+    full_name: s.fullName,
+    date_of_birth: s.dateOfBirth,
+    place_of_birth: s.placeOfBirth,
+    gender: s.gender,
+  };
+}
+
 /**
  * Owner/admin store+update validation accepts: full_name, matricule, date_of_birth,
  * place_of_birth, gender (male|female), class_id, repeater. It does NOT accept guardianName
@@ -110,6 +165,23 @@ function toPayload(input: StudentInput): Record<string, unknown> {
     class_id: input.classId,
     repeater: input.isRepeater ?? false,
   };
+}
+
+function toMultipartPayload(input: StudentInput): FormData {
+  const payload = toPayload(input);
+  const form = new FormData();
+
+  for (const [key, value] of Object.entries(payload)) {
+    form.append(key, value == null ? "" : String(value));
+  }
+
+  if (input.image) form.append("image", input.image);
+
+  return form;
+}
+
+function studentBody(input: StudentInput): Record<string, unknown> | FormData {
+  return input.image ? toMultipartPayload(input) : toPayload(input);
 }
 
 export const httpStudentsService: StudentsService = {
@@ -139,18 +211,54 @@ export const httpStudentsService: StudentsService = {
     };
   },
 
-  async get(id): Promise<Student> {
-    const student = await api.get<StudentPayload>(`/dashboard/students/${id}`);
-    return mapStudent(student);
+  async get(id): Promise<StudentDetail> {
+    const p = await api.get<StudentPayload>(`/dashboard/students/${id}`);
+    return {
+      ...mapStudent(p),
+      code: p.code ?? null,
+      guardianContact: p.tutor?.contact ?? null,
+      guardianEmail: p.tutor?.email ?? null,
+    };
+  },
+
+  async stats(): Promise<StudentStats> {
+    const s = await api.get<StudentStatsPayload>("/dashboard/students/stats");
+    return {
+      total: s.total ?? 0,
+      active: s.active ?? 0,
+      pending: s.pending ?? 0,
+      male: s.male ?? 0,
+      female: s.female ?? 0,
+    };
+  },
+
+  async importParse({ file, classId }): Promise<StudentImportPreview> {
+    // Multipart: the backend validates `student_file` (image/pdf/xlsx) + `class_id`, runs Gemini,
+    // and returns `{ studentData, class_id }`. api-client sends FormData as multipart automatically.
+    const form = new FormData();
+    form.append("student_file", file);
+    form.append("class_id", classId);
+    const res = await api.post<ImportParsePayload>("/dashboard/students/import", form);
+    return {
+      students: (res.studentData ?? []).map(mapImportRow),
+      classId: res.class_id != null ? String(res.class_id) : classId,
+    };
+  },
+
+  async importConfirm({ students, classId }): Promise<void> {
+    await api.post<null>("/dashboard/students/import/confirm", {
+      students: students.map(toImportRowPayload),
+      class_id: classId,
+    });
   },
 
   async create(input): Promise<Student> {
-    const student = await api.post<StudentPayload>("/dashboard/students", toPayload(input));
+    const student = await api.post<StudentPayload>("/dashboard/students", studentBody(input));
     return mapStudent(student);
   },
 
   async update(id, input): Promise<Student> {
-    const student = await api.put<StudentPayload>(`/dashboard/students/${id}`, toPayload(input));
+    const student = await api.put<StudentPayload>(`/dashboard/students/${id}`, studentBody(input));
     return mapStudent(student);
   },
 
